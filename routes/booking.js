@@ -8,4 +8,15 @@ router.get('/', (req, res) => {
   });
 });
 
+// Basic POST handler (we'll expand this next)
+router.post('/', (req, res) => {
+  console.log('Booking submitted:', req.body);
+  res.send(`
+    <h1>Thank you!</h1>
+    <p>Your booking request has been received.</p>
+    <p><a href="/book">Book Another Haul</a></p>
+    <p><a href="/">← Back to Home</a></p>
+  `);
+});
+
 module.exports = router;
