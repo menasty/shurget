@@ -1,0 +1,209 @@
+<%
+const title = 'Same-Day Furniture Delivery in Austin, TX | Shurget';
+const metaDescription = 'Same-day furniture delivery in Austin. Sofas, dressers, appliances — pickup truck drivers arrive in minutes. Get an instant quote, no hidden fees.';
+const canonicalPath = '/austin-furniture-delivery';
+const eyebrow = 'Austin · Same-Day Service';
+const h1 = 'Same-day furniture delivery in Austin';
+const subhead = 'A pickup truck driver, matched in minutes. Book online, get a price instantly — no phone tag, no surprises.';
+const pageCampaign = 'furniture';
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "name": "Shurget",
+      "description": "Same-day pickup truck delivery for oversized items in Austin, TX",
+      "url": "https://shurget.com",
+      "telephone": "",
+      "areaServed": [
+        { "@type": "City", "name": "Austin" },
+        { "@type": "City", "name": "Round Rock" },
+        { "@type": "City", "name": "Cedar Park" },
+        { "@type": "City", "name": "Pflugerville" },
+        { "@type": "City", "name": "Georgetown" }
+      ],
+      "serviceType": "Furniture Delivery"
+    },
+    {
+      "@type": "Service",
+      "name": "Same-Day Furniture Delivery in Austin",
+      "provider": { "@type": "LocalBusiness", "name": "Shurget" },
+      "areaServed": { "@type": "City", "name": "Austin, TX" },
+      "description": "Same-day pickup truck delivery for sofas, dressers, mattresses, and other oversized furniture across the Austin metro.",
+      "offers": {
+        "@type": "Offer",
+        "price": "59",
+        "priceCurrency": "USD",
+        "description": "Starting price for small furniture hauls within 30 miles"
+      }
+    }
+  ]
+});
+%>
+<%
+const bodyContent = '<section class="seo-copy">
+    <div class="seo-copy-inner">
+      <div class="seo-copy-main">
+        <h2>Austin's on-demand furniture hauling service</h2>
+        <p>Bought a sectional on Facebook Marketplace in Mueller? Scored a vintage dresser in East Austin? Got a new king bed arriving from the store but the delivery window is next week? Shurget puts a vetted pickup truck driver at your door today — usually within the hour.</p>
+        <p>We handle the items that won't fit in a sedan and that white-glove movers charge $400 to touch. A sofa, a mattress, a pair of nightstands and a floor lamp? That's a single Shurget job, booked in under two minutes, priced to the penny before you commit.</p>
+
+        <h3>Neighborhoods we serve every day</h3>
+        <p>Our drivers cover the full Austin metro, including:</p>
+        <ul class="seo-list">
+          <li><strong>Mueller</strong> — apartment move-ins, home-goods hauls from the new development retail</li>
+          <li><strong>East Austin</strong> — vintage finds, furniture flips, studio pickups</li>
+          <li><strong>South Congress (SoCo)</strong> — boutique furniture, décor, oversized art</li>
+          <li><strong>Hyde Park / North Loop</strong> — student move-ins and move-outs</li>
+          <li><strong>Round Rock &amp; Cedar Park</strong> — suburban furniture store runs and Marketplace pickups</li>
+          <li><strong>Downtown / Rainey Street</strong> — high-rise and condo deliveries</li>
+        </ul>
+
+        <h3>What fits in a pickup truck?</h3>
+        <p>A standard full-size truck bed (roughly 8 ft × 5.5 ft) handles most single-room hauls. Examples:</p>
+        <ul class="seo-list">
+          <li>Queen or king mattress + box spring</li>
+          <li>3-seat sofa or loveseat</li>
+          <li>Dining table + 4 chairs</li>
+          <li>Full dresser + two nightstands</li>
+          <li>Refrigerator or washing machine (upright)</li>
+          <li>Desk, bookcase, and file cabinet</li>
+        </ul>
+        <p>Larger or oddly shaped loads? Add a second helper at booking — they'll bring securing straps and moving blankets.</p>
+
+        <h3>How pricing works</h3>
+        <p>Enter your pickup and dropoff addresses and we calculate distance instantly. The quote you see is the final price — base rate + distance + any helpers you add. No fuel surcharges added at checkout, no cash expected at the door.</p>
+      </div>
+
+      <div class="seo-sidebar">
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">⚡</div>
+          <strong>Driver in minutes</strong>
+          <p>Average match time under 15 minutes on active days.</p>
+        </div>
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">🛡</div>
+          <strong>Vetted &amp; insured</strong>
+          <p>Every driver passes a background check before joining the pool.</p>
+        </div>
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">📍</div>
+          <strong>Live tracking</strong>
+          <p>Watch your driver on a map from dispatch to dropoff. <a href="/track/demo">How tracking works →</a></p>
+        </div>
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">💳</div>
+          <strong>Pay online</strong>
+          <p>Stripe-secured checkout. No cash, no card at the door.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing section (reused component) -->
+  <section class="pricing" id="pricing">
+    <div class="pricing-inner">
+      <span class="section-label">Simple, Honest Pricing</span>
+      <h2 class="section-title">No hidden fees. Instant quotes.</h2>
+      <p class="pricing-sub">Enter your pickup and dropoff — get an all-in price before you book. <a href="/pricing">See full pricing details →</a></p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-card-header">
+            <div class="pricing-tier-label">Small Haul</div>
+            <div class="pricing-price-wrap"><span class="pricing-from">from</span><span class="pricing-price">$59</span></div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> Sofas &amp; armchairs</li>
+            <li><span class="pricing-check">✓</span> Mattresses (single/double)</li>
+            <li><span class="pricing-check">✓</span> Desks &amp; office chairs</li>
+            <li><span class="pricing-check">✓</span> Dressers &amp; nightstands</li>
+            <li><span class="pricing-check">✓</span> Up to 30 miles included</li>
+          </ul>
+          <a href="/book?utm_source=seo&utm_campaign=austin_furniture" class="btn-pricing">Get a Quote →</a>
+        </div>
+        <div class="pricing-card pricing-card--featured">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-card-header">
+            <div class="pricing-tier-label">Medium Haul</div>
+            <div class="pricing-price-wrap"><span class="pricing-from">from</span><span class="pricing-price">$89</span></div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> Sectional sofas</li>
+            <li><span class="pricing-check">✓</span> King-size mattresses</li>
+            <li><span class="pricing-check">✓</span> Large dressers &amp; wardrobes</li>
+            <li><span class="pricing-check">✓</span> Refrigerators</li>
+            <li><span class="pricing-check">✓</span> Up to 40 miles included</li>
+          </ul>
+          <a href="/book?utm_source=seo&utm_campaign=austin_furniture" class="btn-pricing btn-pricing--light">Get a Quote →</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-card-header">
+            <div class="pricing-tier-label">Large Haul</div>
+            <div class="pricing-price-wrap"><span class="pricing-from">from</span><span class="pricing-price">$129</span></div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> Multiple large items</li>
+            <li><span class="pricing-check">✓</span> Couches + sectionals</li>
+            <li><span class="pricing-check">✓</span> Exercise equipment</li>
+            <li><span class="pricing-check">✓</span> Commercial appliances</li>
+            <li><span class="pricing-check">✓</span> Up to 60 miles included</li>
+          </ul>
+          <a href="/book?utm_source=seo&utm_campaign=austin_furniture" class="btn-pricing">Get a Quote →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="seo-faq">
+    <div class="seo-faq-inner">
+      <span class="section-label">Common Questions</span>
+      <h2 class="section-title">FAQ</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>How fast can you get a driver to me?</summary>
+          <p>On most days in Austin, we match a driver within 10–20 minutes of booking. Same-day availability depends on driver supply, but we're live across the metro. If no driver is immediately available, you'll know instantly — we don't take your money until a driver is confirmed.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if the item has to go up stairs?</summary>
+          <p>Stairs are fine. Add a helper (or two) at checkout — an extra set of hands costs $25–$45 and makes stair carries safe and fast. Elevator buildings are no problem solo.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What's the same-day cutoff time?</summary>
+          <p>We accept bookings until 8 PM for same-day delivery. Anything after that books for the next morning. You'll see real-time availability at checkout.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What happens if something gets damaged?</summary>
+          <p>All drivers carry basic cargo protection. If damage occurs, report it within 24 hours via your order confirmation email and we'll investigate promptly. We want every delivery to arrive in the same condition it left.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do you deliver to Round Rock or Cedar Park?</summary>
+          <p>Yes — our service area covers the full Austin metro including Round Rock, Cedar Park, Pflugerville, Georgetown, and Buda. Distance is factored into your quote automatically.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can I track my driver in real time?</summary>
+          <p>Yes. Once dispatched, you get a live tracking link. Watch your driver on a map, see their ETA, and get an SMS when they're 5 minutes out. <a href="/track/demo">See how tracking works →</a></p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Internal links + CTA -->
+  <section class="seo-links">
+    <div class="seo-links-inner">
+      <h2>Ready to haul?</h2>
+      <p>Get a quote in under 60 seconds. No account required.</p>
+      <a href="/book?utm_source=seo&utm_campaign=austin_furniture" class="btn-cta">Book a pickup now →</a>
+      <div class="seo-related">
+        <span>Also explore:</span>
+        <a href="/sofa-delivery-austin">Sofa delivery Austin</a>
+        <a href="/mattress-delivery-austin">Mattress delivery Austin</a>
+        <a href="/marketplace-pickup-austin">Marketplace pickup Austin</a>
+        <a href="/pricing">Full pricing guide</a>
+        <a href="/partners">Partner with Shurget</a>
+      </div>
+    </div>
+  </section>';
+%>
+<%- include('partials/seo-page-shell', { title, metaDescription, canonicalPath, eyebrow, h1, subhead, pageCampaign, schema, bodyContent }) %>

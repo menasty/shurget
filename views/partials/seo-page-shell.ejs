@@ -1,0 +1,44 @@
+<%#
+  Shared shell for Austin local-SEO landing pages.
+  Expects locals: title, metaDescription, h1, eyebrow, subhead, pageCampaign,
+    bodyContent (HTML string injected via <%- ... %>), schema (JSON string),
+    deliveredCount (number, for reviews snippet).
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <meta name="description" content="<%= metaDescription %>">
+  <link rel="canonical" href="https://shurget.com<%= canonicalPath %>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/seo-pages.css">
+  <%- include('ga4') %>
+  <script type="application/ld+json"><%- schema %></script>
+</head>
+<body>
+  <%- include('nav') %>
+
+  <!-- Above-the-fold hero -->
+  <section class="seo-hero">
+    <div class="seo-hero-inner">
+      <span class="section-label"><%= eyebrow %></span>
+      <h1 class="seo-h1"><%= h1 %></h1>
+      <p class="seo-sub"><%= subhead %></p>
+      <a href="/book?utm_source=seo&utm_medium=organic&utm_campaign=austin_<%= pageCampaign %>"
+         class="btn-cta seo-cta">
+        Book a pickup — quote in 60 seconds →
+      </a>
+    </div>
+  </section>
+
+  <%- bodyContent %>
+
+  <%- include('footer') %>
+  <!-- Polsia Analytics --><script>(function(){var slug="shurget-5";if(!slug)return;var vid=localStorage.getItem('polsia_vid');if(!vid){vid='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});localStorage.setItem('polsia_vid',vid);}new Image().src='https://polsia.com/api/beacon/pixel?s='+encodeURIComponent(slug)+'&v='+encodeURIComponent(vid);})();</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Earnings — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0F0F0F;color:#fff;font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:3rem}
+    .driver-header{background:#1A1A1A;border-bottom:1px solid rgba(255,255,255,0.08);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+    .driver-logo{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.12em;color:#fff;text-decoration:none}
+    .driver-email-dot{width:8px;height:8px;border-radius:50%;background:#22C55E;display:inline-block}
+    .page{max-width:560px;margin:2rem auto;padding:0 1.25rem}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:2.25rem;letter-spacing:.05em;margin-bottom:.25rem}
+    .sub{color:rgba(255,255,255,.45);font-size:.85rem;margin-bottom:2rem}
+    /* Stats grid */
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;margin-bottom:2rem}
+    .stat-card{background:#1A1A1A;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.25rem}
+    .stat-label{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:.4rem}
+    .stat-value{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;color:#fff}
+    .stat-value.green{color:#22C55E}
+    .stat-value.orange{color:#E85D04}
+    /* Transfers table */
+    .section-head{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:#E85D04;margin-bottom:.875rem}
+    .transfer-list{display:flex;flex-direction:column;gap:.75rem}
+    .transfer-row{background:#1A1A1A;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+    .transfer-info{flex:1}
+    .transfer-item{font-weight:600;font-size:.9rem;color:#fff;margin-bottom:.2rem}
+    .transfer-meta{font-size:.75rem;color:rgba(255,255,255,.4)}
+    .transfer-right{text-align:right}
+    .transfer-amount{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:#22C55E}
+    .transfer-status{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:.2rem .55rem;border-radius:99px;margin-top:.25rem}
+    .transfer-status.paid{background:rgba(34,197,94,.15);color:#22C55E}
+    .transfer-status.pending{background:rgba(250,204,21,.15);color:#FACC15}
+    .transfer-status.failed{background:rgba(239,68,68,.15);color:#F87171}
+    /* Empty */
+    .empty{text-align:center;padding:3.5rem 1rem;color:rgba(255,255,255,.3)}
+    .empty-icon{font-size:3rem;margin-bottom:.75rem}
+    .empty-title{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;color:rgba(255,255,255,.5);margin-bottom:.5rem}
+    .empty-sub{font-size:.85rem}
+    /* Nav */
+    .nav-links{display:flex;gap:1.25rem;margin-top:1.75rem}
+    .nav-links a{font-size:.85rem;color:rgba(255,255,255,.4);text-decoration:none}
+    .nav-links a:hover{color:#fff}
+    .payout-cta{display:block;width:100%;padding:.875rem;background:rgba(234,88,4,.12);border:1px solid rgba(234,88,4,.3);color:#E85D04;border-radius:8px;text-align:center;font-size:.85rem;font-weight:700;text-decoration:none;margin-bottom:1.5rem;transition:background .2s}
+    .payout-cta:hover{background:rgba(234,88,4,.2)}
+  </style>
+</head>
+<body>
+<header class="driver-header">
+  <a href="/" class="driver-logo">HAULR</a>
+  <div style="display:flex;align-items:center;gap:.5rem">
+    <span class="driver-email-dot"></span>
+    <span style="font-size:.85rem;font-weight:600"><%= driver.name %></span>
+  </div>
+</header>
+
+<div class="page">
+  <h1>Earnings</h1>
+  <p class="sub">85% of every delivery goes to you. Stripe sends funds in 1–2 business days.</p>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-label">Lifetime Earnings</div>
+      <div class="stat-value green">$<%= parseFloat(summary.lifetime_earnings || 0).toFixed(0) %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">This Week</div>
+      <div class="stat-value">$<%= parseFloat(summary.week_earnings || 0).toFixed(0) %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Pending Payout</div>
+      <div class="stat-value orange">$<%= parseFloat(summary.pending_earnings || 0).toFixed(0) %></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Deliveries</div>
+      <div class="stat-value"><%= summary.total_jobs || 0 %></div>
+    </div>
+  </div>
+
+  <% if (!driver.stripe_account_id) { %>
+  <a href="/driver/payouts?email=<%= encodeURIComponent(email) %>" class="payout-cta">
+    🔗 Connect bank account to enable automatic payouts →
+  </a>
+  <% } %>
+
+  <% if (payouts && payouts.length > 0) { %>
+  <div class="section-head">Recent Deliveries</div>
+  <div class="transfer-list">
+    <% payouts.forEach(function(p) { %>
+    <div class="transfer-row">
+      <div class="transfer-info">
+        <div class="transfer-item"><%= p.item_type %> &nbsp;#<%= p.id %></div>
+        <div class="transfer-meta">
+          <%= p.created_at ? new Date(p.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—' %>
+          <% if (p.stripe_transfer_id) { %>
+          &nbsp;·&nbsp; <span style="font-family:monospace;font-size:.7rem;opacity:.5"><%= p.stripe_transfer_id.slice(0,12) %>…</span>
+          <% } %>
+        </div>
+      </div>
+      <div class="transfer-right">
+        <div class="transfer-amount">$<%= (parseFloat(p.price_total || 0) * 0.85).toFixed(2) %></div>
+        <span class="transfer-status <%= p.payout_status || 'pending' %>"><%= (p.payout_status || 'pending').toUpperCase() %></span>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <% } else { %>
+  <div class="empty">
+    <div class="empty-icon">💸</div>
+    <div class="empty-title">No Deliveries Yet</div>
+    <div class="empty-sub">Accept jobs from the jobs board and complete deliveries to see earnings here.</div>
+  </div>
+  <% } %>
+
+  <div class="nav-links">
+    <a href="/driver/payouts?email=<%= encodeURIComponent(email) %>">Payout Setup →</a>
+    <a href="/driver/jobs?email=<%= encodeURIComponent(email) %>">← Back to Jobs</a>
+  </div>
+</div>
+</body>
+</html>

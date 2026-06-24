@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Driver Portal — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-text-size-adjust:100%}
+    body{background:#0F0F0F;color:#fff;font-family:'DM Sans',sans-serif;min-height:100vh;
+         /* Reserve space for sticky bottom bar on active-job views */
+         padding-bottom:env(safe-area-inset-bottom,0)}
+
+    /* ── Header ── */
+    .dh{background:#1A1A1A;border-bottom:1px solid rgba(255,255,255,.08);
+        padding:.875rem 1rem;display:flex;align-items:center;justify-content:space-between;
+        position:sticky;top:0;z-index:60}
+    .dh-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.12em;color:#fff;text-decoration:none}
+    .dh-driver{display:flex;align-items:center;gap:.5rem}
+    .dh-dot{width:8px;height:8px;border-radius:50%;background:#22C55E;flex-shrink:0}
+    .dh-name{font-size:.82rem;font-weight:600;color:#fff;line-height:1.2}
+    .dh-sub{font-size:.68rem;color:rgba(255,255,255,.45)}
+    .dh-bg{font-size:.65rem;color:#22C55E;font-weight:700}
+
+    /* ── Tab nav ── */
+    .tab-nav{background:#1A1A1A;border-bottom:1px solid rgba(255,255,255,.08);
+             display:flex;padding:0 .5rem;overflow-x:auto;-webkit-overflow-scrolling:touch;
+             scrollbar-width:none}
+    .tab-nav::-webkit-scrollbar{display:none}
+    .tab-btn{flex-shrink:0;padding:.8rem .85rem;font-size:.78rem;font-weight:600;
+             color:rgba(255,255,255,.45);background:none;border:none;cursor:pointer;
+             border-bottom:2.5px solid transparent;transition:color .2s,border-color .2s;
+             display:flex;align-items:center;gap:.35rem;white-space:nowrap;
+             -webkit-tap-highlight-color:transparent}
+    .tab-btn.active{color:#fff;border-bottom-color:#E85D04}
+    .tab-badge{background:#E85D04;color:#fff;font-size:.62rem;font-weight:700;
+               padding:.08rem .38rem;border-radius:99px;min-width:16px;text-align:center}
+    .tab-btn:not(.active) .tab-badge{background:rgba(255,255,255,.15)}
+
+    /* ── Payout banner ── */
+    .payout-banner{background:rgba(234,88,4,.08);border-bottom:1px solid rgba(234,88,4,.18);
+                   padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+    .payout-banner span{font-size:.78rem;color:rgba(255,255,255,.6)}
+    .payout-banner a{font-size:.76rem;font-weight:700;color:#E85D04;text-decoration:none;white-space:nowrap}
+
+    /* ── Content ── */
+    .content{padding:1rem}
+
+    /* ── Login gate ── */
+    .gate{background:#1A1A1A;border:1px solid rgba(255,255,255,.1);border-radius:14px;
+          padding:2.5rem 1.5rem;text-align:center;max-width:400px;margin:3rem auto}
+    .gate-icon{font-size:2.75rem;margin-bottom:1rem}
+    .gate h2{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.06em;margin-bottom:.6rem}
+    .gate p{color:rgba(255,255,255,.5);font-size:.88rem;line-height:1.55;margin-bottom:1.5rem}
+    .gate-form{display:flex;flex-direction:column;gap:.65rem}
+    .gate-input{padding:.9rem 1rem;background:#0F0F0F;border:1.5px solid rgba(255,255,255,.12);
+                border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.95rem;
+                outline:none;transition:border-color .2s;-webkit-appearance:none}
+    .gate-input:focus{border-color:#E85D04}
+    .gate-input::placeholder{color:rgba(255,255,255,.28)}
+    .btn-gate{padding:.9rem;background:#E85D04;color:#fff;border:none;border-radius:10px;
+              font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;
+              transition:background .2s;-webkit-tap-highlight-color:transparent}
+    .btn-gate:hover{background:#F4841F}
+    .gate-link{font-size:.78rem;color:rgba(255,255,255,.35);margin-top:.75rem}
+    .gate-link a{color:#E85D04;text-decoration:none}
+
+    /* ── Error banner ── */
+    .err-banner{background:#3B0A0A;border:1px solid #7F1D1D;border-radius:8px;
+                padding:.8rem 1rem;font-size:.83rem;color:#FCA5A5;margin-bottom:1rem;display:none}
+    .err-banner.visible{display:block}
+
+    /* ── Section heading ── */
+    .section-head{font-size:.68rem;font-weight:600;text-transform:uppercase;
+                  letter-spacing:.14em;color:#E85D04;margin-bottom:.75rem}
+
+    /* ── Job card (available) ── */
+    .job-card{background:#1A1A1A;border:1px solid rgba(255,255,255,.08);border-radius:14px;
+              margin-bottom:.875rem;overflow:hidden;transition:border-color .2s}
+    .job-card.claiming{border-color:rgba(234,88,4,.5)}
+    .job-card-body{padding:1.1rem}
+
+    .job-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.8rem}
+    .job-item{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:.05em;color:#fff}
+    .job-id{font-size:.68rem;color:rgba(255,255,255,.28);margin-top:.1rem}
+    .job-payout-box{text-align:right}
+    .job-payout{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:#22C55E;letter-spacing:.03em}
+    .job-payout-label{font-size:.62rem;color:rgba(255,255,255,.3)}
+    .job-total{font-size:.7rem;color:rgba(255,255,255,.28);text-decoration:line-through}
+
+    .job-route{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.875rem}
+    .job-route-row{display:flex;align-items:flex-start;gap:.65rem}
+    .rdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:.3rem}
+    .rdot.p{background:#E85D04}.rdot.d{background:#22C55E}
+    .rline{width:1px;height:20px;background:rgba(255,255,255,.1);margin-left:4.5px}
+    .rlabels{display:flex;flex-direction:column;gap:.02rem}
+    .rlabel{font-size:.62rem;font-weight:600;text-transform:uppercase;letter-spacing:.09em}
+    .rlabel.p{color:#E85D04}.rlabel.d{color:#22C55E}
+    .raddr{font-size:.82rem;color:rgba(255,255,255,.72);line-height:1.38}
+
+    .job-meta{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.5rem}
+    .job-tag{background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);font-size:.7rem;
+             font-weight:500;padding:.25rem .6rem;border-radius:4px;display:flex;align-items:center;gap:.25rem}
+
+    /* ── Claim countdown bar ── */
+    .claim-bar{padding:.65rem 1.1rem;background:rgba(234,88,4,.12);border-top:1px solid rgba(234,88,4,.2);
+               display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+    .claim-timer{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#E85D04;letter-spacing:.05em}
+    .claim-hint{font-size:.75rem;color:rgba(255,255,255,.5)}
+    .btn-confirm{padding:.65rem 1.2rem;background:#E85D04;color:#fff;border:none;border-radius:8px;
+                 font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;
+                 -webkit-tap-highlight-color:transparent;transition:background .15s;white-space:nowrap}
+    .btn-confirm:hover{background:#F4841F}
+
+    /* ── Sticky bottom action bar (available jobs) ── */
+    .job-actions{display:flex;gap:.65rem;padding:1rem 1.1rem;
+                 padding-bottom:calc(1rem + env(safe-area-inset-bottom,0))}
+    .btn-claim{flex:1;padding:1rem;background:#22C55E;color:#fff;border:none;border-radius:12px;
+               font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;
+               transition:background .15s,transform .1s;-webkit-tap-highlight-color:transparent;
+               min-height:52px}
+    .btn-claim:hover{background:#16A34A}
+    .btn-claim:active{transform:scale(.97)}
+    .btn-claim:disabled{background:#2D2D2D;color:rgba(255,255,255,.3);cursor:not-allowed;transform:none}
+    .btn-skip{padding:1rem 1.25rem;background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);
+              border:1px solid rgba(255,255,255,.1);border-radius:12px;
+              font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;
+              transition:background .15s;-webkit-tap-highlight-color:transparent;min-height:52px}
+    .btn-skip:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8)}
+
+    /* ── Active job card ── */
+    .active-card{background:#1A1A1A;border:1px solid rgba(255,255,255,.1);border-radius:14px;
+                 margin-bottom:.875rem;border-left:4px solid #E85D04;overflow:hidden}
+    .active-body{padding:1.1rem}
+    .active-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+    .active-name{font-weight:700;font-size:.9rem;color:#fff}
+
+    .status-pill{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+                 padding:.22rem .55rem;border-radius:99px}
+    .status-pill.assigned{background:rgba(234,88,4,.2);color:#E85D04}
+    .status-pill.en_route{background:rgba(59,130,246,.2);color:#60A5FA}
+    .status-pill.arrived{background:rgba(234,179,8,.2);color:#FDE047}
+    .status-pill.in_progress{background:rgba(16,185,129,.2);color:#34D399}
+    .status-pill.loaded{background:rgba(16,185,129,.2);color:#34D399}
+    .status-pill.delivered{background:rgba(255,255,255,.1);color:rgba(255,255,255,.5)}
+
+    .active-addr{font-size:.8rem;color:rgba(255,255,255,.5);line-height:1.55}
+    .active-addr strong{color:rgba(255,255,255,.75)}
+    .active-phone{margin-top:.6rem;font-size:.78rem;color:rgba(255,255,255,.35)}
+    .active-payout{margin-top:.6rem;font-size:.82rem;font-weight:700;color:#22C55E}
+
+    /* ── One-tap status buttons on active jobs ── */
+    .status-actions{padding:.75rem 1.1rem;padding-bottom:calc(.75rem + env(safe-area-inset-bottom,0));
+                    border-top:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:.5rem}
+    .btn-status{width:100%;padding:.9rem 1rem;border:none;border-radius:10px;
+                font-family:'DM Sans',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;
+                -webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .1s;
+                min-height:50px}
+    .btn-status:active{transform:scale(.98)}
+    .btn-status:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .btn-enroute{background:#3B82F6;color:#fff}
+    .btn-arrived{background:#EAB308;color:#000}
+    .btn-loaded{background:#10B981;color:#fff}
+    .btn-delivered{background:#22C55E;color:#fff}
+
+    /* ── Payout breakdown tooltip ── */
+    .payout-breakdown{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+                      border-radius:8px;padding:.6rem .8rem;margin-bottom:.75rem}
+    .pbd-row{display:flex;justify-content:space-between;font-size:.75rem;
+             color:rgba(255,255,255,.45);padding:.15rem 0}
+    .pbd-row.total{color:#22C55E;font-weight:700;font-size:.82rem;
+                   border-top:1px solid rgba(255,255,255,.08);margin-top:.25rem;padding-top:.4rem}
+
+    /* ── Referral bar ── */
+    .ref-bar{background:#1A1A1A;border:1px solid rgba(232,93,4,.18);border-radius:10px;
+             padding:.75rem 1rem;margin-bottom:1rem}
+    .ref-bar-inner{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+    .ref-label{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+               color:rgba(255,255,255,.35);margin-bottom:.15rem}
+    .ref-title{font-size:.83rem;font-weight:600;color:#fff}
+    .ref-desc{font-size:.72rem;color:rgba(255,255,255,.38)}
+    .ref-code{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:.15em;color:#E85D04}
+    .btn-copy{padding:.38rem .8rem;background:rgba(232,93,4,.12);border:1px solid rgba(232,93,4,.28);
+              color:#E85D04;border-radius:6px;font-size:.73rem;font-weight:700;cursor:pointer;
+              transition:background .15s;font-family:'DM Sans',sans-serif;
+              -webkit-tap-highlight-color:transparent}
+    .btn-copy:hover{background:rgba(232,93,4,.22)}
+
+    /* ── Spinner ── */
+    .spin{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
+          border-radius:50%;animation:rot .6s linear infinite;display:inline-block;vertical-align:middle}
+    @keyframes rot{to{transform:rotate(360deg)}}
+
+    /* ── Empty state ── */
+    .empty{text-align:center;padding:4rem 1rem;color:rgba(255,255,255,.3)}
+    .empty-icon{font-size:2.75rem;margin-bottom:.75rem}
+    .empty-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:rgba(255,255,255,.5);margin-bottom:.4rem}
+    .empty-sub{font-size:.83rem;line-height:1.5}
+
+    /* ── Toast ── */
+    .toast{position:fixed;bottom:calc(1.5rem + env(safe-area-inset-bottom,0));left:50%;
+           transform:translateX(-50%);background:#1A1A1A;color:#fff;border:1px solid rgba(255,255,255,.12);
+           padding:.8rem 1.4rem;border-radius:10px;font-size:.83rem;font-weight:600;
+           display:none;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.5);white-space:nowrap}
+    .toast.visible{display:block}
+    .toast.success{background:#14532D;border-color:#22C55E;color:#86EFAC}
+    .toast.error{background:#3B0A0A;border-color:#7F1D1D;color:#FCA5A5}
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header class="dh">
+  <a href="/" class="dh-logo">HAULR</a>
+  <% if (driver) { %>
+  <div class="dh-driver">
+    <div class="dh-dot"></div>
+    <div>
+      <div class="dh-name"><%= driver.name %></div>
+      <div class="dh-sub">Driver</div>
+      <% if (driver.background_check_status === 'cleared') { %>
+      <div class="dh-bg">✓ BG Checked</div>
+      <% } %>
+    </div>
+  </div>
+  <% } %>
+</header>
+
+<!-- ── Tab nav ── -->
+<% if (driver) { %>
+<nav class="tab-nav" id="main-tabs">
+  <button class="tab-btn active" id="tab-available" onclick="showTab('available')">
+    Jobs <span class="tab-badge" id="badge-available">0</span>
+  </button>
+  <button class="tab-btn" id="tab-active" onclick="showTab('active')">
+    Active <span class="tab-badge" id="badge-active" style="display:none">!</span>
+  </button>
+  <a class="tab-btn" href="/driver/earnings?email=<%= encodeURIComponent(driver.email) %>" style="text-decoration:none">Earnings</a>
+  <a class="tab-btn" href="/driver/disputes?email=<%= encodeURIComponent(driver.email) %>" style="text-decoration:none">Disputes</a>
+</nav>
+
+<!-- Soft payout banner -->
+<% if (!driver.stripe_account_id) { %>
+<div class="payout-banner">
+  <span>🔗 Connect bank for automatic payouts</span>
+  <a href="/driver/payouts?email=<%= encodeURIComponent(driver.email) %>">Set up →</a>
+</div>
+<% } %>
+<% } %>
+
+<div class="content">
+  <div class="err-banner" id="err-banner"></div>
+
+  <!-- ── Login gate ── -->
+  <% if (!driver) { %>
+  <div class="gate">
+    <div class="gate-icon">🚚</div>
+    <h2>Driver Portal</h2>
+    <p>Enter your signup email to view available jobs and manage deliveries.</p>
+    <div class="gate-form">
+      <input class="gate-input" type="email" id="gate-email" placeholder="driver@example.com" autocomplete="email" inputmode="email">
+      <button class="btn-gate" onclick="loginDriver()">View Jobs</button>
+    </div>
+    <div class="gate-link">Not a driver yet? <a href="/drive">Apply here →</a></div>
+  </div>
+  <% } else { %>
+
+    <!-- ── Referral code bar ── -->
+    <% if (driver.referral_code) { %>
+    <div class="ref-bar">
+      <div class="ref-bar-inner">
+        <div>
+          <div class="ref-label">Driver Referral</div>
+          <div class="ref-title">Refer a driver, earn $50</div>
+          <div class="ref-desc">They complete 3 hauls — you get paid.</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.65rem;flex-wrap:wrap">
+          <div class="ref-code"><%= driver.referral_code %></div>
+          <button class="btn-copy" onclick="copyReferralLink('<%= driver.referral_code %>')">Copy Link</button>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- ── Available jobs panel ── -->
+    <div id="panel-available">
+      <div class="section-head" id="avail-head" style="display:none">Available Jobs</div>
+      <div id="available-list"></div>
+    </div>
+
+    <!-- ── Active jobs panel ── -->
+    <div id="panel-active" style="display:none">
+      <div class="section-head" id="active-head" style="display:none">My Active Jobs</div>
+      <div id="active-list"></div>
+    </div>
+
+  <% } %>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Persistence
+function getEmail() { return sessionStorage.getItem('driver_email') || ''; }
+function setEmail(e) { sessionStorage.setItem('driver_email', e); }
+
+// ── Toast
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast visible' + (type ? ' ' + type : '');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('visible'), 3000);
+}
+
+// ── Error banner
+function showErr(msg) {
+  const b = document.getElementById('err-banner');
+  b.textContent = msg;
+  b.className = 'err-banner visible';
+}
+function clearErr() {
+  document.getElementById('err-banner').className = 'err-banner';
+}
+
+// ── Login
+function loginDriver() {
+  const email = document.getElementById('gate-email').value.trim();
+  if (!email) return;
+  setEmail(email);
+  location.href = '/driver/jobs?email=' + encodeURIComponent(email);
+}
+document.getElementById('gate-email') && document.getElementById('gate-email').addEventListener('keydown', e => {
+  if (e.key === 'Enter') loginDriver();
+});
+
+// ── Tab switch
+function showTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const activeTabBtn = document.getElementById('tab-' + tab) || document.getElementById('tab-active');
+  if (activeTabBtn) activeTabBtn.classList.add('active');
+  document.getElementById('panel-available').style.display = tab === 'available' ? 'block' : 'none';
+  document.getElementById('panel-active').style.display = tab === 'active' ? 'block' : 'none';
+  if (tab === 'active') loadActiveJobs();
+}
+
+// ── Helpers
+function fmtDist(m) { return m ? parseFloat(m).toFixed(1) + ' mi' : '—'; }
+function fmtPayout(total) {
+  const d = parseFloat(total || 0);
+  return '$' + (d * 0.85).toFixed(2);
+}
+function timeAgo(ds) {
+  if (!ds) return '';
+  const s = Math.floor((Date.now() - new Date(ds).getTime()) / 1000);
+  if (s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
+}
+function escape(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Per-card claim state
+// claimState[orderId] = { expiresAt, intervalId }
+const claimState = {};
+
+function startCountdown(orderId, expiresAt) {
+  clearCountdown(orderId);
+  const bar = document.getElementById('claim-bar-' + orderId);
+  const timer = document.getElementById('claim-timer-' + orderId);
+  if (!bar || !timer) return;
+  bar.style.display = 'flex';
+
+  function tick() {
+    const left = Math.max(0, Math.round((new Date(expiresAt) - Date.now()) / 1000));
+    timer.textContent = left + 's';
+    if (left <= 0) {
+      clearCountdown(orderId);
+      // Hold expired — restore Claim button, hide bar
+      const btn = document.getElementById('btn-claim-' + orderId);
+      if (btn) { btn.disabled = false; btn.textContent = 'Claim Job'; }
+      bar.style.display = 'none';
+      const card = document.getElementById('job-card-' + orderId);
+      if (card) card.classList.remove('claiming');
+      showToast('Hold expired — tap Claim again', 'error');
+    }
+  }
+  tick();
+  claimState[orderId] = { expiresAt, intervalId: setInterval(tick, 1000) };
+}
+
+function clearCountdown(orderId) {
+  if (claimState[orderId]) {
+    clearInterval(claimState[orderId].intervalId);
+    delete claimState[orderId];
+  }
+}
+
+// ── Load available jobs
+async function loadAvailableJobs() {
+  const email = getEmail();
+  if (!email) return;
+  try {
+    const r = await fetch('/api/driver/jobs?email=' + encodeURIComponent(email));
+    const data = await r.json();
+    renderAvailableJobs(data.jobs || []);
+    clearErr();
+  } catch(e) {
+    showErr('Could not load jobs — check your connection.');
+  }
+}
+
+function renderAvailableJobs(jobs) {
+  const list = document.getElementById('available-list');
+  const head = document.getElementById('avail-head');
+  const badge = document.getElementById('badge-available');
+  badge.textContent = jobs.length;
+  head.style.display = 'block';
+
+  if (!jobs.length) {
+    list.innerHTML = `<div class="empty">
+      <div class="empty-icon">🔭</div>
+      <div class="empty-title">No Jobs Yet</div>
+      <div class="empty-sub">New jobs appear here once a customer pays. Sorted by payout. Check back soon.</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = jobs.map(job => {
+    const payout = (parseFloat(job.price_total || 0) * 0.85).toFixed(2);
+    const total  = parseFloat(job.price_total || 0).toFixed(2);
+    return `
+    <div class="job-card" id="job-card-${job.id}">
+      <div class="job-card-body">
+        <div class="job-top">
+          <div>
+            <div class="job-item">${escape(job.item_type)}</div>
+            <div class="job-id">#${job.id} · ${timeAgo(job.created_at)}</div>
+          </div>
+          <div class="job-payout-box">
+            <div class="job-payout">$${payout}</div>
+            <div class="job-payout-label">Your payout (85%)</div>
+            <div class="job-total">$${total} total</div>
+          </div>
+        </div>
+
+        <div class="job-route">
+          <div class="job-route-row">
+            <div class="rdot p"></div>
+            <div class="rlabels">
+              <span class="rlabel p">Pickup</span>
+              <span class="raddr">${escape(job.pickup_address || '—')}</span>
+            </div>
+          </div>
+          <div class="rline"></div>
+          <div class="job-route-row">
+            <div class="rdot d"></div>
+            <div class="rlabels">
+              <span class="rlabel d">Dropoff</span>
+              <span class="raddr">${escape(job.dropoff_address || '—')}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="payout-breakdown">
+          <div class="pbd-row"><span>Customer total</span><span>$${total}</span></div>
+          <div class="pbd-row"><span>Shurget fee (15%)</span><span>−$${(parseFloat(total)*0.15).toFixed(2)}</span></div>
+          <div class="pbd-row total"><span>Your take</span><span>$${payout}</span></div>
+        </div>
+
+        <div class="job-meta">
+          <span class="job-tag">📏 ${fmtDist(job.distance_miles)}</span>
+          ${job.eta_minutes ? `<span class="job-tag">⏱ ${job.eta_minutes} min ETA</span>` : ''}
+          ${job.customer_name ? `<span class="job-tag">👤 ${escape(job.customer_name)}</span>` : ''}
+        </div>
+      </div>
+
+      <!-- Claim hold countdown bar (hidden until claimed) -->
+      <div class="claim-bar" id="claim-bar-${job.id}" style="display:none">
+        <div>
+          <div class="claim-hint">Hold expires in</div>
+          <div class="claim-timer" id="claim-timer-${job.id}">60s</div>
+        </div>
+        <button class="btn-confirm" id="btn-confirm-${job.id}" onclick="confirmClaim(${job.id})">Confirm Job</button>
+      </div>
+
+      <div class="job-actions">
+        <button class="btn-claim" id="btn-claim-${job.id}" onclick="claimJob(${job.id})">Claim Job</button>
+        <button class="btn-skip" onclick="declineJob(${job.id})">Skip</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Claim job (soft hold)
+async function claimJob(orderId) {
+  const btn = document.getElementById('btn-claim-' + orderId);
+  const card = document.getElementById('job-card-' + orderId);
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>';
+  card.classList.add('claiming');
+
+  const email = getEmail();
+  try {
+    const r = await fetch('/api/driver/jobs/' + orderId + '/claim?email=' + encodeURIComponent(email), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await r.json();
+    if (data.success) {
+      btn.textContent = 'Claimed!';
+      startCountdown(orderId, data.claim_hold_expires_at);
+      showToast('Job held for 60s — confirm now!', 'success');
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Claim Job';
+      card.classList.remove('claiming');
+      showToast(data.error || 'Job already taken — try another.', 'error');
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Claim Job';
+    card.classList.remove('claiming');
+    showToast('Network error — try again.', 'error');
+  }
+}
+
+// ── Confirm claim (permanent assignment)
+async function confirmClaim(orderId) {
+  const btn = document.getElementById('btn-confirm-' + orderId);
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>';
+
+  const email = getEmail();
+  try {
+    const r = await fetch('/api/driver/jobs/' + orderId + '/confirm?email=' + encodeURIComponent(email), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await r.json();
+    if (data.success) {
+      clearCountdown(orderId);
+      const card = document.getElementById('job-card-' + orderId);
+      if (card) { card.style.transition = 'opacity .35s'; card.style.opacity = '0'; setTimeout(() => card.remove(), 350); }
+      document.getElementById('badge-available').textContent = Math.max(0, parseInt(document.getElementById('badge-available').textContent||'0') - 1);
+      showToast('Job confirmed! 🚚', 'success');
+      setTimeout(() => showTab('active'), 700);
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Confirm Job';
+      showToast(data.error || 'Hold expired — tap Claim again.', 'error');
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Confirm Job';
+    showToast('Network error — try again.', 'error');
+  }
+}
+
+// ── Decline job
+async function declineJob(orderId) {
+  const card = document.getElementById('job-card-' + orderId);
+  clearCountdown(orderId);
+  card.style.transition = 'opacity .3s';
+  card.style.opacity = '0';
+  try {
+    await fetch('/api/driver/jobs/' + orderId + '/decline?email=' + encodeURIComponent(getEmail()), {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }
+    });
+  } catch(e) { /* best-effort */ }
+  setTimeout(() => { if (card) card.remove(); }, 300);
+  const badge = document.getElementById('badge-available');
+  badge.textContent = Math.max(0, parseInt(badge.textContent||'0') - 1);
+  showToast('Job skipped');
+}
+
+// ── Load active jobs
+async function loadActiveJobs() {
+  const email = getEmail();
+  if (!email) return;
+  try {
+    const r = await fetch('/api/driver/my-jobs?email=' + encodeURIComponent(email));
+    const data = await r.json();
+    renderActiveJobs(data.jobs || []);
+  } catch(e) {
+    showErr('Could not load active jobs.');
+  }
+}
+
+function renderActiveJobs(jobs) {
+  const list = document.getElementById('active-list');
+  const head = document.getElementById('active-head');
+  const badge = document.getElementById('badge-active');
+  const activeCount = jobs.filter(j => j.status !== 'delivered').length;
+  if (activeCount > 0) {
+    badge.textContent = activeCount;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+  head.style.display = 'block';
+
+  if (!jobs.length) {
+    list.innerHTML = `<div class="empty">
+      <div class="empty-icon">📋</div>
+      <div class="empty-title">No Active Jobs</div>
+      <div class="empty-sub">Claim a job from the Jobs tab to get started.</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = jobs.map(job => {
+    const payout = (parseFloat(job.price_total || 0) * 0.85).toFixed(2);
+    const ds = job.driver_status || '';
+    const st = job.status || '';
+
+    // Build one-tap status buttons based on current state
+    let actionBtns = '';
+    if (st === 'assigned' && ds === 'accepted') {
+      actionBtns = `<button class="btn-status btn-enroute" onclick="updateJobStatus(${job.id},'start')">🚗 En Route to Pickup</button>`;
+    } else if (st === 'assigned' && ds === 'en_route') {
+      actionBtns = `<button class="btn-status btn-arrived" onclick="updateJobStatus(${job.id},'arrived')">📍 Arrived at Pickup</button>`;
+    } else if (ds === 'arrived') {
+      actionBtns = `<button class="btn-status btn-loaded" onclick="updateJobStatus(${job.id},'loaded')">📦 Item Loaded</button>`;
+    } else if (st === 'in_progress' && (ds === 'loaded' || ds === 'en_route')) {
+      actionBtns = `<button class="btn-status btn-delivered" onclick="updateJobStatus(${job.id},'deliver')">✅ Mark Delivered</button>`;
+    } else if (st === 'delivered') {
+      actionBtns = `<div style="font-size:.8rem;color:#22C55E;font-weight:600;padding:.5rem 0">✓ Delivered — payout queued</div>`;
+    }
+
+    const pillClass = ds || st || 'assigned';
+    const pillText = ds === 'accepted' ? 'Assigned' :
+                     ds === 'en_route' ? 'En Route' :
+                     ds === 'arrived'  ? 'Arrived' :
+                     ds === 'loaded'   ? 'In Transit' :
+                     ds === 'completed'? 'Delivered' :
+                     st.replace('_', ' ');
+
+    return `
+    <div class="active-card" id="active-card-${job.id}">
+      <div class="active-body">
+        <div class="active-top">
+          <div class="active-name">${escape(job.item_type)} #${job.id}</div>
+          <span class="status-pill ${pillClass}">${pillText}</span>
+        </div>
+        <div class="active-addr">
+          <div>📍 <strong>Pickup:</strong> ${escape(job.pickup_address || '—')}</div>
+          <div>📦 <strong>Dropoff:</strong> ${escape(job.dropoff_address || '—')}</div>
+        </div>
+        ${job.customer_phone ? `<div class="active-phone">Customer: <a href="tel:${escape(job.customer_phone)}" style="color:#E85D04">${escape(job.customer_phone)}</a></div>` : ''}
+        <div class="active-payout">Your payout: $${payout}</div>
+      </div>
+      ${actionBtns ? `<div class="status-actions" id="actions-${job.id}">${actionBtns}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── One-tap status update
+async function updateJobStatus(orderId, action) {
+  const btn = document.querySelector(`#actions-${orderId} .btn-status`);
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Updating…'; }
+
+  const email = getEmail();
+  const endpoint = '/api/driver/jobs/' + orderId + '/' + action + '?email=' + encodeURIComponent(email);
+  try {
+    const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    const data = await r.json();
+    if (data.success) {
+      const labels = { start: 'En Route!', arrived: 'Arrived!', loaded: 'Loaded!', deliver: 'Delivered! 🎉' };
+      showToast(labels[action] || 'Updated!', 'success');
+      // Refresh the active jobs panel
+      await loadActiveJobs();
+    } else {
+      if (btn) { btn.disabled = false; btn.textContent = 'Try again'; }
+      showToast(data.error || 'Update failed.', 'error');
+    }
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.textContent = 'Try again'; }
+    showToast('Network error — try again.', 'error');
+  }
+}
+
+// ── Copy referral link
+function copyReferralLink(code) {
+  const url = 'https://shurget.com/drive/earn?ref=' + code;
+  navigator.clipboard.writeText(url).then(() => showToast('Referral link copied!')).catch(() => {
+    const el = document.createElement('textarea');
+    el.value = url; el.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(el); el.select(); document.execCommand('copy');
+    document.body.removeChild(el); showToast('Referral link copied!');
+  });
+}
+
+// ── Init
+<% if (driver) { %>
+loadAvailableJobs();
+// Auto-refresh available jobs every 25 seconds when on that tab
+setInterval(() => {
+  if (document.getElementById('tab-available') && document.getElementById('tab-available').classList.contains('active')) {
+    loadAvailableJobs();
+  }
+}, 25000);
+// Auto-refresh active jobs every 15 seconds when on that tab
+setInterval(() => {
+  if (document.getElementById('tab-active') && document.getElementById('tab-active').classList.contains('active')) {
+    loadActiveJobs();
+  }
+}, 15000);
+<% } else { %>
+const saved = getEmail();
+if (saved && document.getElementById('gate-email')) document.getElementById('gate-email').value = saved;
+<% } %>
+</script>
+</body>
+</html>

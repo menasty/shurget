@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rate your driver — Shurget</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f9fafb; color: #111; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 24px 16px; }
+    .card { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; max-width: 480px; width: 100%; padding: 32px 24px; }
+    .header { background: #1a1a2e; color: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 28px; }
+    .header h1 { font-size: 22px; margin-bottom: 4px; }
+    .header p  { opacity: .75; font-size: 14px; }
+    .label { font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #6b7280; margin-bottom: 6px; }
+    .stars { display: flex; gap: 8px; margin-bottom: 24px; }
+    .stars input[type=radio] { display: none; }
+    .stars label { font-size: 36px; cursor: pointer; color: #d1d5db; transition: color .15s; }
+    .stars input[type=radio]:checked ~ label,
+    .stars label:hover,
+    .stars label:hover ~ label { color: #d1d5db; }
+    .stars label:hover,
+    .stars input[type=radio]:checked + label ~ label { color: #d1d5db; }
+    /* RTL trick for star highlighting */
+    .stars { flex-direction: row-reverse; justify-content: flex-end; }
+    .stars label:hover,
+    .stars label:hover ~ label { color: #f59e0b !important; }
+    .stars input[type=radio]:checked ~ label { color: #f59e0b !important; }
+    textarea { width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 12px; font-size: 14px; resize: vertical; min-height: 80px; margin-bottom: 20px; font-family: inherit; }
+    textarea:focus { outline: none; border-color: #ea580c; }
+    .btn { display: block; width: 100%; background: #ea580c; color: #fff; border: none; border-radius: 8px; padding: 14px; font-size: 16px; font-weight: bold; cursor: pointer; }
+    .btn:hover { background: #c2410c; }
+    .order-meta { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
+    .thanks { text-align: center; padding: 12px 0; }
+    .thanks .icon { font-size: 48px; margin-bottom: 16px; }
+    .thanks h2 { font-size: 22px; margin-bottom: 8px; color: #1a1a2e; }
+    .thanks p  { color: #6b7280; font-size: 14px; line-height: 1.6; }
+    .stars-display { color: #f59e0b; font-size: 28px; letter-spacing: 2px; margin: 12px 0; }
+    .back-link { display: inline-block; margin-top: 20px; color: #ea580c; font-size: 14px; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
+    .error-msg { background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px 16px; color: #b91c1c; font-size: 14px; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h1>Shurget</h1>
+      <p>Post-delivery review</p>
+    </div>
+
+    <% if (alreadyRated || query && query.rated === '1') { %>
+      <!-- Already rated or just submitted -->
+      <div class="thanks">
+        <div class="icon">🎉</div>
+        <h2>Thanks for the feedback!</h2>
+        <% if (existingRating) { %>
+          <div class="stars-display"><%= '★'.repeat(existingRating.rating) %><%= '☆'.repeat(5 - existingRating.rating) %></div>
+          <% if (existingRating.comment) { %>
+            <p style="font-style:italic;color:#374151;">"<%= existingRating.comment %>"</p>
+          <% } %>
+        <% } %>
+        <p style="margin-top:12px;">Your rating helps us keep quality drivers on the platform.</p>
+        <a href="https://shurget.com/book" class="back-link">Book another haul →</a>
+      </div>
+      <% if (order && order.driver_id) { %>
+      <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid #e5e7eb;text-align:center">
+        <a href="/driver/dispute/new?order_id=<%= order.id %>&email=<%= order.customer_email || '' %>"
+           style="font-size:.8rem;color:#6b7280;text-decoration:underline">
+          Contest this rating
+        </a>
+      </div>
+      <% } %>
+    <% } else { %>
+      <!-- Rating form -->
+      <div class="order-meta">
+        Order #<%= order.id %> · <strong><%= order.item_type ? order.item_type.replace(/-/g, ' ') : 'item' %></strong>
+      </div>
+
+      <p style="margin-bottom:20px;font-size:15px;color:#374151;">
+        How did <strong><%= driverFirstName %></strong> do on your delivery?
+      </p>
+
+      <form method="POST" action="/api/reviews/<%= order.id %>">
+        <input type="hidden" name="token" value="<%= token %>">
+
+        <div class="label">Your rating</div>
+        <div class="stars" id="star-container">
+          <% for (let i = 5; i >= 1; i--) { %>
+            <input type="radio" name="rating" id="star<%= i %>" value="<%= i %>" <%= i === 5 ? 'required' : '' %>>
+            <label for="star<%= i %>" title="<%= i %> star<%= i > 1 ? 's' : '' %>">★</label>
+          <% } %>
+        </div>
+
+        <div class="label">Comment (optional)</div>
+        <textarea name="comment" placeholder="Fast, careful, friendly — anything helps..."></textarea>
+
+        <button type="submit" class="btn">Submit Rating</button>
+      </form>
+    <% } %>
+  </div>
+
+  <script>
+    // Highlight stars on selection
+    const radios = document.querySelectorAll('.stars input[type=radio]');
+    radios.forEach(r => {
+      r.addEventListener('change', () => {
+        // Nothing needed — CSS handles it via :checked ~ label
+      });
+    });
+  </script>
+</body>
+</html>

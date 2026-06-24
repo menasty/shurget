@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--bg); }
+
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+    }
+
+    .login-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 16px;
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 0.12em;
+      color: var(--charcoal);
+      text-align: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .login-tagline {
+      text-align: center;
+      color: var(--gray-mid);
+      font-size: 0.9rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .form-group { margin-bottom: 1.25rem; }
+
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--charcoal);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.02em;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--gray-light);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: 'DM Sans', sans-serif;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .form-input:focus { border-color: var(--orange); }
+
+    .login-error {
+      background: #fff0f0;
+      border: 1.5px solid #f5c6c6;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: #c0392b;
+      font-size: 0.875rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .login-btn:hover { background: var(--orange-light); }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: var(--gray-mid);
+    }
+
+    .login-footer a { color: var(--orange); text-decoration: none; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-card">
+      <div class="login-logo">HAULR</div>
+      <p class="login-tagline">Admin portal</p>
+
+      <% if (error) { %>
+        <div class="login-error"><%= error %></div>
+      <% } %>
+
+      <form method="POST" action="/admin/login">
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <input class="form-input" type="text" id="username" name="username" autocomplete="username" required autofocus>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-input" type="password" id="password" name="password" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" class="login-btn">Sign in</button>
+      </form>
+
+      <div class="login-footer">
+        <a href="/">← Back to Shurget</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

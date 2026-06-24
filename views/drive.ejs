@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drive with Shurget — Apply to Earn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <%- include('partials/ga4') %>
+  <style>
+    /* ─── Page Layout ─── */
+    .drive-page { padding-top: 60px; }
+
+    /* ─── Hero ─── */
+    .drive-hero {
+      background: var(--charcoal);
+      color: var(--white);
+      padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem);
+      text-align: center;
+    }
+    .drive-hero-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--orange-light);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+    .drive-hero h1 {
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .drive-hero p {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.72);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.65;
+    }
+
+    /* ─── Earnings Strip ─── */
+    .earnings-strip {
+      background: var(--orange);
+      padding: 1.75rem clamp(1.5rem, 6vw, 5rem);
+    }
+    .earnings-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      text-align: center;
+    }
+    .earn-stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.25rem;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+    .earn-stat-desc {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ─── Onboarding Container ─── */
+    .onboard-wrap {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 2rem);
+    }
+
+    /* ─── Step Progress ─── */
+    .step-progress {
+      display: flex;
+      align-items: center;
+      margin-bottom: 3rem;
+      gap: 0;
+    }
+    .step-dot-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      flex-shrink: 0;
+    }
+    .step-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: var(--white);
+      border: 2px solid rgba(0,0,0,0.18);
+      color: var(--gray-mid);
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+    .step-dot.active {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: var(--white);
+    }
+    .step-dot.done {
+      background: #2e7d32;
+      border-color: #2e7d32;
+      color: var(--white);
+    }
+    .step-dot-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gray-light);
+      white-space: nowrap;
+      text-align: center;
+      max-width: 56px;
+    }
+    .step-dot-wrap.active .step-dot-label { color: var(--orange); }
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: rgba(0,0,0,0.12);
+      margin: 0 0.5rem;
+      margin-bottom: 1.4rem;
+    }
+    .step-line.done { background: #2e7d32; }
+
+    /* ─── Step Header ─── */
+    .step-hdr { margin-bottom: 2rem; }
+    .step-hdr .section-label { margin-bottom: 0.5rem; }
+    .step-hdr h2 {
+      font-size: clamp(1.75rem, 4vw, 2.75rem);
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+    .step-hdr p { font-size: 0.95rem; color: var(--gray-mid); }
+
+    /* ─── Form Cards ─── */
+    .form-card {
+      background: var(--white);
+      border: 1.5px solid rgba(0,0,0,0.1);
+      border-radius: 10px;
+      padding: 2rem 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.06em;
+      color: var(--charcoal);
+      margin-bottom: 0.35rem;
+    }
+    .card-sub { font-size: 0.82rem; color: var(--gray-mid); margin-bottom: 1.25rem; }
+
+    /* ─── Form Fields ─── */
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field-full { width: 100%; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray-mid);
+    }
+    .form-group input,
+    .form-group select {
+      padding: 0.75rem 1rem;
+      border: 1.5px solid rgba(0,0,0,0.18);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      background: var(--white);
+      color: var(--charcoal);
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus { outline: none; border-color: var(--orange); }
+    .form-group input.error, .form-group select.error { border-color: #e53e3e; }
+
+    /* ─── Document Upload ─── */
+    .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .upload-item { display: flex; flex-direction: column; gap: 0.5rem; }
+    .upload-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--charcoal);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .upload-label .req { color: var(--orange); font-size: 0.9em; }
+    .upload-drop {
+      border: 2px dashed rgba(0,0,0,0.2);
+      border-radius: 8px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      font-size: 0.82rem;
+      color: var(--gray-mid);
+    }
+    .upload-drop:hover, .upload-drop.dragover {
+      border-color: var(--orange);
+      background: #fff8f4;
+    }
+    .upload-drop.uploaded {
+      border-color: #2e7d32;
+      border-style: solid;
+      background: #f0faf0;
+      color: #2e7d32;
+      font-weight: 500;
+    }
+    .upload-drop input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .upload-icon { font-size: 1.5rem; display: block; margin-bottom: 0.3rem; }
+    .upload-filename { font-size: 0.78rem; color: var(--gray-mid); display: none; }
+    .upload-drop.uploaded .upload-filename { display: block; }
+    .upload-hint { font-size: 0.72rem; color: var(--gray-light); margin-top: 0.25rem; }
+
+    /* ─── Background Check Consent ─── */
+    .consent-box {
+      background: var(--off-white);
+      border: 1.5px solid rgba(0,0,0,0.08);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .consent-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 0.06em;
+      color: var(--charcoal);
+      margin-bottom: 0.75rem;
+    }
+    .consent-list { padding-left: 1.25rem; font-size: 0.88rem; color: var(--gray-mid); line-height: 1.75; }
+    .consent-list li { margin-bottom: 0.4rem; }
+    .consent-checkbox-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      cursor: pointer;
+    }
+    .consent-checkbox-wrap input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--orange);
+      margin-top: 0.15rem;
+      flex-shrink: 0;
+    }
+    .consent-checkbox-wrap label {
+      font-size: 0.88rem;
+      color: var(--charcoal);
+      line-height: 1.5;
+    }
+
+    /* ─── Review Summary ─── */
+    .review-section {
+      background: var(--white);
+      border: 1.5px solid rgba(0,0,0,0.1);
+      border-radius: 10px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1rem;
+    }
+    .review-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+      font-size: 0.9rem;
+      gap: 1rem;
+    }
+    .review-row:last-child { border-bottom: none; }
+    .review-key { font-weight: 600; color: var(--gray-mid); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.08em; min-width: 100px; flex-shrink: 0; }
+    .review-val { color: var(--charcoal); text-align: right; }
+    .review-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .review-badge.pending { background: #fff8e1; color: #e65100; }
+    .review-badge.active  { background: #e8f5e9; color: #2e7d32; }
+    .doc-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.82rem;
+    }
+    .doc-status.yes { color: #2e7d32; }
+    .doc-status.no  { color: #c62828; }
+
+    /* ─── Navigation Buttons ─── */
+    .step-nav { display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem; }
+    .btn-next {
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      padding: 0.9rem 2.5rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.08em;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-next:hover { background: #c44e03; transform: translateY(-1px); }
+    .btn-next:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-back {
+      background: transparent;
+      color: var(--gray-mid);
+      border: 1.5px solid rgba(0,0,0,0.18);
+      padding: 0.9rem 1.5rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+    .btn-back:hover { border-color: var(--charcoal); color: var(--charcoal); }
+    .spacer { flex: 1; }
+
+    /* ─── Step Transition ─── */
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    /* ─── Alerts ─── */
+    .form-alert {
+      display: none;
+      padding: 0.85rem 1.1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      margin-bottom: 1.25rem;
+    }
+    .form-alert.error {
+      background: #fff0f0;
+      border: 1.5px solid #e53e3e;
+      color: #c53030;
+    }
+    .form-alert.success {
+      background: #f0faf0;
+      border: 1.5px solid #2e7d32;
+      color: #2e7d32;
+    }
+
+    /* ─── Status Screen ─── */
+    .status-screen { text-align: center; padding: 3rem 1.5rem; }
+    .status-icon { font-size: 4rem; display: block; margin-bottom: 1.25rem; }
+    .status-screen h2 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 0.75rem;
+    }
+    .status-screen p { color: var(--gray-mid); max-width: 480px; margin: 0 auto 2rem; line-height: 1.65; }
+    .status-detail {
+      background: var(--off-white);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      text-align: left;
+      max-width: 480px;
+      margin: 0 auto 2rem;
+      font-size: 0.9rem;
+    }
+    .status-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+    }
+    .status-detail-row:last-child { border-bottom: none; }
+    .status-detail-key { color: var(--gray-mid); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .status-detail-val { color: var(--charcoal); }
+    .status-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    /* ─── Footer CTA ─── */
+    .drive-footer-cta {
+      background: var(--charcoal);
+      padding: 2.5rem clamp(1.5rem, 6vw, 5rem);
+      text-align: center;
+    }
+    .drive-footer-cta p { font-size: 0.82rem; color: rgba(255,255,255,0.4); }
+    .drive-footer-cta a { color: var(--orange-light); text-decoration: none; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 600px) {
+      .field-row { grid-template-columns: 1fr; }
+      .upload-grid { grid-template-columns: 1fr; }
+      .earnings-inner { grid-template-columns: 1fr; gap: 1rem; }
+      .step-dot-label { font-size: 0.6rem; max-width: 44px; }
+      .step-progress { gap: 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">HAULR</a>
+      <div class="nav-right">
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/book" class="nav-badge">Book a Haul</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="drive-page">
+    <!-- Hero -->
+    <section class="drive-hero">
+      <span class="drive-hero-eyebrow">Driver Program</span>
+      <h1>Drive &amp; Earn</h1>
+      <p>Complete 4 steps to apply. We review applications within 24 hours.</p>
+    </section>
+
+    <!-- Earnings Strip -->
+    <div class="earnings-strip">
+      <div class="earnings-inner">
+        <div><div class="earn-stat-num">$2,000+</div><div class="earn-stat-desc">Avg. monthly earnings for active drivers</div></div>
+        <div><div class="earn-stat-num">Same-day</div><div class="earn-stat-desc">Instant job offers, no waiting</div></div>
+        <div><div class="earn-stat-num">100%</div><div class="earn-stat-desc">You keep every dollar you earn</div></div>
+      </div>
+    </div>
+
+    <% if (application && application.status) { %>
+    <!-- ── Status Screen (shown when email param is provided) ── -->
+    <div class="onboard-wrap">
+      <div class="status-screen">
+        <% if (application.status === 'pending') { %>
+          <span class="status-icon">⏳</span>
+          <h2>Application Under Review</h2>
+          <p>We received your application and will review it within 24 hours. You'll be notified once a decision has been made.</p>
+        <% } else if (application.status === 'active') { %>
+          <span class="status-icon">🎉</span>
+          <h2>You're Approved!</h2>
+          <p>Welcome to the Shurget driver program. Your account is active and you're in the matching pool for jobs in <%= application.city %>.</p>
+          <script>ga4Event('driver_approved', { city: '<%= application.city %>', vehicleType: '<%= application.vehicle_type %>' });</script>
+        <% } else { %>
+          <span class="status-icon">📋</span>
+          <h2>Application Received</h2>
+          <p>Your application has been submitted successfully. We'll be in touch soon.</p>
+          <script>ga4Event('driver_declined', { status: '<%= application.status %>', city: '<%= application.city %>' });</script>
+        <% } %>
+
+        <div class="status-detail">
+          <div class="status-detail-row">
+            <span class="status-detail-key">Name</span>
+            <span class="status-detail-val"><%= application.name %></span>
+          </div>
+          <div class="status-detail-row">
+            <span class="status-detail-key">Email</span>
+            <span class="status-detail-val"><%= application.email %></span>
+          </div>
+          <div class="status-detail-row">
+            <span class="status-detail-key">City</span>
+            <span class="status-detail-val"><%= application.city %></span>
+          </div>
+          <div class="status-detail-row">
+            <span class="status-detail-key">Status</span>
+            <span class="status-detail-val"><%= application.status === 'active' ? 'Approved' : application.status === 'pending' ? 'Pending Review' : application.status %></span>
+          </div>
+          <div class="status-detail-row">
+            <span class="status-detail-key">Applied</span>
+            <span class="status-detail-val"><%= application.created_at ? new Date(application.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—' %></span>
+          </div>
+        </div>
+
+        <div class="status-actions">
+          <a href="/driver/jobs?email=<%= encodeURIComponent(application.email) %>" class="btn-next">Go to Driver Portal</a>
+          <a href="/drive" class="btn-back">Start a new application</a>
+        </div>
+      </div>
+    </div>
+
+    <% } else { %>
+    <!-- ── Onboarding Form ── -->
+    <div class="onboard-wrap">
+
+      <!-- Error/Success alerts -->
+      <div class="form-alert error" id="form-error"></div>
+      <div class="form-alert success" id="form-success"></div>
+
+      <!-- Step Progress -->
+      <div class="step-progress" id="step-progress">
+        <div class="step-dot-wrap active" id="dot-wrap-1">
+          <div class="step-dot active" id="dot-1">1</div>
+          <div class="step-dot-label">Personal</div>
+        </div>
+        <div class="step-line" id="line-1"></div>
+        <div class="step-dot-wrap" id="dot-wrap-2">
+          <div class="step-dot" id="dot-2">2</div>
+          <div class="step-dot-label">Documents</div>
+        </div>
+        <div class="step-line" id="line-2"></div>
+        <div class="step-dot-wrap" id="dot-wrap-3">
+          <div class="step-dot" id="dot-3">3</div>
+          <div class="step-dot-label">Consent</div>
+        </div>
+        <div class="step-line" id="line-3"></div>
+        <div class="step-dot-wrap" id="dot-wrap-4">
+          <div class="step-dot" id="dot-4">4</div>
+          <div class="step-dot-label">Review</div>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 1: Personal Info + Vehicle ═══ -->
+      <div class="step-panel active" id="step-panel-1">
+        <div class="step-hdr">
+          <span class="section-label">Step 1 of 4</span>
+          <h2>Tell us about yourself</h2>
+          <p>Basic info and your vehicle details. This helps us match you with the right jobs.</p>
+        </div>
+
+        <div class="form-card">
+          <div class="card-title">Personal Information</div>
+          <div class="card-sub">All fields are required.</div>
+          <div class="field-row">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" name="name" placeholder="Marcus Rivera" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="marcus@email.com" required />
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="(555) 987-6543" required />
+            </div>
+            <div class="form-group">
+              <label for="city">City</label>
+              <input type="text" id="city" name="city" placeholder="Phoenix, AZ" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <div class="card-title">Your Vehicle</div>
+          <div class="card-sub">Tell us what you're working with.</div>
+          <div class="form-group">
+            <label for="vehicleType">Vehicle Type</label>
+            <select id="vehicleType" name="vehicleType" required>
+              <option value="" disabled selected>Select your truck</option>
+              <option value="compact-pickup">Compact Pickup (e.g., Tacoma, Colorado)</option>
+              <option value="full-size-pickup">Full-Size Pickup (e.g., F-150, Silverado, Ram 1500)</option>
+              <option value="heavy-duty-pickup">Heavy Duty Pickup (e.g., F-250, Silverado 2500, Ram 2500+)</option>
+              <option value="cargo-van">Cargo Van</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-card" style="margin-top:1.25rem;">
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <input type="checkbox" id="driver-terms-consent" style="width:18px;height:18px;margin-top:2px;cursor:pointer;flex-shrink:0;" />
+            <label for="driver-terms-consent" style="font-size:0.88rem;cursor:pointer;line-height:1.55;color:var(--gray-mid);">
+              I agree to Shurget's <a href="/terms" target="_blank" rel="noopener" style="color:var(--orange);text-decoration:none;">Terms of Service</a> and <a href="/privacy" target="_blank" rel="noopener" style="color:var(--orange);text-decoration:none;">Privacy Policy</a>. I understand I am applying as an independent contractor, not a Shurget employee.
+            </label>
+          </div>
+        </div>
+
+        <div class="step-nav">
+          <div class="spacer"></div>
+          <button class="btn-next" id="btn-next-1" disabled>Continue →</button>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 2: Document Upload ═══ -->
+      <div class="step-panel" id="step-panel-2">
+        <div class="step-hdr">
+          <span class="section-label">Step 2 of 4</span>
+          <h2>Upload your documents</h2>
+          <p>Upload clear photos or scans. Max 10MB per file. JPG, PNG, or PDF.</p>
+        </div>
+
+        <div class="form-card">
+          <div class="card-title">Required Documents</div>
+          <div class="card-sub">All three are required before your application can be approved.</div>
+          <div class="upload-grid">
+            <div class="upload-item">
+              <div class="upload-label">
+                <span class="req">*</span> Driver's License
+              </div>
+              <div class="upload-drop" id="drop-driverLicenseDoc">
+                <input type="file" id="driverLicenseDoc" accept="image/*,.pdf" />
+                <span class="upload-icon">📄</span>
+                <span>Click or drop to upload</span>
+                <div class="upload-filename" id="filename-driverLicenseDoc"></div>
+              </div>
+              <div class="upload-hint">Front &amp; back · JPG, PNG, or PDF</div>
+            </div>
+            <div class="upload-item">
+              <div class="upload-label">
+                <span class="req">*</span> Vehicle Insurance
+              </div>
+              <div class="upload-drop" id="drop-vehicleInsuranceDoc">
+                <input type="file" id="vehicleInsuranceDoc" accept="image/*,.pdf" />
+                <span class="upload-icon">🛡️</span>
+                <span>Click or drop to upload</span>
+                <div class="upload-filename" id="filename-vehicleInsuranceDoc"></div>
+              </div>
+              <div class="upload-hint">Current policy · JPG, PNG, or PDF</div>
+            </div>
+            <div class="upload-item">
+              <div class="upload-label">
+                <span class="req">*</span> Vehicle Registration
+              </div>
+              <div class="upload-drop" id="drop-vehicleRegistrationDoc">
+                <input type="file" id="vehicleRegistrationDoc" accept="image/*,.pdf" />
+                <span class="upload-icon">🚗</span>
+                <span>Click or drop to upload</span>
+                <div class="upload-filename" id="filename-vehicleRegistrationDoc"></div>
+              </div>
+              <div class="upload-hint">Current registration · JPG, PNG, or PDF</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-nav">
+          <button class="btn-back" id="btn-back-2">← Back</button>
+          <div class="spacer"></div>
+          <button class="btn-next" id="btn-next-2" disabled>Continue →</button>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 3: Background Check Consent ═══ -->
+      <div class="step-panel" id="step-panel-3">
+        <div class="step-hdr">
+          <span class="section-label">Step 3 of 4</span>
+          <h2>Background check</h2>
+          <p>We run a quick check to keep the platform safe for everyone.</p>
+        </div>
+
+        <div class="form-card">
+          <div class="card-title">What we check</div>
+          <div class="consent-box">
+            <div class="consent-title">Consent to Background Screening</div>
+            <ul class="consent-list">
+              <li><strong>Identity verification</strong> — confirms your legal name and photo match your documents.</li>
+              <li><strong>Driving record</strong> — checks for major violations, suspensions, or DUIs in the past 3–5 years.</li>
+              <li><strong>Criminal history</strong> — screens for relevant convictions (non-traffic, non-minor).</li>
+              <li><strong>Sex offender registry</strong> — verified against national and state registries.</li>
+            </ul>
+            <p style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.75rem;line-height:1.6;">
+              This check is conducted by a third-party consumer reporting agency in compliance with the Fair Credit Reporting Act (FCRA). You have the right to request a copy of any report and to dispute inaccurate information.
+            </p>
+          </div>
+
+          <div class="consent-checkbox-wrap">
+            <input type="checkbox" id="bg-check-consent" />
+            <label for="bg-check-consent">
+              I consent to Shurget conducting a background screening as described above. I understand this is required before my application can be approved, and that I may request a copy of the report.
+            </label>
+          </div>
+        </div>
+
+        <div class="step-nav">
+          <button class="btn-back" id="btn-back-3">← Back</button>
+          <div class="spacer"></div>
+          <button class="btn-next" id="btn-next-3" disabled>Continue →</button>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 4: Review & Submit ═══ -->
+      <div class="step-panel" id="step-panel-4">
+        <div class="step-hdr">
+          <span class="section-label">Step 4 of 4</span>
+          <h2>Review &amp; submit</h2>
+          <p>Make sure everything looks right before submitting.</p>
+        </div>
+
+        <div class="review-section" id="review-personal">
+          <div class="card-title">Personal Information</div>
+          <div class="review-row">
+            <span class="review-key">Name</span>
+            <span class="review-val" id="r-name">—</span>
+          </div>
+          <div class="review-row">
+            <span class="review-key">Email</span>
+            <span class="review-val" id="r-email">—</span>
+          </div>
+          <div class="review-row">
+            <span class="review-key">Phone</span>
+            <span class="review-val" id="r-phone">—</span>
+          </div>
+          <div class="review-row">
+            <span class="review-key">City</span>
+            <span class="review-val" id="r-city">—</span>
+          </div>
+          <div class="review-row">
+            <span class="review-key">Vehicle</span>
+            <span class="review-val" id="r-vehicle">—</span>
+          </div>
+        </div>
+
+        <div class="review-section" id="review-docs">
+          <div class="card-title">Documents</div>
+          <div class="review-row">
+            <span class="review-key">License</span>
+            <span class="review-val">
+              <span class="doc-status no" id="r-driverLicenseDoc">⚠️ Not uploaded</span>
+            </span>
+          </div>
+          <div class="review-row">
+            <span class="review-key">Insurance</span>
+            <span class="review-val">
+              <span class="doc-status no" id="r-vehicleInsuranceDoc">⚠️ Not uploaded</span>
+            </span>
+          </div>
+          <div class="review-row">
+            <span class="review-key">Registration</span>
+            <span class="review-val">
+              <span class="doc-status no" id="r-vehicleRegistrationDoc">⚠️ Not uploaded</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="review-section">
+          <div class="card-title">Background Check</div>
+          <div class="review-row">
+            <span class="review-key">Consent</span>
+            <span class="review-val">
+              <span id="r-consent" class="review-badge pending">Not yet</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="form-alert error" id="submit-error" style="display:none"></div>
+
+        <div class="step-nav">
+          <button class="btn-back" id="btn-back-4">← Back</button>
+          <div class="spacer"></div>
+          <button class="btn-next" id="btn-submit" disabled>Submit Application</button>
+        </div>
+      </div>
+
+    </div><!-- /.onboard-wrap -->
+    <% } %>
+
+    <!-- Footer CTA -->
+    <div class="drive-footer-cta">
+      <p>Questions? Email <a href="mailto:drive@shurget.com">drive@shurget.com</a></p>
+    </div>
+  </div><!-- /.drive-page -->
+
+  <script>
+    // ─── GA4 Events ─────────────────────────────────────────────
+    const GA4_ID = '<%= ga4Id %>';
+    function ga4Event(name, params = {}) {
+      if (typeof gtag !== 'undefined') {
+        gtag('event', name, params);
+      }
+    }
+
+    // Fire driver_signup_started on every fresh-form load
+    <% if (!application || !application.status) { %>
+      ga4Event('driver_signup_started', { page: '/drive' });
+    <% } %>
+    const formData = {
+      name: '', email: '', phone: '', city: '', vehicleType: '',
+      vehicleInsuranceDoc: null,
+      driverLicenseDoc: null,
+      vehicleRegistrationDoc: null,
+      backgroundCheckConsent: false,
+    };
+
+    let currentStep = 1;
+    const TOTAL_STEPS = 4;
+
+    // ─── DOM helpers ──────────────────────────────────────────────
+    function showError(msg) {
+      const el = document.getElementById('form-error');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+    function hideError() {
+      document.getElementById('form-error').style.display = 'none';
+    }
+    function showSuccess(msg) {
+      const el = document.getElementById('form-success');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function updateProgress(step) {
+      for (let i = 1; i <= TOTAL_STEPS; i++) {
+        const dot = document.getElementById('dot-' + i);
+        const wrap = document.getElementById('dot-wrap-' + i);
+        if (!dot) continue;
+        dot.className = 'step-dot';
+        if (i < step) {
+          dot.classList.add('done');
+          dot.textContent = '✓';
+        } else if (i === step) {
+          dot.classList.add('active');
+          dot.textContent = i;
+        } else {
+          dot.textContent = i;
+        }
+        wrap.className = i <= step ? 'step-dot-wrap active' : 'step-dot-wrap';
+      }
+      for (let i = 1; i < TOTAL_STEPS; i++) {
+        const line = document.getElementById('line-' + i);
+        if (line) line.className = i < step ? 'step-line done' : 'step-line';
+      }
+    }
+
+    function goToStep(n) {
+      document.getElementById('step-panel-' + currentStep).classList.remove('active');
+      document.getElementById('step-panel-' + n).classList.add('active');
+      currentStep = n;
+      updateProgress(n);
+      hideError();
+    }
+
+    // ─── Step 1: Personal Info ─────────────────────────────────────
+    const nameEl       = document.getElementById('name');
+    const emailEl      = document.getElementById('email');
+    const phoneEl      = document.getElementById('phone');
+    const cityEl       = document.getElementById('city');
+    const vehicleEl    = document.getElementById('vehicleType');
+    const termsEl1     = document.getElementById('driver-terms-consent');
+    const btnNext1     = document.getElementById('btn-next-1');
+
+    function validateStep1() {
+      const valid = nameEl.value.trim() && emailEl.value.trim()
+        && phoneEl.value.trim() && cityEl.value.trim() && vehicleEl.value
+        && termsEl1.checked;
+      btnNext1.disabled = !valid;
+    }
+
+    [nameEl, emailEl, phoneEl, cityEl, vehicleEl].forEach(el => {
+      el.addEventListener('input', validateStep1);
+      el.addEventListener('change', validateStep1);
+    });
+    termsEl1.addEventListener('change', validateStep1);
+
+    btnNext1.addEventListener('click', () => {
+      formData.name = nameEl.value.trim();
+      formData.email = emailEl.value.trim();
+      formData.phone = phoneEl.value.trim();
+      formData.city = cityEl.value.trim();
+      formData.vehicleType = vehicleEl.value;
+      goToStep(2);
+    });
+
+    // ─── Step 2: Document Upload ───────────────────────────────────
+    const requiredDocs = ['driverLicenseDoc', 'vehicleInsuranceDoc', 'vehicleRegistrationDoc'];
+    let uploadedFiles = {};
+
+    function setupUpload(inputId) {
+      const input = document.getElementById(inputId);
+      const drop  = document.getElementById('drop-' + inputId);
+      const fname = document.getElementById('filename-' + inputId);
+
+      input.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        handleFile(file, inputId, drop, fname);
+      });
+
+      // Drag-and-drop
+      drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('dragover'); });
+      drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+      drop.addEventListener('drop', (e) => {
+        e.preventDefault();
+        drop.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file) handleFile(file, inputId, drop, fname);
+      });
+    }
+
+    function handleFile(file, inputId, drop, fnameEl) {
+      const MAX = 10 * 1024 * 1024; // 10MB
+      if (file.size > MAX) {
+        showError('File too large. Maximum size is 10MB.');
+        return;
+      }
+      const allowed = ['image/jpeg', 'image/png', 'application/pdf'];
+      if (!allowed.includes(file.type)) {
+        showError('Unsupported file type. Please upload JPG, PNG, or PDF.');
+        return;
+      }
+
+      // Store as base64 for submission
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        formData[inputId] = e.target.result; // base64 data URL
+        uploadedFiles[inputId] = file.name;
+        drop.classList.add('uploaded');
+        fnameEl.textContent = file.name;
+        drop.querySelector('span:not(.upload-icon):not(.upload-filename)').textContent = '✅ Uploaded';
+        hideError();
+        validateStep2();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function validateStep2() {
+      const allUploaded = requiredDocs.every(id => !!formData[id]);
+      const btn = document.getElementById('btn-next-2');
+      btn.disabled = !allUploaded;
+    }
+
+    requiredDocs.forEach(id => setupUpload(id));
+
+    document.getElementById('btn-next-2').addEventListener('click', () => {
+      ga4Event('driver_documents_uploaded', { city: formData.city || 'unknown' });
+      goToStep(3);
+    });
+    document.getElementById('btn-back-2').addEventListener('click', () => goToStep(1));
+
+    // ─── Step 3: Background Check Consent ─────────────────────────
+    const consentEl = document.getElementById('bg-check-consent');
+    const btnNext3  = document.getElementById('btn-next-3');
+
+    consentEl.addEventListener('change', () => {
+      formData.backgroundCheckConsent = consentEl.checked;
+      btnNext3.disabled = !consentEl.checked;
+    });
+
+    btnNext3.addEventListener('click', () => {
+      if (!formData.backgroundCheckConsent) {
+        showError('You must consent to the background check to continue.');
+        return;
+      }
+      goToStep(4);
+      populateReview();
+    });
+
+    document.getElementById('btn-back-3').addEventListener('click', () => goToStep(2));
+
+    // ─── Step 4: Review & Submit ──────────────────────────────────
+    function populateReview() {
+      const vehicleLabels = {
+        'compact-pickup':    'Compact Pickup',
+        'full-size-pickup':  'Full-Size Pickup',
+        'heavy-duty-pickup': 'Heavy Duty Pickup',
+        'cargo-van':         'Cargo Van',
+      };
+
+      document.getElementById('r-name').textContent     = formData.name;
+      document.getElementById('r-email').textContent    = formData.email;
+      document.getElementById('r-phone').textContent    = formData.phone;
+      document.getElementById('r-city').textContent     = formData.city;
+      document.getElementById('r-vehicle').textContent  = vehicleLabels[formData.vehicleType] || formData.vehicleType;
+
+      const docStatus = (formDataKey, label) => {
+        const el = document.getElementById('r-' + formDataKey);
+        if (formData[formDataKey]) {
+          el.className = 'doc-status yes';
+          el.textContent = '✅ Uploaded';
+        } else {
+          el.className = 'doc-status no';
+          el.textContent = '⚠️ Not uploaded';
+        }
+      };
+      docStatus('driverLicenseDoc', 'Driver License');
+      docStatus('vehicleInsuranceDoc', 'Vehicle Insurance');
+      docStatus('vehicleRegistrationDoc', 'Vehicle Registration');
+
+      const consentBadge = document.getElementById('r-consent');
+      if (formData.backgroundCheckConsent) {
+        consentBadge.className = 'review-badge active';
+        consentBadge.textContent = '✅ Consented';
+      } else {
+        consentBadge.className = 'review-badge pending';
+        consentBadge.textContent = 'Not yet';
+      }
+
+      // Check all required before enabling submit
+      const allDocs = requiredDocs.every(id => !!formData[id]);
+      document.getElementById('btn-submit').disabled = !(allDocs && formData.backgroundCheckConsent);
+    }
+
+    document.getElementById('btn-back-4').addEventListener('click', () => goToStep(3));
+
+    const submitBtn = document.getElementById('btn-submit');
+    submitBtn.addEventListener('click', async () => {
+      hideError();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+
+      try {
+        // Capture UTM from URL (last-touch at submission time)
+        const _driveUtm = new URLSearchParams(window.location.search);
+        const res = await fetch('/api/drive', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name:                    formData.name,
+            email:                   formData.email,
+            phone:                   formData.phone,
+            vehicleType:             formData.vehicleType,
+            city:                    formData.city,
+            vehicleInsuranceDoc:     formData.vehicleInsuranceDoc,
+            driverLicenseDoc:        formData.driverLicenseDoc,
+            vehicleRegistrationDoc:  formData.vehicleRegistrationDoc,
+            backgroundCheckConsent:  formData.backgroundCheckConsent,
+            utmSource:   _driveUtm.get('utm_source')   || undefined,
+            utmMedium:   _driveUtm.get('utm_medium')   || undefined,
+            utmCampaign: _driveUtm.get('utm_campaign') || undefined,
+          }),
+        });
+
+        const json = await res.json();
+
+        if (!res.ok) {
+          throw new Error(json.error || 'Submission failed. Please try again.');
+        }
+
+        // Show success and redirect to status page
+        ga4Event('driver_submitted_for_review', {
+          email: formData.email,
+          city: formData.city,
+          vehicleType: formData.vehicleType,
+        });
+        const app = json.application || {};
+        const statusUrl = '/drive?email=' + encodeURIComponent(app.email || formData.email);
+        showSuccess('Application submitted! Redirecting to your status page…');
+        setTimeout(() => { window.location.href = statusUrl; }, 1500);
+
+      } catch (err) {
+        showError(err.message || 'Something went wrong. Please try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Application';
+      }
+    });
+  </script>
+</body>
+</html>

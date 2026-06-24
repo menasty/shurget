@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>My Disputes — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0F0F0F;color:#fff;font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:2rem}
+    .header{background:#1A1A1A;border-bottom:1px solid rgba(255,255,255,.08);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.12em;color:#fff;text-decoration:none}
+    .user-info{display:flex;align-items:center;gap:.5rem}
+    .user-dot{width:8px;height:8px;border-radius:50%;background:#22C55E}
+    .user-name{font-size:.85rem;font-weight:600}
+    .nav{padding:0 1.25rem;background:#1A1A1A;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:.25rem}
+    .nav-link{padding:.875rem 1rem;font-size:.8rem;font-weight:600;color:rgba(255,255,255,.45);text-decoration:none;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;display:flex;align-items:center;gap:.4rem}
+    .nav-link.active{color:#fff;border-bottom-color:#E85D04}
+    .page{padding:1.25rem}
+    .section-head{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.15em;color:#E85D04;margin-bottom:.75rem}
+    .dispute-card{background:#1A1A1A;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+    .dispute-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
+    .dispute-order{font-weight:600;font-size:.9rem}
+    .dispute-meta{font-size:.75rem;color:rgba(255,255,255,.4);margin-bottom:.5rem;line-height:1.5}
+    .status-pill{display:inline-flex;padding:.2rem .6rem;border-radius:99px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+    .status-pill.pending{background:rgba(250,204,21,.15);color:#FACC15}
+    .status-pill.under_review{background:rgba(59,130,246,.15);color:#60A5FA}
+    .status-pill.overridden{background:rgba(34,197,94,.15);color:#22C55E}
+    .status-pill.dismissed{background:rgba(255,255,255,.08);color:rgba(255,255,255,.5)}
+    .reason-block{background:rgba(255,255,255,.04);border-left:2px solid #E85D04;padding:.875rem;border-radius:0 6px 6px 0;margin-top:.75rem}
+    .reason-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:.3rem}
+    .reason-text{font-size:.82rem;color:rgba(255,255,255,.7);line-height:1.5}
+    .empty-state{text-align:center;padding:4rem 1rem}
+    .empty-icon{font-size:3rem;margin-bottom:1rem}
+    .empty-title{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;color:rgba(255,255,255,.5);margin-bottom:.5rem}
+    .empty-sub{font-size:.85rem;color:rgba(255,255,255,.3)}
+    /* Gate */
+    .gate-card{background:#1A1A1A;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:2.5rem 1.5rem;text-align:center;max-width:420px;margin:3rem auto}
+    .gate-icon{font-size:3rem;margin-bottom:1rem}
+    .gate-card h2{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.05em;margin-bottom:.75rem}
+    .gate-card p{color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.6;margin-bottom:1.75rem}
+    .gate-form{display:flex;flex-direction:column;gap:.75rem}
+    .gate-input{padding:.875rem 1rem;background:#0F0F0F;border:1.5px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
+    .gate-input:focus{border-color:#E85D04}
+    .gate-input::placeholder{color:rgba(255,255,255,.3)}
+    .btn-gate{padding:.875rem;background:#E85D04;color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:700;cursor:pointer}
+    .btn-gate:hover{background:#F4841F}
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <a href="/" class="logo">HAULR</a>
+  <% if (driver) { %>
+  <div class="user-info">
+    <div class="user-dot"></div>
+    <div class="user-name"><%= driver.name %></div>
+  </div>
+  <% } %>
+</header>
+
+<% if (driver) { %>
+<nav class="nav">
+  <a class="nav-link" href="/driver/jobs?email=<%= encodeURIComponent(driverEmail || '') %>">Jobs</a>
+  <a class="nav-link" href="/driver/earnings?email=<%= encodeURIComponent(driverEmail || '') %>">Earnings</a>
+  <a class="nav-link active" href="/driver/disputes?email=<%= encodeURIComponent(driverEmail || '') %>">Disputes</a>
+</nav>
+<% } %>
+
+<div class="page">
+  <% if (!driver) { %>
+  <!-- Email gate -->
+  <div class="gate-card">
+    <div class="gate-icon">📋</div>
+    <h2>My Disputes</h2>
+    <p>Enter the email you use to sign in to the driver portal.</p>
+    <div class="gate-form">
+      <input class="gate-input" type="email" id="gate-email" placeholder="driver@example.com" autocomplete="email" value="<%= driverEmail || '' %>">
+      <button class="btn-gate" onclick="loginDriver()">View Disputes</button>
+    </div>
+  </div>
+  <% } else if (disputes.length === 0) { %>
+  <div class="empty-state">
+    <div class="empty-icon">📋</div>
+    <div class="empty-title">No Disputes</div>
+    <div class="empty-sub">If you ever need to contest a rating, the option appears on the rating page after you submit feedback.</div>
+  </div>
+  <% } else { %>
+  <div class="section-head">My Disputes (<%= disputes.length %>)</div>
+  <% for (const d of disputes) { %>
+  <div class="dispute-card">
+    <div class="dispute-top">
+      <div class="dispute-order">
+        <% if (d.item_type) { %><%= d.item_type.replace(/-/g, ' ') %><% } %> — Order #<%= d.order_id %>
+      </div>
+      <span class="status-pill <%= d.status %>"><%= d.status.replace('_', ' ') %></span>
+    </div>
+    <div class="dispute-meta">
+      <%= d.pickup_address ? d.pickup_address.split(',')[0] : '' %> → <%= d.dropoff_address ? d.dropoff_address.split(',')[0] : '' %>
+      &nbsp;·&nbsp;
+      <%= d.created_at ? new Date(d.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '' %>
+    </div>
+    <% if (d.reason) { %>
+    <div class="reason-block">
+      <div class="reason-label">Your dispute reason</div>
+      <div class="reason-text"><%= d.reason %></div>
+      <% if (d.comment) { %>
+      <div style="margin-top:.5rem;font-size:.78rem;color:rgba(255,255,255,.4)"><em><%= d.comment %></em></div>
+      <% } %>
+    </div>
+    <% } %>
+    <% if (d.status === 'overridden') { %>
+    <div style="margin-top:.75rem;padding:.75rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:6px;font-size:.8rem;color:#22C55E">
+      ✓ Your dispute was reviewed and the rating has been adjusted in your favor.
+    </div>
+    <% } else if (d.status === 'dismissed') { %>
+    <div style="margin-top:.75rem;padding:.75rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:6px;font-size:.8rem;color:rgba(255,255,255,.5)">
+      This dispute was reviewed and the original rating remains on record.
+    </div>
+    <% } else if (d.status === 'pending') { %>
+    <div style="margin-top:.75rem;font-size:.78rem;color:rgba(255,255,255,.35)">
+      ⏳ Our team is reviewing this dispute. You'll be notified if we need more information.
+    </div>
+    <% } %>
+  </div>
+  <% } %>
+  <% } %>
+</div>
+
+<script>
+  function loginDriver() {
+    const email = document.getElementById('gate-email').value.trim();
+    if (!email) return;
+    location.href = '/driver/disputes?email=' + encodeURIComponent(email);
+  }
+</script>
+</body>
+</html>

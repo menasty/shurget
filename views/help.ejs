@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help Center — Shurget</title>
+  <meta name="description" content="Shurget Help Center: answers to common questions about booking, pricing, tracking, and driver payouts.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--bg); }
+
+    /* ── Page layout ── */
+    .help-page {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 100px 1.5rem 5rem;
+    }
+
+    /* ── Hero: search ── */
+    .help-hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .help-hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.75rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.4rem;
+    }
+    .help-hero p {
+      color: var(--gray-mid);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .search-wrap {
+      position: relative;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .search-input {
+      width: 100%;
+      padding: 0.85rem 1rem 0.85rem 3rem;
+      border: 2px solid var(--gray-light);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      color: var(--charcoal);
+      background: var(--white);
+      transition: border-color 0.2s;
+    }
+    .search-input::placeholder { color: var(--gray-light); }
+    .search-input:focus { outline: none; border-color: var(--orange); }
+    .search-icon {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    .search-clear {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: var(--gray-mid);
+      display: none;
+      line-height: 1;
+    }
+    .search-clear.visible { display: block; }
+
+    /* ── Category tiles ── */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.85rem;
+      margin-bottom: 2.5rem;
+    }
+    @media (max-width: 480px) { .category-grid { grid-template-columns: 1fr; } }
+
+    .cat-tile {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      transition: border-color 0.15s, background 0.15s;
+      text-decoration: none;
+    }
+    .cat-tile:hover { border-color: var(--orange); background: #FFF8F3; }
+    .cat-icon {
+      font-size: 1.6rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .cat-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--charcoal);
+    }
+    .cat-count {
+      font-size: 0.78rem;
+      color: var(--gray-mid);
+      margin-top: 0.1rem;
+    }
+
+    /* ── No-results ── */
+    .no-results {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      display: none;
+    }
+    .no-results.visible { display: block; }
+    .no-results p { color: var(--gray-mid); font-size: 0.95rem; margin-bottom: 0.75rem; }
+    .no-results a {
+      display: inline-block;
+      padding: 0.6rem 1.4rem;
+      background: var(--orange);
+      color: var(--white);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* ── FAQ accordion ── */
+    .faq-list { display: block; }
+    .faq-list.hidden { display: none; }
+
+    .faq-group-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.06em;
+      color: var(--charcoal);
+      border-bottom: 2px solid var(--orange);
+      padding-bottom: 0.4rem;
+      margin: 2rem 0 1rem;
+    }
+    .faq-group-label:first-child { margin-top: 0; }
+
+    .faq-item {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 8px;
+      margin-bottom: 0.65rem;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .faq-item:hover { border-color: var(--orange-light); }
+
+    .faq-q {
+      padding: 1rem 1.25rem;
+      font-weight: 600;
+      font-size: 0.93rem;
+      color: var(--charcoal);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      user-select: none;
+      line-height: 1.4;
+    }
+    .faq-q:hover { background: #fafaf8; }
+    .faq-q::after { content: '▾'; font-size: 1rem; color: var(--orange); flex-shrink: 0; }
+    .faq-item.open .faq-q::after { content: '▴'; }
+
+    .faq-a {
+      display: none;
+      padding: 0.1rem 1.25rem 1.1rem;
+      font-size: 0.88rem;
+      color: var(--gray-mid);
+      line-height: 1.7;
+    }
+    .faq-item.open .faq-a { display: block; }
+    .faq-a p { margin-bottom: 0.75rem; }
+    .faq-a p:last-child { margin-bottom: 0; }
+    .faq-a table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.85rem; }
+    .faq-a th, .faq-a td { padding: 0.45rem 0.75rem; text-align: left; border: 1px solid #e5e7eb; }
+    .faq-a th { background: var(--off-white); font-weight: 600; color: var(--charcoal); }
+    .faq-a strong { color: var(--charcoal); }
+    .faq-a a { color: var(--orange); font-weight: 600; text-decoration: none; }
+    .faq-a a:hover { text-decoration: underline; }
+
+    /* ── Footer CTA ── */
+    .help-cta {
+      background: var(--off-white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 1.75rem 2rem;
+      text-align: center;
+      margin-top: 2.5rem;
+    }
+    .help-cta p { color: var(--gray-mid); font-size: 0.95rem; margin: 0 0 1rem; }
+    .help-cta a {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: var(--orange);
+      color: var(--white);
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .help-cta a:hover { background: #c44d03; }
+  </style>
+
+  <!-- FAQPage JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "How does Shurget pricing work?", "acceptedAnswer": { "@type": "Answer", "text": "Shurget charges a base rate by load size: Small $59+, Medium $89+, Large $129+. Add-ons include helpers at $20/hour per helper and rush pickup. A 15% platform fee is added at checkout, and the final price is shown before you confirm." } },
+      { "@type": "Question", "name": "What can I haul?", "acceptedAnswer": { "@type": "Answer", "text": "Shurget handles 28+ item types across 6 categories: Furniture (couches, beds, dressers, tables, chairs), Appliances (washers, dryers, fridges, ovens), Electronics (TVs, computers, servers), Construction (lumber, drywall, tile, debris bags), Vehicles (motorcycles, ATVs, lawn equipment), Miscellaneous (hot tubs, pianos, exercise equipment, trampolines). We cannot move hazardous materials, fuel, pressurized containers, or illegal items." } },
+      { "@type": "Question", "name": "How fast can I get a pickup?", "acceptedAnswer": { "@type": "Answer", "text": "In Austin, TX, most orders are matched with a driver within 1–2 hours of booking. Timing depends on time of day, load size, and weather. You'll see real-time driver ETA once matched." } },
+      { "@type": "Question", "name": "What if no driver accepts my order?", "acceptedAnswer": { "@type": "Answer", "text": "If no driver accepts within a reasonable window, you're placed on a priority waitlist and notified as soon as one picks it up. If we can't match within the expected window, a full refund is issued immediately. You're not charged until a driver is confirmed." } },
+      { "@type": "Question", "name": "How do I track my order?", "acceptedAnswer": { "@type": "Answer", "text": "Use your order ID at /track/[your-order-id]. The tracker shows four stages: Pending (finding a driver), Matched (driver assigned, en route to pickup), In Transit (your items are on the move), and Delivered (job complete). You'll also receive SMS/email updates at each stage." } },
+      { "@type": "Question", "name": "Can I cancel or reschedule?", "acceptedAnswer": { "@type": "Answer", "text": "Cancellation: Before driver is matched = full refund, no questions asked. After matched = 50% cancellation fee. After pickup starts = no refund. Rescheduling: Contact us before pickup and we can push the window in most cases with no fee. All changes via /contact — mention your order ID." } },
+      { "@type": "Question", "name": "What if my item is damaged?", "acceptedAnswer": { "@type": "Answer", "text": "Step 1 — Rate your driver after delivery and flag any issue there. Step 2 — Ratings of 2 or below automatically alert our support team, reviewed within 24 hours. Step 3 — If damage is driver-caused and documented, we'll work toward a resolution including potential compensation. Shurget's Protection policy covers verified driver-caused damage; intentional damage or improper packing is not covered." } },
+      { "@type": "Question", "name": "Do you accept tips?", "acceptedAnswer": { "@type": "Answer", "text": "Not currently — tipping is not built into the checkout flow yet. It's on our roadmap. Drivers are paid a fair base rate plus distance and assistance time through Shurget's earnings model. You don't need to tip to ensure a good driver experience." } },
+      { "@type": "Question", "name": "Do you serve cities outside Austin?", "acceptedAnswer": { "@type": "Answer", "text": "Austin, TX only — for now. We're building out coverage. Enter your city and email at the bottom of any page to join the waitlist for your area." } },
+      { "@type": "Question", "name": "How do I become a Shurget driver?", "acceptedAnswer": { "@type": "Answer", "text": "Requirements: 18+, valid driver's license, own vehicle (cargo van, pickup truck, or larger), pass background check. Steps: 1) Apply at /drive, 2) Complete 4-step onboarding (license, vehicle photos, background check, Stripe Connect payout setup), 3) Start accepting jobs via /driver/jobs. Get paid within 24h of each delivery via Stripe Connect." } },
+      { "@type": "Question", "name": "When do drivers get paid?", "acceptedAnswer": { "@type": "Answer", "text": "Within 24 hours of delivery. Shurget uses Stripe Connect for driver payouts. After delivery is marked complete, Shurget releases the payment (minus platform fee) and Stripe processes the transfer to your connected bank account. Funds arrive in 1–2 business days. Minimum payout: $20. No waiting for monthly cycles." } },
+      { "@type": "Question", "name": "How do I use a referral code?", "acceptedAnswer": { "@type": "Answer", "text": "$20 off your first order. 1) Get a referral code from a friend. 2) Go to /book. 3) At checkout, find the 'Referral code' field and enter it — the discount applies automatically. One use per account. Codes can't be stacked." } }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <!-- ── Navigation (standalone, not layout) ── -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">HAULR</a>
+      <div class="nav-right">
+        <a href="/help" class="nav-link">Help</a>
+        <a href="/partners" class="nav-link">Partners</a>
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/book" class="nav-cta">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="help-page">
+
+    <!-- ── Hero + Search ── -->
+    <div class="help-hero">
+      <h1>Help Center</h1>
+      <p>Search for answers or browse by topic below.</p>
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          type="search"
+          id="faq-search"
+          class="search-input"
+          placeholder="Search help articles…"
+          autocomplete="off"
+          spellcheck="false"
+        >
+        <button class="search-clear" id="search-clear" aria-label="Clear search">✕</button>
+      </div>
+    </div>
+
+    <!-- ── Category tiles ── -->
+    <div class="category-grid" id="category-grid">
+      <div class="cat-tile" data-cat="booking">
+        <div class="cat-icon">📦</div>
+        <div>
+          <div class="cat-label">Booking</div>
+          <div class="cat-count">3 articles</div>
+        </div>
+      </div>
+      <div class="cat-tile" data-cat="pricing">
+        <div class="cat-icon">💳</div>
+        <div>
+          <div class="cat-label">Pricing &amp; Payment</div>
+          <div class="cat-count">3 articles</div>
+        </div>
+      </div>
+      <div class="cat-tile" data-cat="tracking">
+        <div class="cat-icon">📍</div>
+        <div>
+          <div class="cat-label">Tracking &amp; Delivery</div>
+          <div class="cat-count">3 articles</div>
+        </div>
+      </div>
+      <div class="cat-tile" data-cat="drivers">
+        <div class="cat-icon">🚚</div>
+        <div>
+          <div class="cat-label">Drivers</div>
+          <div class="cat-count">3 articles</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── No-results state ── -->
+    <div class="no-results" id="no-results">
+      <p>No results for "<strong id="search-query-display"></strong>"</p>
+      <a href="/contact">Contact us →</a>
+    </div>
+
+    <!-- ── FAQ Accordion ── -->
+    <div class="faq-list" id="faq-list">
+
+      <!-- BOOKING -->
+      <div class="faq-group-label">Booking</div>
+
+      <div class="faq-item" id="what-can-i-haul">
+        <div class="faq-q" onclick="toggleFaq(this)">What can I haul?</div>
+        <div class="faq-a">
+          <p>Shurget handles 28+ item types across 6 categories:</p>
+          <table>
+            <thead><tr><th>Category</th><th>Examples</th></tr></thead>
+            <tbody>
+              <tr><td>Furniture</td><td>Couches, beds, dressers, tables, chairs</td></tr>
+              <tr><td>Appliances</td><td>Washers, dryers, fridges, ovens</td></tr>
+              <tr><td>Electronics</td><td>TVs, computers, servers</td></tr>
+              <tr><td>Construction</td><td>Lumber, drywall, tile, bags of debris</td></tr>
+              <tr><td>Vehicles</td><td>Motorcycles, ATVs, lawn equipment</td></tr>
+              <tr><td>Miscellaneous</td><td>Hot tubs, pianos, exercise equipment, trampolines</td></tr>
+            </tbody>
+          </table>
+          <p><strong>What we can't move:</strong> Hazardous materials, fuel, pressurized containers, illegal items.</p>
+          <p><a href="/book">Start a booking →</a></p>
+        </div>
+      </div>
+
+      <div class="faq-item" id="pickup-speed">
+        <div class="faq-q" onclick="toggleFaq(this)">How fast can I get a pickup?</div>
+        <div class="faq-a">
+          <p><strong>Austin, TX — same-day available.</strong> Most orders are matched with a driver within 1–2 hours of booking.</p>
+          <p>Factors that affect timing:</p>
+          <ul style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li>Time of day (peak hours = longer wait)</li>
+            <li>Load size (large loads may take longer to match)</li>
+            <li>Weather and traffic</li>
+          </ul>
+          <p>You'll see real-time driver ETA once matched. No guesswork.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" id="no-driver-available">
+        <div class="faq-q" onclick="toggleFaq(this)">What if no driver accepts my order?</div>
+        <div class="faq-a">
+          <p>If no driver accepts within a reasonable window:</p>
+          <ol style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li>You're automatically placed on a <strong>priority waitlist</strong></li>
+            <li>We notify you as soon as a driver picks it up</li>
+            <li><strong>Full refund</strong> issued immediately if we can't match within the expected window</li>
+          </ol>
+          <p>No charge until a driver is confirmed.</p>
+        </div>
+      </div>
+
+      <!-- PRICING & PAYMENT -->
+      <div class="faq-group-label">Pricing &amp; Payment</div>
+
+      <div class="faq-item" id="how-pricing-works">
+        <div class="faq-q" onclick="toggleFaq(this)">How does Shurget pricing work?</div>
+        <div class="faq-a">
+          <p>Shurget charges a base rate by load size:</p>
+          <ul style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li><strong>Small</strong> — $59+ (e.g., small couch, boxes, 1-person load)</li>
+            <li><strong>Medium</strong> — $89+ (e.g., full bedroom set, mid-size furniture)</li>
+            <li><strong>Large</strong> — $129+ (e.g., multi-room move, appliances, construction debris)</li>
+          </ul>
+          <p><strong>Add-ons:</strong></p>
+          <ul style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li>Helper at pickup/delivery: +$20/hour per helper (select at checkout)</li>
+            <li>Rush pickup: varies by availability</li>
+          </ul>
+          <p><strong>Platform fee:</strong> 15% added at checkout. Final price shown before you confirm.</p>
+          <p><a href="/pricing">See full pricing →</a></p>
+        </div>
+      </div>
+
+      <div class="faq-item" id="cancel-reschedule">
+        <div class="faq-q" onclick="toggleFaq(this)">Can I cancel or reschedule?</div>
+        <div class="faq-a">
+          <p><strong>Cancellation:</strong></p>
+          <ul style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li><strong>Before driver is matched:</strong> Full refund, no questions asked</li>
+            <li><strong>After matched:</strong> 50% cancellation fee (driver is already on the way)</li>
+            <li><strong>After pickup starts:</strong> No refund</li>
+          </ul>
+          <p><strong>Rescheduling:</strong></p>
+          <ul style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li>Contact us before pickup — we can push the window in most cases</li>
+            <li>No fee to reschedule, just confirm driver availability</li>
+          </ul>
+          <p>All changes via <a href="/contact">/contact</a> — mention your order ID.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" id="referral-code">
+        <div class="faq-q" onclick="toggleFaq(this)">How do I use a referral code?</div>
+        <div class="faq-a">
+          <p><strong>$20 off your first order.</strong></p>
+          <ol style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li>Get a referral code from a friend</li>
+            <li>Go to <a href="/book">/book</a></li>
+            <li>At checkout, find the <strong>"Referral code" field</strong></li>
+            <li>Enter the code and the discount applies automatically</li>
+          </ol>
+          <p>One use per account. Codes can't be stacked.</p>
+        </div>
+      </div>
+
+      <!-- TRACKING & DELIVERY -->
+      <div class="faq-group-label">Tracking &amp; Delivery</div>
+
+      <div class="faq-item" id="track-order">
+        <div class="faq-q" onclick="toggleFaq(this)">How do I track my order?</div>
+        <div class="faq-a">
+          <p>Use your order ID at <a href="/track">/track</a> — enter your order number and see live status.</p>
+          <p>The tracker shows 4 stages:</p>
+          <ol style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li><strong>Pending</strong> — Order received, finding a driver</li>
+            <li><strong>Matched</strong> — Driver assigned, en route to pickup</li>
+            <li><strong>In Transit</strong> — Your items are on the move</li>
+            <li><strong>Delivered</strong> — Job complete</li>
+          </ol>
+          <p>You'll also get SMS/email updates at each stage.</p>
+          <p><a href="/track">Track your order →</a></p>
+        </div>
+      </div>
+
+      <div class="faq-item" id="damage-claims">
+        <div class="faq-q" onclick="toggleFaq(this)">What if my item is damaged?</div>
+        <div class="faq-a">
+          <p><strong>Step 1 — Rate your driver:</strong> After delivery, you'll be prompted to rate 1–5 stars. Flagging an issue here starts the review process.</p>
+          <p><strong>Step 2 — Admin review:</strong> Ratings of 2 or below automatically alert our support team. We review within 24 hours.</p>
+          <p><strong>Step 3 — Claims process:</strong> If the damage is driver-caused and documented, we'll work toward a resolution including potential compensation. Have photos ready.</p>
+          <p><strong>Note:</strong> Shurget's Protection policy covers verified driver-caused damage. Intentional damage or improper packing is not covered.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" id="service-areas">
+        <div class="faq-q" onclick="toggleFaq(this)">Do you serve cities outside Austin?</div>
+        <div class="faq-a">
+          <p><strong>Austin, TX only — for now.</strong></p>
+          <p>We're building out coverage. Enter your city and email at the bottom of any page to join the waitlist for your area.</p>
+          <p>We'd rather do Austin right than spread thin. Expansion is coming.</p>
+        </div>
+      </div>
+
+      <!-- DRIVERS -->
+      <div class="faq-group-label">Drivers</div>
+
+      <div class="faq-item" id="become-driver">
+        <div class="faq-q" onclick="toggleFaq(this)">How do I become a Shurget driver?</div>
+        <div class="faq-a">
+          <p><strong>Requirements:</strong></p>
+          <ul style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li>18+, valid driver's license</li>
+            <li>Own vehicle (cargo van, pickup truck, or larger)</li>
+            <li>Pass background check</li>
+          </ul>
+          <p><strong>Steps:</strong></p>
+          <ol style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li>Apply at <a href="/drive">/drive</a></li>
+            <li>Complete the 4-step onboarding wizard (license, vehicle photos, background check, Stripe Connect payout setup)</li>
+            <li>Start accepting jobs via <a href="/driver/jobs">/driver/jobs</a></li>
+          </ol>
+          <p><strong>Earnings:</strong> Set your own schedule. Get paid within 24h of each delivery via Stripe Connect.</p>
+          <p><a href="/drive">Apply to drive →</a> &nbsp;·&nbsp; <a href="/drive/earn">See earnings math →</a></p>
+        </div>
+      </div>
+
+      <div class="faq-item" id="driver-payout">
+        <div class="faq-q" onclick="toggleFaq(this)">When do drivers get paid?</div>
+        <div class="faq-a">
+          <p><strong>Within 24 hours of delivery.</strong></p>
+          <p>Shurget uses Stripe Connect for driver payouts. After you complete a delivery and the customer confirms:</p>
+          <ol style="padding-left:1.2rem;margin:0.5rem 0;">
+            <li>Shurget releases the payment (minus platform fee)</li>
+            <li>Stripe processes the transfer to your connected bank account</li>
+            <li>Funds arrive in 1–2 business days depending on your bank</li>
+          </ol>
+          <p><strong>Minimum payout:</strong> $20. No waiting for monthly cycles.</p>
+          <p><a href="/driver/payouts">Set up Stripe Connect →</a></p>
+        </div>
+      </div>
+
+      <div class="faq-item" id="tips">
+        <div class="faq-q" onclick="toggleFaq(this)">Do you accept tips?</div>
+        <div class="faq-a">
+          <p><strong>Not currently.</strong> Tipping is not built into the checkout flow yet.</p>
+          <p>We know this is a common expectation — it's on our roadmap. For now, drivers are paid a fair base rate + distance + assistance time through Shurget's earnings model. You don't need to tip to ensure a good driver experience.</p>
+        </div>
+      </div>
+
+    </div><!-- /faq-list -->
+
+    <!-- ── Footer CTA ── -->
+    <div class="help-cta">
+      <p>Still need help? Our team typically responds within a few hours.</p>
+      <a href="/contact">Contact us →</a>
+    </div>
+
+  </div><!-- /help-page -->
+
+  <script>
+    // ── Accordion ──
+    function toggleFaq(el) {
+      el.closest('.faq-item').classList.toggle('open');
+    }
+
+    // ── Deep-link: open the matching FAQ item if URL has an anchor hash
+    (function () {
+      var hash = window.location.hash;
+      if (hash) {
+        var target = document.querySelector(hash);
+        if (target && target.classList.contains('faq-item')) {
+          target.classList.add('open');
+          setTimeout(function () { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+        }
+      }
+    })();
+
+    // ── Client-side search ──
+    var searchInput = document.getElementById('faq-search');
+    var clearBtn    = document.getElementById('search-clear');
+    var faqList     = document.getElementById('faq-list');
+    var noResults   = document.getElementById('no-results');
+    var queryDisplay = document.getElementById('search-query-display');
+    var groupLabels = faqList.querySelectorAll('.faq-group-label');
+
+    function doSearch(term) {
+      term = term.trim().toLowerCase();
+      clearBtn.classList.toggle('visible', term.length > 0);
+
+      if (!term) {
+        // Reset: show all items, hide groups with no visible items
+        faqList.classList.remove('hidden');
+        noResults.classList.remove('visible');
+        faqList.querySelectorAll('.faq-item').forEach(function (item) { item.style.display = ''; });
+        groupLabels.forEach(function (lbl) { lbl.style.display = ''; });
+        return;
+      }
+
+      faqList.classList.remove('hidden');
+      var allItems = faqList.querySelectorAll('.faq-item');
+      var visibleCount = 0;
+
+      allItems.forEach(function (item) {
+        var qText   = item.querySelector('.faq-q').textContent.toLowerCase();
+        var aText   = item.querySelector('.faq-a').textContent.toLowerCase();
+        var matches = qText.includes(term) || aText.includes(term);
+        item.style.display = matches ? '' : 'none';
+        if (matches) visibleCount++;
+      });
+
+      // Hide group labels with no visible siblings
+      var currentGroup = null;
+      groupLabels.forEach(function (lbl) {
+        var next = lbl.nextElementSibling;
+        var hasVisible = false;
+        while (next && !next.classList.contains('faq-group-label')) {
+          if (next.classList.contains('faq-item') && next.style.display !== 'none') hasVisible = true;
+          next = next.nextElementSibling;
+        }
+        lbl.style.display = hasVisible ? '' : 'none';
+      });
+
+      noResults.classList.toggle('visible', visibleCount === 0);
+      queryDisplay.textContent = term;
+    }
+
+    searchInput.addEventListener('input', function () { doSearch(this.value); });
+    clearBtn.addEventListener('click', function () {
+      searchInput.value = '';
+      searchInput.focus();
+      doSearch('');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metrics — Admin — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--bg); }
+
+    .dash-page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 80px 1.5rem 4rem;
+    }
+
+    /* Header */
+    .dash-header { margin-bottom: 2rem; }
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.25rem;
+    }
+    .page-sub { color: var(--gray-mid); font-size: 0.95rem; }
+
+    /* Back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gray-mid);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+    }
+    .back-link:hover { color: var(--orange); }
+
+    /* Admin sidebar nav */
+    .admin-nav {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .admin-nav-link {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1.5px solid transparent;
+      transition: all 0.15s;
+      color: var(--gray-mid);
+      background: var(--white);
+    }
+    .admin-nav-link:hover { border-color: var(--orange); color: var(--orange); }
+    .admin-nav-link.active { background: var(--charcoal); color: var(--white); border-color: var(--charcoal); }
+
+    /* Nav (shared) */
+    .dash-nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 clamp(1.5rem, 4vw, 3rem);
+      background: rgba(26,26,26,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem; letter-spacing: 0.12em; color: var(--white); text-decoration: none; }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-btn { padding: 0.45rem 1rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; text-decoration: none; border: none; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
+    .nav-btn-primary { background: var(--orange); color: var(--white); }
+    .nav-btn-primary:hover { background: var(--orange-light); }
+    .nav-btn-secondary { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+    .nav-btn-secondary:hover { background: rgba(255,255,255,0.18); }
+
+    /* Section */
+    .section { margin-bottom: 2.5rem; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.05em; color: var(--charcoal); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+    /* KPI cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .kpi-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+    .kpi-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-mid); margin-bottom: 0.5rem; }
+    .kpi-value { font-size: 2rem; font-weight: 700; color: var(--charcoal); font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.02em; line-height: 1; }
+    .kpi-sub { font-size: 0.78rem; color: var(--gray-mid); margin-top: 0.3rem; }
+    .kpi-sub em { font-style: normal; color: var(--charcoal); font-weight: 600; }
+    .kpi-value.orange { color: var(--orange); }
+
+    /* Revenue cards */
+    .kpi-card.revenue { border-color: #F5C77E; }
+    .kpi-card.revenue .kpi-value { color: #16A34A; }
+
+    /* Bar chart for status / tier */
+    .bar-chart { display: flex; flex-direction: column; gap: 0.75rem; }
+    .bar-row { display: grid; grid-template-columns: 130px 1fr 60px; align-items: center; gap: 1rem; }
+    .bar-label { font-size: 0.82rem; font-weight: 500; color: var(--charcoal); text-transform: capitalize; }
+    .bar-track { background: var(--off-white); border-radius: 4px; height: 28px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 4px; background: var(--orange); transition: width 0.4s ease; }
+    .bar-fill.green { background: #16A34A; }
+    .bar-fill.blue  { background: #1D4ED8; }
+    .bar-fill.amber { background: #D97706; }
+    .bar-fill.gray  { background: var(--gray-mid); }
+    .bar-count { font-size: 0.82rem; font-weight: 600; color: var(--charcoal); text-align: right; }
+
+    /* Daily volume chart */
+    .daily-chart-wrap { background: var(--white); border: 1.5px solid var(--gray-light); border-radius: 12px; padding: 1.5rem; }
+    .daily-chart-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; }
+    .daily-chart-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.05em; color: var(--charcoal); }
+    .daily-chart-sub { font-size: 0.8rem; color: var(--gray-mid); }
+    .chart-area {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 160px;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--gray-light);
+    }
+    .chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 0; }
+    .chart-bar {
+      width: 100%;
+      max-width: 20px;
+      background: var(--orange);
+      border-radius: 3px 3px 0 0;
+      min-height: 2px;
+      transition: background 0.2s;
+      cursor: default;
+      position: relative;
+    }
+    .chart-bar:hover { background: var(--orange-light); }
+    .chart-bar:hover::after { content: attr(data-count) ' order(s)'; position: absolute; bottom: calc(100% + 4px); left: 50%; transform: translateX(-50%); background: var(--charcoal); color: var(--white); font-size: 0.68rem; white-space: nowrap; padding: 0.25rem 0.4rem; border-radius: 4px; z-index: 10; }
+    .chart-label { font-size: 0.6rem; color: var(--gray-mid); margin-top: 0.35rem; }
+    .chart-empty { flex: 1; display: flex; align-items: center; justify-content: center; height: 160px; color: var(--gray-mid); font-size: 0.85rem; }
+
+    /* Top routes */
+    .routes-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .route-row {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 8px;
+      padding: 0.85rem 1.1rem;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .route-rank {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--off-white);
+      border: 1.5px solid var(--gray-light);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--charcoal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .route-names { font-size: 0.88rem; color: var(--charcoal); font-weight: 500; }
+    .route-names span { color: var(--gray-mid); font-weight: 400; }
+    .route-meta { text-align: right; }
+    .route-count { font-size: 0.85rem; font-weight: 700; color: var(--charcoal); }
+    .route-revenue { font-size: 0.75rem; color: #16A34A; font-weight: 600; }
+
+    /* Summary stats row */
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .summary-stat { background: var(--white); border: 1.5px solid var(--gray-light); border-radius: 8px; padding: 0.85rem 1rem; }
+    .stat-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-mid); margin-bottom: 0.3rem; }
+    .stat-value { font-size: 1.4rem; font-weight: 700; font-family: 'Bebas Neue', sans-serif; color: var(--charcoal); letter-spacing: 0.02em; }
+    .stat-value.green { color: #16A34A; }
+    .stat-value.red { color: #DC2626; }
+
+    @media (max-width: 600px) {
+      .bar-row { grid-template-columns: 90px 1fr 48px; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="dash-nav">
+    <a href="/" class="nav-logo">HAULR</a>
+    <div class="nav-right">
+      <a href="/dashboard" class="nav-btn nav-btn-secondary">Dashboard</a>
+      <a href="/book" class="nav-btn nav-btn-primary">New Booking</a>
+      <a href="/admin/logout" class="nav-btn nav-btn-secondary">Logout</a>
+    </div>
+  </nav>
+
+  <div class="dash-page">
+    <div class="dash-header">
+      <h1 class="page-title">Order Metrics</h1>
+      <p class="page-sub">Platform performance at a glance — all data from the orders table.</p>
+    </div>
+
+    <a class="back-link" href="/admin">← Back to Admin</a>
+
+    <!-- Admin sidebar nav -->
+    <div class="admin-nav">
+      <a class="admin-nav-link" href="/admin">Overview</a>
+      <a class="admin-nav-link" href="/admin/bookings">Bookings</a>
+      <a class="admin-nav-link" href="/admin/dispatch">Dispatch</a>
+      <a class="admin-nav-link" href="/admin/drivers">Drivers</a>
+      <a class="admin-nav-link active" href="/admin/metrics">Metrics</a>
+      <a class="admin-nav-link" href="/admin/ratings">Ratings</a>
+    </div>
+
+    <% const t = metrics.totals; %>
+    <% const totalOrders = parseInt(t.total_orders) || 0; %>
+    <% const completed = parseInt(t.completed) || 0; %>
+    <% const cancelled = parseInt(t.cancelled) || 0; %>
+    <% const completionRate = totalOrders > 0 ? ((completed / totalOrders) * 100).toFixed(1) : '0.0'; %>
+    <% const cancelRate = totalOrders > 0 ? ((cancelled / totalOrders) * 100).toFixed(1) : '0.0'; %>
+    <% const avgOrderValue = parseFloat(t.avg_order_value) || 0; %>
+
+    <% const weekOrders = parseInt(metrics.week.cnt) || 0; %>
+    <% const monthOrders = parseInt(metrics.month.cnt) || 0; %>
+    <% const weekRevenue = parseFloat(metrics.week.revenue) || 0; %>
+    <% const monthRevenue = parseFloat(metrics.month.revenue) || 0; %>
+    <% const totalRevenue = parseFloat(t.total_revenue) || 0; %>
+
+    <!-- ── KPI Cards ── -->
+    <div class="section">
+      <div class="section-title"><span>📊</span> Key Performance Indicators</div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Orders (All-Time)</div>
+          <div class="kpi-value"><%= totalOrders.toLocaleString() %></div>
+          <div class="kpi-sub"><em><%= monthOrders %></em> this month · <em><%= weekOrders %></em> this week</div>
+        </div>
+        <div class="kpi-card revenue">
+          <div class="kpi-label">Platform Take (Revenue)</div>
+          <div class="kpi-value">$<%= totalRevenue.toFixed(2) %></div>
+          <div class="kpi-sub"><em>$<%= monthRevenue.toFixed(2) %></em> this month · <em>$<%= weekRevenue.toFixed(2) %></em> this week</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Order Value</div>
+          <div class="kpi-value">$<%= avgOrderValue.toFixed(2) %></div>
+          <div class="kpi-sub">across all <em><%= totalOrders %></em> orders</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Completion Rate</div>
+          <div class="kpi-value green"><%= completionRate %>%</div>
+          <div class="kpi-sub"><em><%= completed %></em> completed · <em><%= cancelRate %>%</em> cancelled</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Review Email Metrics ── -->
+    <div class="section">
+      <div class="section-title"><span>⭐</span> Review Email Performance</div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Review Emails Sent</div>
+          <div class="kpi-value orange"><%= parseInt(reviewEmailStats && reviewEmailStats.cnt) || 0 %></div>
+          <div class="kpi-sub">Delivered 2hr post-delivery (idempotent)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Ratings from Email</div>
+          <% const emailRatingsCount = parseInt(ratingStats && ratingStats.cnt) || 0; %>
+          <% const emailsSent = parseInt(reviewEmailStats && reviewEmailStats.cnt) || 0; %>
+          <% const convRate = emailsSent > 0 ? ((emailRatingsCount / emailsSent) * 100).toFixed(1) : '0.0'; %>
+          <% const avgRating = parseFloat(ratingStats && ratingStats.avg_rating) || 0; %>
+          <div class="kpi-value"><%= emailRatingsCount %></div>
+          <div class="kpi-sub"><em><%= convRate %>%</em> of emails converted · avg <em><%= avgRating > 0 ? avgRating.toFixed(1) + '★' : 'N/A' %></em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Orders by Status ── -->
+    <div class="section">
+      <div class="section-title"><span>📋</span> Orders by Status</div>
+      <div class="bar-chart">
+        <% const statusMap = { delivered: { label: 'Delivered', fill: 'green' }, assigned: { label: 'Assigned', fill: 'blue' }, in_progress: { label: 'In Progress', fill: 'blue' }, paid: { label: 'Paid (Unassigned)', fill: 'amber' }, pending: { label: 'Pending', fill: 'amber' }, pending_payment: { label: 'Pending Payment', fill: 'amber' }, cancelled: { label: 'Cancelled', fill: 'gray' } }; %>
+        <% const statusCounts = {}; byStatus.forEach(r => { statusCounts[r.status] = parseInt(r.cnt); }); %>
+        <% const maxStatus = Math.max(...byStatus.map(r => parseInt(r.cnt)), 1); %>
+        <% ['delivered', 'assigned', 'in_progress', 'paid', 'pending', 'pending_payment', 'cancelled'].forEach(status => { %>
+          <% const cnt = statusCounts[status] || 0; %>
+          <% if (cnt > 0) { %>
+            <% const meta = statusMap[status] || { label: status, fill: 'gray' }; %>
+            <div class="bar-row">
+              <div class="bar-label"><%= meta.label %></div>
+              <div class="bar-track">
+                <div class="bar-fill <%= meta.fill %>" style="width: <%= (cnt / maxStatus * 100).toFixed(1) %>%;"></div>
+              </div>
+              <div class="bar-count"><%= cnt %></div>
+            </div>
+          <% } %>
+        <% }); %>
+      </div>
+    </div>
+
+    <!-- ── Orders by Size Tier ── -->
+    <div class="section">
+      <div class="section-title"><span>📦</span> Orders by Size Tier</div>
+      <div class="bar-chart">
+        <% const tierMap = { small: { label: 'Small (< $50 base)', fill: 'blue' }, medium: { label: 'Medium ($50–$69)', fill: 'amber' }, large: { label: 'Large ($70+)', fill: 'orange' } }; %>
+        <% const tierCounts = {}; byTier.forEach(r => { tierCounts[r.tier] = parseInt(r.cnt); }); %>
+        <% const maxTier = Math.max(...byTier.map(r => parseInt(r.cnt)), 1); %>
+        <% ['small', 'medium', 'large'].forEach(tier => { %>
+          <% const cnt = tierCounts[tier] || 0; %>
+          <% if (cnt > 0) { %>
+            <% const meta = tierMap[tier] || { label: tier, fill: 'gray' }; %>
+            <div class="bar-row">
+              <div class="bar-label"><%= meta.label %></div>
+              <div class="bar-track">
+                <div class="bar-fill <%= meta.fill %>" style="width: <%= (cnt / maxTier * 100).toFixed(1) %>%;"></div>
+              </div>
+              <div class="bar-count"><%= cnt %></div>
+            </div>
+          <% } %>
+        <% }); %>
+      </div>
+    </div>
+
+    <!-- ── Daily Order Volume (30 days) ── -->
+    <div class="section">
+      <div class="section-title"><span>📈</span> Daily Order Volume — Last 30 Days</div>
+      <div class="daily-chart-wrap">
+        <div class="daily-chart-header">
+          <div class="daily-chart-title">Order Volume</div>
+          <div class="daily-chart-sub">bar height = relative volume</div>
+        </div>
+        <% if (daily.length > 0) { %>
+          <% const maxDaily = Math.max(...daily.map(d => parseInt(d.orders)), 1); %>
+          <div class="chart-area">
+            <% daily.forEach(d => { %>
+              <div class="chart-bar-wrap" title="<%= new Date(d.date).toLocaleDateString('en-US', {month:'short',day:'numeric'}) %>: <%= d.orders %> order(s)">
+                <div class="chart-bar" style="height: <%= Math.max(4, (parseInt(d.orders) / maxDaily * 100)).toFixed(1) %>%;" data-count="<%= d.orders %>"></div>
+                <div class="chart-label"><%= new Date(d.date).toLocaleDateString('en-US', {month:'numeric',day:'numeric'}) %></div>
+              </div>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <div class="chart-empty">No order data in the last 30 days.</div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- ── Top Routes ── -->
+    <div class="section">
+      <div class="section-title"><span>🛣️</span> Top Routes</div>
+      <% if (topRoutes.length > 0) { %>
+        <div class="routes-list">
+          <% topRoutes.forEach((route, i) => { %>
+            <div class="route-row">
+              <div class="route-rank"><%= i + 1 %></div>
+              <div class="route-names">
+                <%= route.pickup_city %><span> → </span><%= route.dropoff_city %>
+              </div>
+              <div class="route-meta">
+                <div class="route-count"><%= route.cnt %> order<%= route.cnt !== '1' ? 's' : '' %></div>
+                <% if (parseFloat(route.total_revenue) > 0) { %>
+                  <div class="route-revenue">$<%= parseFloat(route.total_revenue).toFixed(2) %> total</div>
+                <% } %>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div style="background: var(--white); border: 1.5px solid var(--gray-light); border-radius: 8px; padding: 2rem; text-align: center; color: var(--gray-mid); font-size: 0.9rem;">
+          No route data yet — orders will populate this once they come in.
+        </div>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

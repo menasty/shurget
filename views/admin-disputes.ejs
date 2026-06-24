@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rating Disputes — Admin — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--bg); }
+    .dash-page { max-width: 900px; margin: 0 auto; padding: 80px 1.5rem 4rem; }
+    .dash-header { margin-bottom: 2rem; }
+    .dash-header .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 0.05em; color: var(--charcoal); margin-bottom: 0.25rem; }
+    .dash-header .page-sub { color: var(--gray-mid); font-size: 0.95rem; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; color: var(--gray-mid); text-decoration: none; margin-bottom: 1.5rem; }
+    .back-link:hover { color: var(--orange); }
+    .dash-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 0 clamp(1.5rem, 4vw, 3rem); background: rgba(26,26,26,0.9); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.06); height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem; letter-spacing: 0.12em; color: var(--white); text-decoration: none; }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-btn { padding: 0.45rem 1rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; text-decoration: none; cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
+    .nav-btn-primary { background: var(--orange); color: var(--white); }
+    .nav-btn-primary:hover { background: var(--orange-light); }
+    .nav-btn-secondary { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+    .nav-btn-secondary:hover { background: rgba(255,255,255,0.18); }
+    .admin-nav { display: flex; gap: 0.25rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .admin-nav-link { padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.82rem; font-weight: 600; text-decoration: none; border: 1.5px solid transparent; transition: all 0.15s; color: var(--gray-mid); background: var(--white); }
+    .admin-nav-link:hover { border-color: var(--orange); color: var(--orange); }
+    .admin-nav-link.active { background: var(--charcoal); color: var(--white); border-color: var(--charcoal); }
+    .section-head { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.05em; color: var(--charcoal); margin: 1.5rem 0 0.75rem; }
+    .dispute-card { background: var(--white); border: 1.5px solid var(--gray-light); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+    .dispute-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem; }
+    .dispute-driver { font-weight: 700; font-size: 1rem; color: var(--charcoal); }
+    .dispute-email { font-size: 0.8rem; color: var(--gray-mid); margin-top: 0.15rem; }
+    .dispute-order { font-size: 0.82rem; color: var(--gray-mid); }
+    .dispute-order strong { color: var(--charcoal); }
+    .status-pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.65rem; border-radius: 99px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+    .status-pill.pending    { background: #FFF7ED; color: #92400E; border: 1px solid #F5C77E; }
+    .status-pill.under_review { background: #EFF6FF; color: #1D4ED8; border: 1px solid #93C5FD; }
+    .status-pill.overridden  { background: #F0FAF5; color: #166534; border: 1px solid #86C9A0; }
+    .status-pill.dismissed   { background: #F9FAFB; color: #6B7280; border: 1px solid #D1D5DB; }
+    .rating-badge { background: #FFF7ED; color: #D97706; border: 1px solid #FCD34D; border-radius: 4px; padding: 0.2rem 0.5rem; font-size: 0.8rem; font-weight: 700; }
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .meta-item label { display: block; font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gray-mid); margin-bottom: 0.25rem; }
+    .meta-item span { font-size: 0.9rem; color: var(--charcoal); font-weight: 500; }
+    .reason-block { background: var(--off-white); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 3px solid var(--orange); }
+    .reason-block label { display: block; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--gray-mid); margin-bottom: 0.4rem; }
+    .reason-block p { font-size: 0.9rem; color: var(--charcoal); line-height: 1.5; margin: 0; }
+    .resolve-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; padding-top: 1rem; border-top: 1px solid var(--gray-light); }
+    .resolve-actions label { font-size: 0.8rem; font-weight: 600; color: var(--gray-mid); }
+    select { background: var(--white); border: 1.5px solid var(--gray-light); border-radius: 6px; padding: 0.45rem 0.75rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--charcoal); cursor: pointer; }
+    textarea { width: 100%; border: 1.5px solid var(--gray-light); border-radius: 8px; padding: 0.75rem; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; resize: vertical; min-height: 60px; margin-top: 0.75rem; }
+    .btn-override { padding: 0.5rem 1rem; background: #166534; color: #fff; border: none; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+    .btn-dismiss  { padding: 0.5rem 1rem; background: #6B7280; color: #fff; border: none; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+    .resolved-banner { background: #F0FAF5; border: 1px solid #86C9A0; border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.85rem; color: #166534; margin-top: 0.75rem; }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--gray-mid); }
+    .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-state h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem; color: var(--charcoal); margin-bottom: 0.5rem; }
+    .empty-state p { font-size: 0.9rem; color: var(--gray-mid); }
+  </style>
+</head>
+<body>
+  <nav class="dash-nav">
+    <a href="/" class="nav-logo">HAULR</a>
+    <div class="nav-right">
+      <a href="/dashboard" class="nav-btn nav-btn-secondary">Dashboard</a>
+      <a href="/book" class="nav-btn nav-btn-primary">New Booking</a>
+      <a href="/admin/logout" class="nav-btn nav-btn-secondary">Logout</a>
+    </div>
+  </nav>
+
+  <div class="dash-page">
+    <div class="dash-header">
+      <h1 class="page-title">Rating Disputes</h1>
+      <p class="page-sub">Review and resolve driver rating disputes.</p>
+    </div>
+
+    <div class="admin-nav">
+      <a class="admin-nav-link" href="/admin">Overview</a>
+      <a class="admin-nav-link" href="/admin/bookings">Bookings</a>
+      <a class="admin-nav-link" href="/admin/dispatch">Dispatch</a>
+      <a class="admin-nav-link" href="/admin/drivers">Drivers</a>
+      <a class="admin-nav-link" href="/admin/metrics">Metrics</a>
+      <a class="admin-nav-link active" href="/admin/disputes">Disputes</a>
+    </div>
+
+    <a class="back-link" href="/admin">← Back to Admin</a>
+
+    <% if (disputes.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <h2>No Disputes</h2>
+        <p>No rating disputes have been filed. Disputes appear here when a driver contests a customer rating.</p>
+      </div>
+    <% } else { %>
+      <% for (const d of disputes) { %>
+      <div class="dispute-card">
+        <div class="dispute-header">
+          <div>
+            <div class="dispute-driver"><%= d.driver_name %></div>
+            <div class="dispute-email"><%= d.driver_email %></div>
+          </div>
+          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+            <span class="rating-badge">★ <%= d.rating %>/5</span>
+            <span class="status-pill <%= d.status %>"><%= d.status.replace('_', ' ') %></span>
+          </div>
+        </div>
+
+        <div class="dispute-order">
+          Order #<strong><%= d.order_id %></strong> —
+          <%= (d.item_type || '').replace(/-/g, ' ') %> &nbsp;
+          <%= d.pickup_address ? d.pickup_address.split(',')[0] : '' %> → <%= d.dropoff_address ? d.dropoff_address.split(',')[0] : '' %>
+          &nbsp;·&nbsp; Customer: <%= d.customer_name || '—' %> (<%= d.customer_email || '—' %>)
+        </div>
+
+        <div class="meta-grid" style="margin-top:1rem">
+          <div class="meta-item">
+            <label>Filed</label>
+            <span><%= d.created_at ? new Date(d.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—' %></span>
+          </div>
+          <div class="meta-item">
+            <label>Price</label>
+            <span>$<%= Number(d.price_total || 0).toFixed(2) %></span>
+          </div>
+        </div>
+
+        <% if (d.reason) { %>
+        <div class="reason-block">
+          <label>Driver's Reason for Dispute</label>
+          <p><%= d.reason %></p>
+          <% if (d.comment) { %>
+          <p style="margin-top:0.5rem;font-size:0.85rem;color:var(--gray-mid)"><em>Additional: <%= d.comment %></em></p>
+          <% } %>
+        </div>
+        <% } %>
+
+        <% if (d.status === 'overridden' || d.status === 'dismissed') { %>
+        <div class="resolved-banner">
+          <strong><%= d.status === 'overridden' ? 'Overridden' : 'Dismissed' %></strong>
+          <% if (d.resolved_at) { %> on <%= new Date(d.resolved_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %><% } %>
+          <% if (d.admin_notes) { %> — <em><%= d.admin_notes %></em><% } %>
+        </div>
+        <% } else { %>
+        <form method="post" action="/admin/disputes/<%= d.id %>/resolve">
+          <div class="resolve-actions">
+            <label for="status-<%= d.id %>">Resolution:</label>
+            <select name="status" id="status-<%= d.id %>">
+              <option value="overridden">Override rating (favorable to driver)</option>
+              <option value="dismissed">Dismiss dispute (rating stands)</option>
+            </select>
+          </div>
+          <textarea name="adminNotes" placeholder="Admin notes (optional — visible internally)"></textarea>
+          <div style="margin-top:0.75rem">
+            <button type="submit" class="btn-override">Save Resolution</button>
+          </div>
+        </form>
+        <% } %>
+      </div>
+      <% } %>
+    <% } %>
+  </div>
+</body>
+</html>

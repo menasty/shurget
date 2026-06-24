@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become a Partner — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--off-white); }
+    .apply-page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gray-mid);
+      font-size: 0.9rem;
+      text-decoration: none;
+      margin-bottom: 2rem;
+    }
+    .back-link:hover { color: var(--charcoal); }
+    .apply-card {
+      background: var(--white);
+      border: 1.5px solid rgba(0,0,0,0.1);
+      border-radius: 14px;
+      padding: 3rem 2.5rem;
+    }
+    .apply-header { margin-bottom: 2.5rem; }
+    .apply-header h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 0.04em;
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+    .apply-header p { color: var(--gray-mid); font-size: 1rem; line-height: 1.6; }
+    .form-section { margin-bottom: 2rem; }
+    .form-section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 0.78rem; font-weight: 600; color: var(--charcoal); text-transform: uppercase; letter-spacing: 0.06em; }
+    input, select, textarea {
+      padding: 0.75rem 0.9rem;
+      border: 1.5px solid rgba(0,0,0,0.12);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--charcoal);
+      outline: none;
+      transition: border-color 0.15s;
+      background: #fafafa;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--orange); background: #fff; }
+    textarea { resize: vertical; min-height: 80px; }
+    .btn-submit {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.15s;
+      margin-top: 0.5rem;
+    }
+    .btn-submit:hover { background: #c25a00; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .form-error { color: #dc2626; font-size: 0.85rem; margin-bottom: 1rem; display: none; }
+    .form-success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+    .form-success.visible { display: block; }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .apply-card { padding: 2rem 1.5rem; } }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">HAULR</a>
+      <div class="nav-right">
+        <a href="/partners" class="nav-link">Partners</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="apply-page">
+    <a href="/partners" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Partners
+    </a>
+
+    <div class="apply-card">
+      <div class="apply-header">
+        <h1>Apply for Partnership</h1>
+        <p>Tell us about your store. We'll follow up within 48 hours to set up a pilot — typically 5–10 deliveries to prove the model.</p>
+      </div>
+
+      <div id="form-error" class="form-error"></div>
+      <div id="form-success" class="form-success"></div>
+
+      <form id="apply-form">
+        <div class="form-section">
+          <div class="form-section-title">Your Store</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="store_name">Store Name *</label>
+              <input type="text" id="store_name" name="store_name" placeholder="Acme Furniture Co." required>
+            </div>
+            <div class="form-group">
+              <label for="website_url">Website URL</label>
+              <input type="url" id="website_url" name="website_url" placeholder="https://acmefurniture.com">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Contact</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="contact_name">Your Name *</label>
+              <input type="text" id="contact_name" name="contact_name" placeholder="Jane Smith" required>
+            </div>
+            <div class="form-group">
+              <label for="contact_email">Work Email *</label>
+              <input type="email" id="contact_email" name="contact_email" placeholder="jane@acmefurniture.com" required>
+            </div>
+            <div class="form-group">
+              <label for="contact_phone">Phone</label>
+              <input type="tel" id="contact_phone" name="contact_phone" placeholder="(512) 555-0100">
+            </div>
+            <div class="form-group">
+              <label for="monthly_volume">Monthly Oversized-Item Volume *</label>
+              <select id="monthly_volume" name="monthly_volume" required>
+                <option value="" disabled selected>Select a range</option>
+                <option value="1-10">1–10 deliveries/month</option>
+                <option value="11-50">11–50 deliveries/month</option>
+                <option value="51-200">51–200 deliveries/month</option>
+                <option value="200+">200+ deliveries/month</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <div class="form-section-title">Service Area &amp; Inventory</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="zip_codes_served">ZIP Codes You Serve *</label>
+              <input type="text" id="zip_codes_served" name="zip_codes_served" placeholder="78701, 78704, 78705" required>
+            </div>
+            <div class="form-group">
+              <label for="item_description">What Items Do You Ship Most?</label>
+              <input type="text" id="item_description" name="item_description" placeholder="e.g. sofas, dining sets, commercial refrigerators">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submit-btn">Submit Application →</button>
+        <p style="text-align:center;margin-top:1rem;font-size:0.8rem;color:var(--gray-mid);">We review every application within 48 hours. No commitment required.</p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('apply-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const formError = document.getElementById('form-error');
+    const formSuccess = document.getElementById('form-success');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      formError.style.display = 'none';
+      formSuccess.classList.remove('visible');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+
+      const data = {
+        store_name:        document.getElementById('store_name').value.trim(),
+        website_url:       document.getElementById('website_url').value.trim(),
+        contact_name:      document.getElementById('contact_name').value.trim(),
+        contact_email:     document.getElementById('contact_email').value.trim(),
+        contact_phone:     document.getElementById('contact_phone').value.trim(),
+        monthly_volume:    document.getElementById('monthly_volume').value,
+        zip_codes_served:  document.getElementById('zip_codes_served').value.trim(),
+        item_description:  document.getElementById('item_description').value.trim(),
+      };
+
+      try {
+        const res = await fetch('/api/partners/apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Something went wrong.');
+        formSuccess.textContent = json.message;
+        formSuccess.classList.add('visible');
+        form.reset();
+        formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err) {
+        formError.textContent = err.message;
+        formError.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Application →';
+      }
+    });
+  </script>
+</body>
+</html>

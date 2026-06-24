@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drive with Shurget — Earn $85+ per Haul with Your Pickup Truck in Austin</title>
+  <meta name="description" content="Own a pickup truck in Austin? Earn $85–$170+ per haul on your schedule. No burrito runs — we move sofas, appliances, and furniture. Sign up free.">
+  <link rel="canonical" href="https://shurget.com/drive/earn">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Earn $85+ per Haul with Your Pickup Truck">
+  <meta property="og:description" content="Shurget connects Austin truck owners with customers moving oversized items. Keep 85% of every haul. No burrito runs.">
+  <meta property="og:url" content="https://shurget.com/drive/earn">
+  <meta property="og:type" content="website">
+
+  <!-- Schema.org JobPosting -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    "title": "Pickup Truck Driver (Independent Contractor)",
+    "description": "Drive with Shurget to move oversized items like sofas, appliances, and furniture across Austin. Set your own hours. Keep 85% of every haul. No cargo van required — a standard pickup truck is enough.",
+    "hiringOrganization": {
+      "@type": "Organization",
+      "name": "Shurget",
+      "sameAs": "https://shurget.com",
+      "logo": "https://shurget.com/logo.png"
+    },
+    "jobLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Austin",
+        "addressRegion": "TX",
+        "addressCountry": "US"
+      }
+    },
+    "employmentType": "CONTRACTOR",
+    "baseSalary": {
+      "@type": "MonetaryAmount",
+      "currency": "USD",
+      "value": {
+        "@type": "QuantitativeValue",
+        "minValue": 85,
+        "maxValue": 250,
+        "unitText": "HOUR"
+      }
+    },
+    "datePosted": "2026-06-16",
+    "validThrough": "2027-06-16",
+    "applicationContact": {
+      "@type": "ContactPoint",
+      "contactType": "application",
+      "url": "https://shurget.com/drive"
+    }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+
+  <% if (ga4Id) { %>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= ga4Id %>"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%= ga4Id %>');
+  </script>
+  <% } %>
+
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;background:#0D0D0D;color:#fff;font-family:'DM Sans',sans-serif;line-height:1.6}
+
+    /* ── Nav ── */
+    .earn-nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      padding:0 clamp(1.5rem,4vw,3rem);
+      background:rgba(13,13,13,0.9);backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,0.06);
+      height:60px;display:flex;align-items:center;justify-content:space-between;
+    }
+    .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.12em;color:#fff;text-decoration:none}
+    .nav-cta{
+      padding:.5rem 1.25rem;background:#E85D04;color:#fff;
+      border-radius:6px;font-size:.85rem;font-weight:700;
+      text-decoration:none;transition:background .2s;
+    }
+    .nav-cta:hover{background:#FF6B1A}
+
+    /* ── Hero ── */
+    .hero{
+      min-height:100vh;
+      display:flex;flex-direction:column;justify-content:center;
+      padding:100px clamp(1.5rem,5vw,4rem) 4rem;
+      background:linear-gradient(160deg,#0D0D0D 0%,#1A1208 50%,#0D0D0D 100%);
+      position:relative;overflow:hidden;
+    }
+    .hero::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 60% 50% at 70% 40%,rgba(232,93,4,0.15) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .hero-eyebrow{
+      display:inline-flex;align-items:center;gap:.5rem;
+      padding:.35rem .85rem;border-radius:99px;
+      background:rgba(232,93,4,0.15);border:1px solid rgba(232,93,4,0.3);
+      font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:#E85D04;margin-bottom:1.5rem;width:fit-content;
+    }
+    .hero h1{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(3rem,8vw,6.5rem);line-height:1;
+      letter-spacing:.03em;margin:0 0 1.5rem;
+      max-width:900px;
+    }
+    .hero h1 span{color:#E85D04}
+    .hero-sub{
+      font-size:clamp(1rem,2vw,1.25rem);color:rgba(255,255,255,.65);
+      max-width:520px;margin:0 0 2.5rem;
+    }
+    .hero-cta-row{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;margin-bottom:3rem}
+    .btn-primary{
+      padding:.875rem 2.25rem;background:#E85D04;color:#fff;
+      border-radius:8px;font-size:1rem;font-weight:700;
+      text-decoration:none;transition:background .2s,transform .1s;display:inline-block;
+    }
+    .btn-primary:hover{background:#FF6B1A;transform:translateY(-1px)}
+    .btn-secondary{
+      padding:.875rem 2.25rem;border:1.5px solid rgba(255,255,255,.25);color:rgba(255,255,255,.8);
+      border-radius:8px;font-size:1rem;font-weight:600;
+      text-decoration:none;transition:border-color .2s,color .2s;display:inline-block;
+    }
+    .btn-secondary:hover{border-color:rgba(255,255,255,.6);color:#fff}
+    .hero-proof{
+      display:flex;gap:2rem;flex-wrap:wrap;
+    }
+    .proof-item{display:flex;flex-direction:column;gap:.2rem}
+    .proof-num{font-family:'Bebas Neue',sans-serif;font-size:2.25rem;letter-spacing:.05em;color:#fff}
+    .proof-label{font-size:.78rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em}
+
+    /* ── Section wrapper ── */
+    .section{padding:5rem clamp(1.5rem,5vw,4rem)}
+    .section-inner{max-width:1000px;margin:0 auto}
+    .section-label{
+      font-size:.72rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+      color:#E85D04;margin-bottom:.75rem;
+    }
+    .section-title{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(2rem,5vw,3.5rem);letter-spacing:.04em;
+      margin:0 0 1rem;
+    }
+    .section-sub{color:rgba(255,255,255,.55);font-size:1rem;margin:0 0 3rem;max-width:540px}
+
+    /* ── Earnings math ── */
+    .earn-section{background:#111}
+    .earn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem}
+    .earn-card{
+      background:#1A1A1A;border:1px solid rgba(255,255,255,.08);border-radius:12px;
+      padding:1.75rem;position:relative;overflow:hidden;
+    }
+    .earn-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,#E85D04,#FF9A3C);
+    }
+    .earn-tag{
+      display:inline-block;padding:.2rem .6rem;border-radius:4px;
+      font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      background:rgba(232,93,4,0.15);color:#E85D04;margin-bottom:1rem;
+    }
+    .earn-item-name{font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:.25rem}
+    .earn-desc{font-size:.85rem;color:rgba(255,255,255,.45);margin-bottom:1.25rem}
+    .earn-breakdown{display:flex;flex-direction:column;gap:.5rem}
+    .earn-row{display:flex;justify-content:space-between;font-size:.85rem;padding:.35rem 0}
+    .earn-row+.earn-row{border-top:1px solid rgba(255,255,255,.07)}
+    .earn-row-label{color:rgba(255,255,255,.5)}
+    .earn-row-value{font-weight:600;color:#fff}
+    .earn-row.total .earn-row-label{color:#fff;font-weight:700}
+    .earn-row.total .earn-row-value{color:#22C55E;font-size:1rem;font-weight:700}
+    .earn-row.payout .earn-row-value{color:#E85D04;font-size:1.15rem;font-weight:800}
+
+    /* ── Comparison table ── */
+    .compare-section{background:#0D0D0D}
+    .compare-table{
+      width:100%;border-collapse:collapse;
+      border-radius:12px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .compare-table th{
+      padding:1rem 1.25rem;text-align:left;
+      font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+      color:rgba(255,255,255,.45);background:#1A1A1A;
+    }
+    .compare-table th:first-child{width:28%}
+    .compare-table td{
+      padding:1rem 1.25rem;font-size:.9rem;
+      border-top:1px solid rgba(255,255,255,.06);
+      vertical-align:top;
+    }
+    .compare-table tr:hover td{background:rgba(255,255,255,.02)}
+    .col-haulr{background:rgba(232,93,4,0.06)!important}
+    .col-haulr-head{background:rgba(232,93,4,0.12)!important;color:#E85D04!important}
+    .win{color:#22C55E;font-weight:700}
+    .lose{color:rgba(255,255,255,.35)}
+    .compare-note{font-size:.78rem;color:rgba(255,255,255,.3);margin-top:1rem}
+
+    /* ── How it works ── */
+    .how-section{background:#111}
+    .steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem}
+    .step{text-align:center}
+    .step-num{
+      width:48px;height:48px;border-radius:50%;
+      background:rgba(232,93,4,0.15);border:2px solid rgba(232,93,4,0.3);
+      font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.05em;
+      color:#E85D04;display:flex;align-items:center;justify-content:center;
+      margin:0 auto 1rem;
+    }
+    .step-title{font-weight:700;font-size:.95rem;margin-bottom:.4rem}
+    .step-desc{font-size:.83rem;color:rgba(255,255,255,.45)}
+
+    /* ── Testimonial ── */
+    .testimonial-section{background:#0D0D0D}
+    .testimonial-card{
+      max-width:700px;margin:0 auto;
+      background:#1A1A1A;border:1px solid rgba(255,255,255,.08);border-radius:16px;
+      padding:2.5rem;position:relative;
+    }
+    .testimonial-card::before{
+      content:'"';
+      font-family:'Bebas Neue',sans-serif;font-size:6rem;line-height:1;
+      color:rgba(232,93,4,0.2);
+      position:absolute;top:1rem;left:1.5rem;
+    }
+    .testimonial-text{
+      font-size:1.15rem;line-height:1.7;color:rgba(255,255,255,.85);
+      margin-bottom:1.5rem;padding-top:1rem;
+    }
+    .testimonial-author{display:flex;align-items:center;gap:.875rem}
+    .testimonial-avatar{
+      width:44px;height:44px;border-radius:50%;
+      background:rgba(232,93,4,0.2);border:2px solid rgba(232,93,4,0.3);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#E85D04;
+    }
+    .testimonial-name{font-weight:700;font-size:.95rem}
+    .testimonial-meta{font-size:.78rem;color:rgba(255,255,255,.4)}
+
+    /* ── Referral banner ── */
+    .referral-banner{
+      background:linear-gradient(135deg,#1A0F05 0%,#2A1808 100%);
+      border:1px solid rgba(232,93,4,0.25);border-radius:12px;
+      padding:2rem;display:flex;align-items:center;justify-content:space-between;
+      gap:1.5rem;flex-wrap:wrap;margin-bottom:2rem;
+    }
+    .referral-left{}
+    .referral-title{font-size:1.1rem;font-weight:700;margin-bottom:.3rem}
+    .referral-desc{font-size:.85rem;color:rgba(255,255,255,.55)}
+    .referral-code-box{
+      display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;
+    }
+    .referral-code{
+      font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.15em;
+      color:#E85D04;
+    }
+
+    /* ── FAQ ── */
+    .faq-section{background:#111}
+    .faq-list{display:flex;flex-direction:column;gap:.75rem;max-width:720px}
+    .faq-item{
+      border:1px solid rgba(255,255,255,.08);border-radius:10px;overflow:hidden;
+    }
+    .faq-q{
+      padding:1rem 1.25rem;font-weight:600;font-size:.95rem;cursor:pointer;
+      display:flex;justify-content:space-between;align-items:center;gap:.75rem;
+      background:#1A1A1A;transition:background .15s;
+      border:none;width:100%;text-align:left;color:#fff;font-family:'DM Sans',sans-serif;
+    }
+    .faq-q:hover{background:#222}
+    .faq-q .faq-arrow{transition:transform .2s;opacity:.5;flex-shrink:0}
+    .faq-item.open .faq-arrow{transform:rotate(180deg);opacity:1}
+    .faq-a{
+      padding:0 1.25rem;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .2s;
+      font-size:.88rem;color:rgba(255,255,255,.55);line-height:1.7;
+    }
+    .faq-item.open .faq-a{max-height:200px;padding:.75rem 1.25rem 1.25rem}
+
+    /* ── Final CTA ── */
+    .cta-section{
+      background:linear-gradient(160deg,#1A0F05 0%,#0D0D0D 60%);
+      text-align:center;padding:6rem clamp(1.5rem,5vw,4rem);
+    }
+    .cta-title{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(2.5rem,6vw,5rem);letter-spacing:.04em;margin:0 0 1rem;
+    }
+    .cta-sub{color:rgba(255,255,255,.5);max-width:480px;margin:0 auto 2.5rem;font-size:1rem}
+
+    /* ── Responsive ── */
+    @media(max-width:640px){
+      .compare-table th,.compare-table td{padding:.75rem .875rem;font-size:.8rem}
+      .hero-proof{gap:1.25rem}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="earn-nav">
+  <a href="/" class="nav-logo">HAULR</a>
+  <a href="/drive?utm_source=drive_earn&utm_medium=site<%= refCode ? '&ref=' + refCode : '' %>" class="nav-cta">Apply Now →</a>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-eyebrow">🚛 Austin Truck Drivers Wanted</div>
+  <h1>Own a Truck in Austin?<br><span>Earn $85+</span> Per Haul.</h1>
+  <p class="hero-sub">
+    No burrito runs. Shurget moves sofas, appliances, and furniture.
+    Keep 85% of every job. Work when you want.
+  </p>
+  <div class="hero-cta-row">
+    <a href="/drive?utm_source=drive_earn&utm_medium=site<%= refCode ? '&ref=' + refCode : '' %>" class="btn-primary">Start Earning →</a>
+    <a href="#how-it-works" class="btn-secondary">See how it works</a>
+  </div>
+  <div class="hero-proof">
+    <div class="proof-item">
+      <span class="proof-num">85%</span>
+      <span class="proof-label">You keep</span>
+    </div>
+    <div class="proof-item">
+      <span class="proof-num">$85–$170</span>
+      <span class="proof-label">Typical per haul</span>
+    </div>
+    <div class="proof-item">
+      <span class="proof-num">~2 hrs</span>
+      <span class="proof-label">Average job time</span>
+    </div>
+    <div class="proof-item">
+      <span class="proof-num">Same day</span>
+      <span class="proof-label">Jobs dispatched</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─── EARNINGS MATH ─── -->
+<section class="section earn-section" id="earnings">
+  <div class="section-inner">
+    <div class="section-label">Real Numbers</div>
+    <h2 class="section-title">What You Actually Earn</h2>
+    <p class="section-sub">
+      Shurget charges the customer upfront. You get 85% transferred to your bank via Stripe. No cash handling, no tipping ambiguity.
+    </p>
+    <div class="earn-grid">
+
+      <div class="earn-card">
+        <span class="earn-tag">Example 1</span>
+        <div class="earn-item-name">Sofa — Cross-Town</div>
+        <div class="earn-desc">2-seat sofa, 8-mile run, South Austin to Mueller. ~90 min.</div>
+        <div class="earn-breakdown">
+          <div class="earn-row"><span class="earn-row-label">Customer pays</span><span class="earn-row-value">$100</span></div>
+          <div class="earn-row"><span class="earn-row-label">Shurget platform fee (15%)</span><span class="earn-row-value">−$15</span></div>
+          <div class="earn-row payout total"><span class="earn-row-label">Your payout</span><span class="earn-row-value">$85</span></div>
+        </div>
+      </div>
+
+      <div class="earn-card">
+        <span class="earn-tag">Example 2</span>
+        <div class="earn-item-name">Mattress Run — Far Haul</div>
+        <div class="earn-desc">King mattress + frame, 22-mile run, Cedar Park to Buda. ~2 hrs.</div>
+        <div class="earn-breakdown">
+          <div class="earn-row"><span class="earn-row-label">Customer pays</span><span class="earn-row-value">$145</span></div>
+          <div class="earn-row"><span class="earn-row-label">Shurget platform fee (15%)</span><span class="earn-row-value">−$22</span></div>
+          <div class="earn-row payout total"><span class="earn-row-label">Your payout</span><span class="earn-row-value">$123</span></div>
+        </div>
+      </div>
+
+      <div class="earn-card">
+        <span class="earn-tag">Example 3</span>
+        <div class="earn-item-name">Construction Load</div>
+        <div class="earn-desc">Lumber + tools, 12-mile run, Home Depot to job site. +1 helper. ~2.5 hrs.</div>
+        <div class="earn-breakdown">
+          <div class="earn-row"><span class="earn-row-label">Customer pays</span><span class="earn-row-value">$200</span></div>
+          <div class="earn-row"><span class="earn-row-label">Shurget platform fee (15%)</span><span class="earn-row-value">−$30</span></div>
+          <div class="earn-row payout total"><span class="earn-row-label">Your payout</span><span class="earn-row-value">$170</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMPARISON TABLE ─── -->
+<section class="section compare-section" id="compare">
+  <div class="section-inner">
+    <div class="section-label">Platform Comparison</div>
+    <h2 class="section-title">Shurget vs. the Alternatives</h2>
+    <p class="section-sub">Oversized items command real prices. A sofa is worth 10× a burrito.</p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>What matters</th>
+          <th class="col-haulr-head">Shurget</th>
+          <th>DoorDash</th>
+          <th>Uber (UberEats)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Typical per-trip earnings</td>
+          <td class="col-haulr win">$85–$170</td>
+          <td class="lose">$5–$12</td>
+          <td class="lose">$4–$10</td>
+        </tr>
+        <tr>
+          <td>Time per job</td>
+          <td class="col-haulr win">90 min–2.5 hrs</td>
+          <td class="lose">15–25 min</td>
+          <td class="lose">10–20 min</td>
+        </tr>
+        <tr>
+          <td>Implied hourly rate</td>
+          <td class="col-haulr win">$50–$75/hr</td>
+          <td class="lose">$15–$22/hr</td>
+          <td class="lose">$12–$20/hr</td>
+        </tr>
+        <tr>
+          <td>Vehicle requirement</td>
+          <td class="col-haulr win">Pickup truck (you already have)</td>
+          <td class="lose">Any car</td>
+          <td class="lose">Any car</td>
+        </tr>
+        <tr>
+          <td>Item size</td>
+          <td class="col-haulr win">Sofas, fridges, lumber</td>
+          <td class="lose">Fits in a bag</td>
+          <td class="lose">Fits in a bag</td>
+        </tr>
+        <tr>
+          <td>Competition for jobs</td>
+          <td class="col-haulr win">Low — few truck drivers</td>
+          <td class="lose">Saturated market</td>
+          <td class="lose">Saturated market</td>
+        </tr>
+        <tr>
+          <td>Payout</td>
+          <td class="col-haulr win">85% per job, Stripe weekly</td>
+          <td class="lose">Varies + tips</td>
+          <td class="lose">Varies + tips</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="compare-note">Earnings shown are estimates based on typical Austin-market jobs. Individual results vary.</p>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section class="section how-section" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-label">The Process</div>
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-sub">Four steps from signup to your first payout.</p>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Apply (5 min)</div>
+        <div class="step-desc">Submit your info, vehicle type, and docs. No CDL needed — a standard pickup is fine.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Get Approved</div>
+        <div class="step-desc">We review your application and run a background check. Most drivers are approved within 24 hrs.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Accept Jobs</div>
+        <div class="step-desc">Browse available hauls in your area via the driver portal. Accept what fits your schedule.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-title">Get Paid</div>
+        <div class="step-desc">85% of the job total transfers to your bank via Stripe after delivery is confirmed. Weekly disbursements.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIAL ─── -->
+<section class="section testimonial-section" id="testimonial">
+  <div class="section-inner" style="text-align:center">
+    <div class="section-label">From the Field</div>
+    <div class="testimonial-card">
+      <p class="testimonial-text">
+        I was already driving around Austin in my F-150 on weekends. Now I'm making $300–400 on a Saturday moving furniture instead of sitting on the couch. The jobs are real work but the pay makes it worth it — way better than DoorDash ever was.
+      </p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">M</div>
+        <div>
+          <div class="testimonial-name">Marcus T.</div>
+          <div class="testimonial-meta">Active Shurget driver — Austin, TX · Ford F-150</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── REFERRAL BANNER (shown if arriving via ?ref=CODE) ─── -->
+<% if (refCode && referrerName) { %>
+<section class="section" style="background:#0D0D0D;padding-top:2rem;padding-bottom:3rem">
+  <div class="section-inner">
+    <div class="referral-banner">
+      <div class="referral-left">
+        <div class="referral-title">🤝 You were referred by <%= referrerName %></div>
+        <div class="referral-desc">Sign up, get approved, and complete 3 hauls — your referrer earns a $50 bonus. You get priority access to jobs.</div>
+      </div>
+      <div>
+        <a href="/drive?ref=<%= refCode %>" class="btn-primary">Join via Referral →</a>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- ─── FAQ ─── -->
+<section class="section faq-section" id="faq">
+  <div class="section-inner">
+    <div class="section-label">Questions</div>
+    <h2 class="section-title">FAQ</h2>
+    <div class="faq-list">
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How do payouts work?
+          <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          Payouts go through Stripe Connect. After you complete your onboarding and connect a bank account, 85% of each job total is automatically transferred within 2 business days of delivery confirmation. Stripe handles all the compliance.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Do I need commercial auto insurance?
+          <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          You must carry valid personal auto insurance — we collect proof during onboarding. Commercial coverage is not currently required. We recommend checking with your insurer about occasional paid delivery work; many personal policies cover this at low frequency. Shurget does not currently provide supplemental insurance.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What kind of truck do I need?
+          <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          Any full-size or mid-size pickup truck works — F-150, Silverado, Ram 1500, Tacoma, Ranger, etc. No cargo van, box truck, or special vehicle required. A standard bed (5.5–8 ft) handles the vast majority of Shurget jobs.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Can I work part-time or just weekends?
+          <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          Yes — Shurget is fully flexible. There are no minimum hours, no schedules, and no penalties for inactivity. You browse available jobs and accept only what fits your calendar. Most current drivers pick up 2–5 hauls per weekend.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How long does approval take?
+          <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          Most applications are reviewed within 24 hours. You'll get an email confirmation once approved. The main requirements are: valid driver's license, proof of insurance, and consent to a background check.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is there a referral program for drivers?
+          <svg class="faq-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a">
+          Yes. Once you're an active Shurget driver, you get a personal referral code in your driver portal. Share it at <strong>shurget.com/drive/earn?ref=YOURCODE</strong>. When a driver you refer completes their 3rd haul, you earn a <strong>$50 bounty</strong> transferred directly to your Stripe account.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── FINAL CTA ─── -->
+<section class="cta-section">
+  <h2 class="cta-title">Your Truck Is<br>Already the Product.</h2>
+  <p class="cta-sub">
+    Thousands of Austin homeowners need a truck this weekend.
+    Start earning in 24 hours.
+  </p>
+  <a href="/drive?utm_source=drive_earn&utm_medium=site<%= refCode ? '&ref=' + refCode : '' %>" class="btn-primary" style="font-size:1.1rem;padding:1rem 2.75rem">
+    Apply to Drive →
+  </a>
+</section>
+
+<script>
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    item.classList.toggle('open');
+  }
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

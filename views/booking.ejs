@@ -1,142 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><%= title %></title>
-    <meta name="description" content="<%= description %>" />
-    <style>
-      :root {
-        --bg: #f6f8fb;
-        --card: #ffffff;
-        --text: #1f2937;
-        --muted: #6b7280;
-        --accent: #0f766e;
-        --accent-hover: #115e59;
-        --border: #e5e7eb;
-      }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book a Haul — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/booking.css">
+  <%- include('partials/ga4') %>
+</head>
+<body>
 
-      * {
-        box-sizing: border-box;
-      }
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">HAULR</a>
+      <div class="nav-right">
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/dashboard" class="nav-badge">Track Order</a>
+      </div>
+    </div>
+  </nav>
 
-      body {
-        margin: 0;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
-        color: var(--text);
-      }
+  <!-- Page -->
+  <div class="booking-page">
 
-      .container {
-        max-width: 760px;
-        margin: 40px auto;
-        padding: 0 16px;
-      }
+    <!-- Page header -->
+    <div class="booking-header">
+      <h1>Book a Haul</h1>
+      <p>Get an instant price. Driver matched in minutes.</p>
+    </div>
 
-      .card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 24px;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
-      }
+    <div id="error-msg" class="error-msg"></div>
 
-      h1 {
-        margin: 0 0 8px;
-        font-size: 1.8rem;
-      }
+    <!-- ── Section 1: What are you moving ── -->
+    <div class="accordion" id="section-item">
+      <button class="accordion-header" id="btn-toggle-item" type="button" aria-expanded="true">
+        <div class="accordion-header-inner">
+          <div class="accordion-num" id="num-item">1</div>
+          <div class="accordion-title-group">
+            <div class="accordion-title">What are you moving?</div>
+            <div class="accordion-summary" id="summary-item">Select an item type</div>
+          </div>
+        </div>
+        <div class="accordion-chevron" id="chev-item">▾</div>
+      </button>
 
-      p {
-        margin: 0 0 18px;
-        color: var(--muted);
-      }
+      <div class="accordion-body" id="body-item">
 
-      form {
-        display: grid;
-        gap: 14px;
-      }
-
-      label {
-        font-weight: 600;
-        font-size: 0.95rem;
-      }
-
-      input,
-      textarea,
-      button {
-        width: 100%;
-        padding: 10px 12px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        font: inherit;
-      }
-
-      textarea {
-        min-height: 90px;
-        resize: vertical;
-      }
-
-      button {
-        border: none;
-        background: var(--accent);
-        color: #fff;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-      button:hover {
-        background: var(--accent-hover);
-      }
-
-      .back {
-        margin-top: 14px;
-        display: inline-block;
-        color: var(--accent);
-        text-decoration: none;
-      }
-
-      .back:hover {
-        text-decoration: underline;
-      }
-    </style>
-  </head>
-  <body>
-    <main class="container">
-      <section class="card">
-        <h1>Book a Haul</h1>
-        <p><%= description %></p>
-
-        <form method="POST" action="/book">
-          <div>
-            <label for="name">Full name</label>
-            <input id="name" name="name" type="text" required />
+        <div class="item-grid" id="item-grid">
+          <div class="item-group-label">Furniture</div>
+          <div class="item-card" data-value="sofa">
+            <div class="item-icon">🛋️</div><div class="item-label">Sofa / Couch</div>
+          </div>
+          <div class="item-card" data-value="armchair">
+            <div class="item-icon">🪑</div><div class="item-label">Armchair</div>
+          </div>
+          <div class="item-card" data-value="mirror">
+            <div class="item-icon">🪞</div><div class="item-label">Mirror</div>
+          </div>
+          <div class="item-card" data-value="dresser">
+            <div class="item-icon">🗄️</div><div class="item-label">Dresser</div>
+          </div>
+          <div class="item-card" data-value="bed-frame">
+            <div class="item-icon">🛏️</div><div class="item-label">Bed Frame</div>
+          </div>
+          <div class="item-card" data-value="dining-table">
+            <div class="item-icon">🍽️</div><div class="item-label">Dining Table</div>
+          </div>
+          <div class="item-card" data-value="desk">
+            <div class="item-icon">💻</div><div class="item-label">Desk</div>
+          </div>
+          <div class="item-card" data-value="bookshelf">
+            <div class="item-icon">📚</div><div class="item-label">Bookshelf</div>
+          </div>
+          <div class="item-card" data-value="nightstand">
+            <div class="item-icon">🛋️</div><div class="item-label">Nightstand</div>
+          </div>
+          <div class="item-card" data-value="mattress">
+            <div class="item-icon">🛏️</div><div class="item-label">Mattress</div>
           </div>
 
-          <div>
-            <label for="phone">Phone</label>
-            <input id="phone" name="phone" type="tel" required />
+          <div class="item-group-label">Appliances</div>
+          <div class="item-card" data-value="refrigerator">
+            <div class="item-icon">🧊</div><div class="item-label">Refrigerator</div>
+          </div>
+          <div class="item-card" data-value="washer-dryer">
+            <div class="item-icon">👕</div><div class="item-label">Washer / Dryer</div>
+          </div>
+          <div class="item-card" data-value="oven-range">
+            <div class="item-icon">🍳</div><div class="item-label">Oven / Range</div>
+          </div>
+          <div class="item-card" data-value="dishwasher">
+            <div class="item-icon">🍽️</div><div class="item-label">Dishwasher</div>
           </div>
 
-          <div>
-            <label for="pickup">Pickup address</label>
-            <input id="pickup" name="pickup" type="text" required />
+          <div class="item-group-label">Other</div>
+          <div class="item-card" data-value="tv">
+            <div class="item-icon">📺</div><div class="item-label">TV</div>
           </div>
-
-          <div>
-            <label for="dropoff">Dropoff address</label>
-            <input id="dropoff" name="dropoff" type="text" required />
+          <div class="item-card" data-value="exercise-equipment">
+            <div class="item-icon">🏋️</div><div class="item-label">Exercise Equip.</div>
           </div>
-
-          <div>
-            <label for="details">Details</label>
-            <textarea id="details" name="details" placeholder="What needs to be moved?"></textarea>
+          <div class="item-card" data-value="grill">
+            <div class="item-icon">🔥</div><div class="item-label">Grill</div>
           </div>
+          <div class="item-card" data-value="patio-furniture">
+            <div class="item-icon">🪑</div><div class="item-label">Patio Furniture</div>
+          </div>
+          <div class="item-card" data-value="other" id="item-other">
+            <div class="item-icon">📋</div><div class="item-label">Other</div>
+          </div>
+        </div>
 
-          <button type="submit">Submit Booking</button>
-        </form>
+        <div class="other-input-block" id="other-input-block">
+          <label>Describe your item</label>
+          <input type="text" id="other-item-input" placeholder="e.g. Kayak, Treadmill, Large crate…" maxlength="60" />
+        </div>
 
-        <a class="back" href="/">Back to home</a>
-      </section>
-    </main>
-  </body>
+        <div class="addr-block">
+          <label>Pickup Address</label>
+          <input type="text" id="pickup-address" placeholder="123 Main St, City, State ZIP" />
+        </div>
+        <div class="addr-block">
+          <label>Drop-off Address</label>
+          <input type="text" id="dropoff-address" placeholder="456 Oak Ave, City, State ZIP" />
+        </div>
+
+        <div class="addr-block">
+          <label>Need a helper?</label>
+          <div class="helper-toggle" id="helper-toggle">
+            <button type="button" class="helper-btn selected" data-helpers="0">Driver only</button>
+            <button type="button" class="helper-btn" data-helpers="1">+ 1 Helper <span class="helper-price">+$25</span></button>
+            <button type="button" class="helper-btn" data-helpers="2">+ 2 Helpers <span class="helper-price">+$45</span></button>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btn-price" disabled>Get Instant Price →</button>
+      </div>
+    </div>
+
+    <!-- ── Section 2: Your price ── -->
+    <div class="accordion locked" id="section-price">
+      <button class="accordion-header" id="btn-toggle-price" type="button" aria-expanded="false" disabled>
+        <div class="accordion-header-inner">
+          <div class="accordion-num" id="num-price">2</div>
+          <div class="accordion-title-group">
+            <div class="accordion-title">Your Price</div>
+            <div class="accordion-summary" id="summary-price">—</div>
+          </div>
+        </div>
+        <div class="accordion-chevron" id="chev-price">▾</div>
+      </button>
+
+      <div class="accordion-body" id="body-price">
+        <div class="price-panel" id="price-panel">
+          <div class="price-total-row">
+            <span class="price-label">Total</span>
+            <span class="price-amount" id="price-display">—</span>
+          </div>
+          <div class="price-distance-badge" id="distance-badge"></div>
+          <div class="price-breakdown">
+            <div class="breakdown-row">
+              <span>Base haul rate</span>
+              <span id="price-base-rate">—</span>
+            </div>
+            <div class="breakdown-row">
+              <span id="distance-label">Distance</span>
+              <span id="price-distance">—</span>
+            </div>
+            <div class="breakdown-row" id="helpers-row" style="display:none">
+              <span id="helpers-label">Helpers</span>
+              <span id="price-helpers">—</span>
+            </div>
+            <div class="breakdown-row" style="border-top: 1px solid rgba(255,255,255,0.15); margin-top: 0.4rem; padding-top: 0.4rem;">
+              <span>Service fee (15%)</span>
+              <span id="price-fee">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="driver-panel" id="driver-panel">
+          <div class="driver-avatar" id="driver-initial">?</div>
+          <div class="driver-info">
+            <div class="driver-label">Driver Matched</div>
+            <div class="driver-name" id="driver-name">—</div>
+            <div class="driver-eta" id="driver-eta">—</div>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btn-to-customer">Enter Your Details →</button>
+        <button class="btn-secondary" id="btn-back-price">← Change item or addresses</button>
+      </div>
+    </div>
+
+    <!-- ── Section 3: Your details ── -->
+    <div class="accordion locked" id="section-customer">
+      <button class="accordion-header" id="btn-toggle-customer" type="button" aria-expanded="false" disabled>
+        <div class="accordion-header-inner">
+          <div class="accordion-num" id="num-customer">3</div>
+          <div class="accordion-title-group">
+            <div class="accordion-title">Your Details</div>
+            <div class="accordion-summary" id="summary-customer">—</div>
+          </div>
+        </div>
+        <div class="accordion-chevron" id="chev-customer">▾</div>
+      </button>
+
+      <div class="accordion-body" id="body-customer">
+        <div class="customer-fields">
+          <div class="field-row">
+            <div>
+              <label>Full Name</label>
+              <input type="text" id="cust-name" placeholder="Jordan Smith" />
+            </div>
+            <div>
+              <label>Phone</label>
+              <input type="tel" id="cust-phone" placeholder="(555) 123-4567" />
+            </div>
+          </div>
+          <div class="field-row">
+            <div>
+              <label>Email (optional)</label>
+              <input type="email" id="cust-email" placeholder="you@email.com" />
+            </div>
+          </div>
+          <div class="field-row sms-optin-row" style="align-items:center;">
+            <input type="checkbox" id="cust-sms-consent" style="width:18px;height:18px;margin-right:8px;cursor:pointer;" />
+            <label for="cust-sms-consent" style="font-size:0.85rem;cursor:pointer;">Get SMS updates on my delivery (order confirmed, driver en route, etc.)</label>
+          </div>
+          <div class="field-row">
+            <div style="width:100%">
+              <label>Referral code <span style="font-weight:400;text-transform:none;color:var(--gray-mid);font-size:0.8rem;">(optional — saves $20)</span></label>
+              <div style="display:flex;gap:0.5rem;align-items:center;">
+                <input type="text" id="referral-code-input" placeholder="e.g. ABC12345" maxlength="8" style="text-transform:uppercase;letter-spacing:2px;font-weight:600;max-width:180px;" />
+                <button type="button" id="btn-apply-referral" style="padding:0.65rem 1rem;background:var(--charcoal);color:var(--white);border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;white-space:nowrap;">Apply</button>
+              </div>
+              <div id="referral-msg" style="margin-top:0.4rem;font-size:0.82rem;display:none;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="price-panel" id="price-panel-2">
+          <div class="price-total-row">
+            <span class="price-label">Total to Pay</span>
+            <span class="price-amount" id="price-display-2">—</span>
+          </div>
+          <div class="price-breakdown">
+            <div class="breakdown-row" id="helpers-row-2" style="display:none">
+              <span id="helpers-label-2">Helpers included</span>
+              <span id="price-helpers-2">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="driver-panel" id="driver-panel-2">
+          <div class="driver-avatar" id="driver-initial-2">?</div>
+          <div class="driver-info">
+            <div class="driver-label">Your Driver</div>
+            <div class="driver-name" id="driver-name-2">—</div>
+            <div class="driver-eta" id="driver-eta-2">—</div>
+          </div>
+        </div>
+
+        <div class="field-row sms-optin-row" style="align-items:center;margin-bottom:0.75rem;">
+          <input type="checkbox" id="cust-terms-consent" style="width:18px;height:18px;margin-right:8px;cursor:pointer;flex-shrink:0;" />
+          <label for="cust-terms-consent" style="font-size:0.85rem;cursor:pointer;line-height:1.5;">I agree to the <a href="/terms" target="_blank" rel="noopener" style="color:var(--orange);text-decoration:none;">Terms of Service</a> and <a href="/privacy" target="_blank" rel="noopener" style="color:var(--orange);text-decoration:none;">Privacy Policy</a></label>
+        </div>
+
+        <button class="btn-primary" id="btn-submit" disabled>Confirm &amp; Book</button>
+        <button class="btn-secondary" id="btn-back-customer">← Back</button>
+      </div>
+    </div>
+
+  </div><!-- /.booking-page -->
+
+  <!-- Sticky price bar -->
+  <div class="sticky-bar" id="sticky-bar">
+    <div class="sticky-bar-info">
+      <span class="sticky-label" id="sticky-label">Enter addresses above</span>
+      <span class="sticky-price" id="sticky-price">—</span>
+    </div>
+    <button class="btn-primary sticky-cta" id="btn-sticky-cta" disabled>Get Price</button>
+  </div>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay" id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loading-text">Finding your price…</div>
+  </div>
+
+  <script src="/js/booking.js"></script>
+</body>
 </html>

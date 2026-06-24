@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Integration Kit — Shurget for Partners</title>
+  <meta name="description" content="Add Shurget to your checkout in minutes. One script tag. Real-time pricing. Same-day delivery.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <%- include('partials/ga4') %>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #1a1a2e;
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    /* ─── Nav ─── */
+    .kit-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .kit-nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.05em;
+      color: #fff;
+      text-decoration: none;
+    }
+    .kit-nav-logo span { color: #ff6b35; }
+    .kit-nav-back {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .kit-nav-back:hover { color: rgba(255,255,255,0.8); }
+
+    /* ─── Hero ─── */
+    .kit-hero {
+      text-align: center;
+      padding: 5rem 2rem 4rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .kit-hero-badge {
+      display: inline-block;
+      background: rgba(255,107,53,0.15);
+      border: 1px solid rgba(255,107,53,0.35);
+      color: #ff6b35;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 0.3rem 0.9rem;
+      border-radius: 99px;
+      margin-bottom: 1.5rem;
+    }
+    .kit-hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      margin-bottom: 1.25rem;
+    }
+    .kit-hero h1 span { color: #ff6b35; }
+    .kit-hero-sub {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.6);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.75;
+    }
+
+    /* ─── Section ─── */
+    .kit-section {
+      padding: 4rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .kit-section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #ff6b35;
+      margin-bottom: 0.75rem;
+    }
+    .kit-section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+    .kit-section-sub {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.95rem;
+      max-width: 540px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    /* ─── Embed Snippet ─── */
+    .kit-code-block {
+      background: #12122a;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 0.75rem;
+      overflow-x: auto;
+    }
+    .kit-code-block code {
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      color: #e2e8f0;
+      white-space: pre;
+    }
+    .kit-code-note {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.35);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ─── Live Preview ─── */
+    .kit-preview-wrap {
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .kit-preview-bar {
+      background: #f0f0f5;
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    .kit-preview-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .kit-preview-dot--red { background: #ff5f57; }
+    .kit-preview-dot--yellow { background: #febc2e; }
+    .kit-preview-dot--green { background: #28c840; }
+    .kit-preview-url {
+      margin-left: 0.75rem;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 5px;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.75rem;
+      color: #888;
+      font-family: 'Courier New', monospace;
+    }
+    .kit-preview-frame {
+      width: 100%;
+      height: 520px;
+      border: none;
+      display: block;
+    }
+
+    /* ─── 3-Step Walkthrough ─── */
+    .kit-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .kit-step-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      position: relative;
+    }
+    .kit-step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      color: rgba(255,107,53,0.2);
+      position: absolute;
+      top: 0.75rem;
+      right: 1.25rem;
+      line-height: 1;
+    }
+    .kit-step-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(255,107,53,0.12);
+      border: 1px solid rgba(255,107,53,0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .kit-step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .kit-step-desc { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.65; }
+
+    /* ─── SLA Table ─── */
+    .kit-sla-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    .kit-sla-table th {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.06em;
+      text-align: left;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 2px solid rgba(255,107,53,0.3);
+      color: #ff6b35;
+    }
+    .kit-sla-table td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      vertical-align: top;
+    }
+    .kit-sla-table tr:last-child td { border-bottom: none; }
+    .kit-sla-table .kit-sla-stage { color: rgba(255,255,255,0.75); }
+    .kit-sla-table .kit-sla-time { color: #fff; font-weight: 500; }
+
+    /* ─── Revenue Terms ─── */
+    .kit-revenue-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .kit-revenue-card {
+      background: rgba(255,107,53,0.07);
+      border: 1px solid rgba(255,107,53,0.18);
+      border-radius: 10px;
+      padding: 1.75rem 1.5rem;
+    }
+    .kit-revenue-icon {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+    .kit-revenue-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .kit-revenue-desc { font-size: 0.85rem; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+    /* ─── CTA ─── */
+    .kit-cta {
+      text-align: center;
+      padding: 5rem 2rem;
+    }
+    .kit-cta h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+    .kit-cta-sub {
+      color: rgba(255,255,255,0.5);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .kit-cta-btn {
+      display: inline-block;
+      background: #ff6b35;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.9rem 2.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .kit-cta-btn:hover { background: #e55a25; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .kit-steps, .kit-revenue-grid { grid-template-columns: 1fr; }
+      .kit-nav { padding: 1rem 1.25rem; }
+      .kit-hero { padding: 3.5rem 1.5rem 3rem; }
+      .kit-section { padding: 3rem 1.5rem; }
+      .kit-preview-frame { height: 380px; }
+    }
+    @media (max-width: 480px) {
+      .kit-hero h1 { font-size: 2.75rem; }
+      .kit-nav-logo { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Nav ─── -->
+  <nav class="kit-nav">
+    <a href="/" class="kit-nav-logo">Shur<span>get</span></a>
+    <a href="/partners" class="kit-nav-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Partners
+    </a>
+  </nav>
+
+  <!-- ─── Hero ─── -->
+  <section class="kit-hero">
+    <div class="kit-hero-badge">For Developers &amp; Retailers</div>
+    <h1>Add <span>Shurget</span> in 5 Minutes</h1>
+    <p class="kit-hero-sub">Turn your checkout into a delivery moment — no logistics, no upfront cost. One script tag and your customers can book a Haulr driver without leaving your page.</p>
+  </section>
+
+  <!-- ─── Embed Snippet ─── -->
+  <section class="kit-section">
+    <div class="kit-section-label">Step 1 — Paste</div>
+    <h2 class="kit-section-title">The embed code</h2>
+    <p class="kit-section-sub">Drop this before <code style="font-family:monospace;background:rgba(255,255,255,0.08);padding:0.1em 0.4em;border-radius:4px;">&lt;/body&gt;</code> on any page — product, cart, or checkout. Works on Shopify, WooCommerce, or custom storefronts.</p>
+    <div class="kit-code-block"><code>&lt;script src="https://haulr-5.polsia.app/embed.js"&gt;&lt;/script&gt;</code></div>
+    <p class="kit-code-note">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Paste this one line before &lt;/body&gt; on your checkout page.
+    </p>
+  </section>
+
+  <!-- ─── Live Preview ─── -->
+  <section class="kit-section">
+    <div class="kit-section-label">Step 2 — Preview</div>
+    <h2 class="kit-section-title">See it in action</h2>
+    <p class="kit-section-sub">The widget appears inline on your page. No redirect. No new tab. Customers price out delivery and book without ever leaving your checkout flow.</p>
+    <div class="kit-preview-wrap">
+      <div class="kit-preview-bar">
+        <span class="kit-preview-dot kit-preview-dot--red"></span>
+        <span class="kit-preview-dot kit-preview-dot--yellow"></span>
+        <span class="kit-preview-dot kit-preview-dot--green"></span>
+        <span class="kit-preview-url">haulr-5.polsia.app/partners/embed</span>
+      </div>
+      <iframe src="https://haulr-5.polsia.app/partners/embed" class="kit-preview-frame" title="Shurget embed widget preview" loading="lazy"></iframe>
+    </div>
+  </section>
+
+  <!-- ─── 3-Step Walkthrough ─── -->
+  <section class="kit-section">
+    <div class="kit-section-label">How it works</div>
+    <h2 class="kit-section-title">Three steps to a delivery booking</h2>
+    <p class="kit-section-sub">The widget is stateless — it hands off to Shurget the moment a customer commits. No order management, no inventory sync, no webhooks required on your end.</p>
+    <div class="kit-steps">
+      <div class="kit-step-card">
+        <div class="kit-step-num">01</div>
+        <div class="kit-step-icon">🛒</div>
+        <div class="kit-step-title">Customer hits checkout</div>
+        <p class="kit-step-desc">Your customer adds an oversized item to their cart and proceeds to checkout. Your existing flow stays exactly the same.</p>
+      </div>
+      <div class="kit-step-card">
+        <div class="kit-step-num">02</div>
+        <div class="kit-step-icon">📦</div>
+        <div class="kit-step-title">Shurget modal appears</div>
+        <p class="kit-step-desc">Our snippet loads a lightweight modal showing live delivery pricing based on the customer's ZIP code. They enter pickup/dropoff and see an instant quote — no forms, no account.</p>
+      </div>
+      <div class="kit-step-card">
+        <div class="kit-step-num">03</div>
+        <div class="kit-step-icon">✅</div>
+        <div class="kit-step-title">Delivery is booked</div>
+        <p class="kit-step-desc">Customer confirms and pays through Shurget's Stripe checkout. You get a partner-attributed order in your dashboard. Driver is matched and en route within minutes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SLA Table ─── -->
+  <section class="kit-section">
+    <div class class="kit-section-label">Performance</div>
+    <h2 class="kit-section-title">Service level</h2>
+    <p class="kit-section-sub">Real drivers, real SLAs. We measure every handoff so you can trust the delivery promise made at checkout.</p>
+    <table class="kit-sla-table">
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="kit-sla-stage">Quote response</td>
+          <td class="kit-sla-time">Within 60 seconds</td>
+        </tr>
+        <tr>
+          <td class="kit-sla-stage">Driver assigned</td>
+          <td class="kit-sla-time">Within 15 min (M–F, 8am–6pm CT)</td>
+        </tr>
+        <tr>
+          <td class="kit-sla-stage">Delivery window</td>
+          <td class="kit-sla-time">Same-day or next-day</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ─── Revenue Terms ─── -->
+  <section class="kit-section">
+    <div class="kit-section-label">Commercial terms</div>
+    <h2 class="kit-section-title">Revenue model</h2>
+    <p class="kit-section-sub">Shurget earns when you earn. No setup fees, no subscription, no risk.</p>
+    <div class="kit-revenue-grid">
+      <div class="kit-revenue-card">
+        <div class="kit-revenue-icon">🚀</div>
+        <div class="kit-revenue-title">Zero setup cost</div>
+        <div class="kit-revenue-desc">No integration fee. No monthly minimum. Add the snippet today and take your first order with no commitment.</div>
+      </div>
+      <div class="kit-revenue-card">
+        <div class="kit-revenue-icon">💰</div>
+        <div class="kit-revenue-title">Partner keeps 100%</div>
+        <div class="kit-revenue-desc">Your product revenue stays yours. We take no cut of item sales — only delivery service fees are shared with Shurget.</div>
+      </div>
+      <div class="kit-revenue-card">
+        <div class="kit-revenue-icon">📊</div>
+        <div class="kit-revenue-title">Shurget fee on delivery only</div>
+        <div class="kit-revenue-desc">If the delivery completes, Shurget earns its service fee. No fee unless the driver shows up.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ─── -->
+  <section class="kit-cta">
+    <h2>Ready to get started?</h2>
+    <p class="kit-cta-sub">Tell us about your store and we'll help you integrate in days, not weeks.</p>
+    <a href="mailto:haulr-5@polsia.app?subject=B2B%20integration" class="kit-cta-btn">Talk to us →</a>
+  </section>
+
+  <!-- Polsia Analytics --><script>(function(){var slug="shurget-5";if(!slug)return;var vid=localStorage.getItem('polsia_vid');if(!vid){vid='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});localStorage.setItem('polsia_vid',vid);}new Image().src='https://polsia.com/api/beacon/pixel?s='+encodeURIComponent(slug)+'&v='+encodeURIComponent(vid);})();</script>
+</body>
+</html>

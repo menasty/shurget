@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <%- include('partials/ga4') %>
+  <style>
+    body { background: var(--bg); }
+    .contact-wrap { min-height: 100vh; display: flex; flex-direction: column; }
+    .contact-header { padding: 8rem clamp(1.5rem, 5vw, 5rem) 4rem; text-align: center; background: var(--charcoal); }
+    .contact-header .section-label { color: var(--orange-light); }
+    .contact-header .section-title { color: var(--white); margin-bottom: 0.5rem; }
+    .contact-header .section-sub { color: rgba(255,255,255,0.6); font-size: 1rem; }
+    .contact-body { padding: 4rem clamp(1.5rem, 5vw, 5rem); max-width: 640px; margin: 0 auto; width: 100%; }
+    .contact-card { background: var(--white); border: 1.5px solid rgba(0,0,0,0.1); border-radius: 12px; padding: 2.5rem; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 0.8rem; font-weight: 600; color: var(--charcoal); text-transform: uppercase; letter-spacing: 0.06em; }
+    input, textarea { padding: 0.7rem 0.9rem; border: 1.5px solid rgba(0,0,0,0.12); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--charcoal); outline: none; transition: border-color 0.15s; background: #fafafa; }
+    input:focus, textarea:focus { border-color: var(--orange); background: #fff; }
+    textarea { resize: vertical; min-height: 80px; }
+    .btn-primary { background: var(--orange); color: var(--white); border: none; padding: 0.85rem 2rem; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.15s; }
+    .btn-primary:hover { background: #c25a00; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .form-error { color: #dc2626; font-size: 0.85rem; margin-bottom: 1rem; display: none; }
+    .form-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 1rem 1.25rem; border-radius: 8px; font-size: 0.95rem; margin-bottom: 1.5rem; display: none; }
+    .section-divider { border: none; border-top: 1px solid rgba(0,0,0,0.08); margin: 2rem 0; }
+    .contact-links { margin-top: 2rem; }
+    .contact-link-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+    .contact-link-icon { font-size: 1.25rem; }
+    .contact-link-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray-mid); font-weight: 600; min-width: 60px; }
+    .contact-link-val { font-size: 0.95rem; color: var(--charcoal); font-weight: 500; }
+    a.contact-link-val { color: var(--orange); text-decoration: none; }
+    a.contact-link-val:hover { text-decoration: underline; }
+    .back-row { text-align: center; padding: 1rem 0 0.5rem; }
+    .back-link { font-size: 0.85rem; color: var(--gray-mid); text-decoration: none; }
+    .back-link:hover { color: var(--charcoal); }
+    @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <%- include('partials/nav') %>
+  <div class="contact-wrap">
+    <div class="contact-header">
+      <span class="section-label">Get in touch</span>
+      <h2 class="section-title">Contact Shurget</h2>
+      <p class="section-sub">Questions about a delivery? Want to partner? We'd love to hear from you.</p>
+    </div>
+    <div class="contact-body">
+      <div class="contact-card">
+        <form id="contact-form">
+          <div id="form-error" class="form-error"></div>
+          <div id="form-success" class="form-success"></div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="name">Your Name *</label>
+              <input type="text" id="name" name="name" placeholder="Jane Smith" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input type="email" id="email" name="email" placeholder="jane@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" placeholder="(555) 867-5309">
+            </div>
+            <div class="form-group full">
+              <label for="item_description">Item Description</label>
+              <textarea id="item_description" name="item_description" placeholder="Describe the item(s) you need moved — e.g. antique armoire, commercial freezer, hot tub..."></textarea>
+            </div>
+            <div class="form-group">
+              <label for="pickup_address">Pickup Address</label>
+              <input type="text" id="pickup_address" name="pickup_address" placeholder="123 Main St, Austin TX">
+            </div>
+            <div class="form-group">
+              <label for="dropoff_address">Dropoff Address</label>
+              <input type="text" id="dropoff_address" name="dropoff_address" placeholder="456 Oak Ave, Austin TX">
+            </div>
+          </div>
+          <button type="submit" class="btn-primary" id="submit-btn">Request Quote</button>
+        </form>
+
+        <hr class="section-divider">
+
+        <div class="contact-links">
+          <div class="contact-link-row">
+            <span class="contact-link-icon">📧</span>
+            <span class="contact-link-label">Email</span>
+            <a href="mailto:support@shurget.com" class="contact-link-val">support@shurget.com</a>
+          </div>
+          <div class="contact-link-row">
+            <span class="contact-link-icon">💬</span>
+            <span class="contact-link-label">Chat</span>
+            <span class="contact-link-val">Live chat available during business hours</span>
+          </div>
+          <div class="contact-link-row">
+            <span class="contact-link-icon">📱</span>
+            <span class="contact-link-label">Driver?</span>
+            <a href="/drive" class="contact-link-val">Apply to drive →</a>
+          </div>
+          <div class="contact-link-row">
+            <span class="contact-link-icon">📍</span>
+            <span class="contact-link-label">Service</span>
+            <span class="contact-link-val">Available in major metro areas</span>
+          </div>
+        </div>
+      </div>
+      <div class="back-row">
+        <a href="/" class="back-link">← Back to home</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    const form = document.getElementById('contact-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const formError = document.getElementById('form-error');
+    const formSuccess = document.getElementById('form-success');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      formError.style.display = 'none';
+      formSuccess.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      const data = {
+        name:            document.getElementById('name').value.trim(),
+        email:           document.getElementById('email').value.trim(),
+        phone:           document.getElementById('phone').value.trim(),
+        item_description: document.getElementById('item_description').value.trim(),
+        pickup_address:  document.getElementById('pickup_address').value.trim(),
+        dropoff_address: document.getElementById('dropoff_address').value.trim(),
+      };
+
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Something went wrong.');
+        formSuccess.textContent = json.message;
+        formSuccess.style.display = 'block';
+        form.reset();
+      } catch (err) {
+        formError.textContent = err.message;
+        formError.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Request Quote';
+      }
+    });
+  </script>
+  </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Something Went Wrong — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--bg); }
+    .error-page {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 120px 1.5rem 4rem;
+      text-align: center;
+    }
+    .error-icon { font-size: 4rem; margin-bottom: 1.25rem; }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.75rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+    .subtitle { color: var(--gray-mid); font-size: 1rem; margin-bottom: 2rem; line-height: 1.65; }
+    a.btn {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    a.btn:hover { background: var(--orange-light); }
+    .contact-row { margin-top: 1.5rem; color: var(--gray-mid); font-size: 0.85rem; }
+    .contact-row a { color: var(--orange); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">HAULR</a>
+      <div class="nav-right">
+        <a href="/book" class="nav-badge">Book Now</a>
+      </div>
+    </div>
+  </nav>
+  <div class="error-page">
+    <div class="error-icon">⚠️</div>
+    <h1>Something Went Wrong</h1>
+    <p class="subtitle"><%= typeof message !== 'undefined' ? message : 'We encountered an unexpected error. Please try again.' %></p>
+    <a href="/" class="btn">Go to Homepage</a>
+    <p class="contact-row">
+      If the problem persists, <a href="mailto:hello@shurgetapp.com">contact support</a>.
+    </p>
+  </div>
+</body>
+</html>

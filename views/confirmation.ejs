@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Confirmed — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <%- include('partials/ga4') %>
+  <style>
+    body { background: var(--bg); }
+
+    .confirm-page {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 90px 1.5rem 3rem;
+      min-height: 100vh;
+    }
+
+    .confirm-hero {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .check-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 2.2rem;
+    }
+
+    .confirm-hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.75rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .confirm-hero p {
+      color: var(--gray-mid);
+      font-size: 1rem;
+    }
+
+    .order-id-badge {
+      display: inline-block;
+      background: var(--charcoal);
+      color: var(--white);
+      padding: 0.35rem 1rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      margin-top: 0.75rem;
+    }
+
+    /* Driver card */
+    .driver-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .driver-avatar-lg {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .driver-meta .driver-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--orange);
+      margin-bottom: 0.25rem;
+    }
+    .driver-meta .driver-name {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--charcoal);
+    }
+    .driver-meta .driver-phone {
+      font-size: 0.9rem;
+      color: var(--gray-mid);
+      margin-top: 0.2rem;
+    }
+
+    .eta-badge {
+      background: #F0FAF5;
+      border: 1.5px solid #86C9A0;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .eta-badge .eta-icon { font-size: 1.5rem; }
+    .eta-badge .eta-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--orange);
+    }
+    .eta-badge .eta-time {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--charcoal);
+    }
+
+    /* Summary grid */
+    .summary-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .summary-card h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      color: var(--charcoal);
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #F0F0EE;
+      font-size: 0.9rem;
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row .key { color: var(--gray-mid); }
+    .summary-row .val { font-weight: 600; color: var(--charcoal); text-align: right; max-width: 55%; }
+
+    .price-row .key { color: var(--charcoal); font-weight: 600; }
+    .price-row .val { font-size: 1.25rem; color: var(--orange); }
+
+    /* Action buttons */
+    .action-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .btn-home {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      background: var(--charcoal);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-home:hover { background: var(--slate); }
+
+    .btn-book-again {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      background: transparent;
+      color: var(--orange);
+      border: 2px solid var(--orange);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-book-again:hover { background: #FEF3E8; }
+
+    /* 404 style */
+    .not-found { text-align: center; padding: 4rem 1rem; }
+    .not-found h1 { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--charcoal); }
+
+    /* Payment status */
+    .payment-banner {
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .payment-banner.paid   { background: #F0FAF5; border: 1.5px solid #86C9A0; color: #166534; }
+    .payment-banner.pending, .payment-banner.unpaid { background: #FFF7ED; border: 1.5px solid #F5C77E; color: #92400E; }
+
+    /* Live driver location card */
+    .driver-location-card {
+      background: #F0FAF5;
+      border: 1.5px solid #86C9A0;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .location-dot {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .pulse-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid #86C9A0;
+      animation: pulse 2s infinite;
+    }
+    .pulse-center {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #166534;
+    }
+    @keyframes pulse {
+      0%   { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .location-info .location-status-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #166534;
+    }
+    .location-info .location-update-time {
+      font-size: 0.75rem;
+      color: #4D7A5B;
+      margin-top: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">HAULR</a>
+      <div class="nav-right">
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/book" class="nav-badge">New Booking</a>
+      </div>
+    </div>
+  </nav>
+
+  <% if (!order) { %>
+    <div class="confirm-page not-found">
+      <h1>Order Not Found</h1>
+      <p style="color:var(--gray-mid)">We couldn't find an order with that ID.</p>
+      <br>
+      <a href="/book" class="btn-home" style="display:inline-block">Make a Booking</a>
+    </div>
+  <% } else { %>
+  <div class="confirm-page" id="confirm-root">
+    <div class="confirm-hero">
+      <div class="check-circle">✓</div>
+      <h1>Booking Confirmed!</h1>
+      <p>Your haul is scheduled. Your driver is on the way.</p>
+      <span class="order-id-badge">ORDER #<%= order.id %></span>
+    </div>
+
+    <!-- Payment status banner — filled by inline script on Stripe redirect -->
+    <div id="payment-banner" class="payment-banner" style="display:none"></div>
+
+    <% if (order.driver_name) { %>
+    <div class="driver-card">
+      <div class="driver-avatar-lg">
+        <%= order.driver_name.split(' ').map(n => n[0]).join('') %>
+      </div>
+      <div class="driver-meta">
+        <div class="driver-label">Your Driver</div>
+        <div class="driver-name"><%= order.driver_name %></div>
+        <% if (order.driver_phone) { %>
+        <div class="driver-phone">📞 <%= order.driver_phone %></div>
+        <% } %>
+      </div>
+    </div>
+    <% } %>
+
+    <% if (order.eta_minutes) { %>
+    <div class="eta-badge" id="eta-badge">
+      <div class="eta-icon">🚛</div>
+      <div>
+        <div class="eta-label">Estimated Arrival</div>
+        <div class="eta-time" id="eta-time">In <%= order.eta_minutes %> minutes</div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Live driver location card — appears when driver shares location -->
+    <div id="driver-location-card" class="driver-location-card" style="display:none">
+      <div class="location-dot">
+        <div class="pulse-ring"></div>
+        <div class="pulse-center"></div>
+      </div>
+      <div class="location-info">
+        <div class="location-status-label">Driver is on the way</div>
+        <div class="location-update-time" id="location-update-time"></div>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <h2>Order Details</h2>
+      <div class="summary-row">
+        <span class="key">Item</span>
+        <span class="val" style="text-transform:capitalize"><%= order.item_type %></span>
+      </div>
+      <div class="summary-row">
+        <span class="key">Pickup</span>
+        <span class="val"><%= order.pickup_address %></span>
+      </div>
+      <div class="summary-row">
+        <span class="key">Drop-off</span>
+        <span class="val"><%= order.dropoff_address %></span>
+      </div>
+      <% if (order.distance_miles) { %>
+      <div class="summary-row">
+        <span class="key">Distance</span>
+        <span class="val"><%= order.distance_miles %> mi</span>
+      </div>
+      <% } %>
+      <div class="summary-row price-row">
+        <span class="key">Total</span>
+        <span class="val">$<%= (order.price_total || 0).toFixed(2) %></span>
+      </div>
+    </div>
+
+    <div class="action-btns">
+      <% if (order.customer_email) { %>
+      <a href="/dashboard?email=<%= encodeURIComponent(order.customer_email) %>" class="btn-home">Track Your Order →</a>
+      <% } else { %>
+      <a href="/dashboard" class="btn-home">Track Your Order →</a>
+      <% } %>
+      <a href="/book" class="btn-book-again">Book Another Haul</a>
+    </div>
+
+    <!-- Referral share block — shown after first paid order -->
+    <div id="referral-share-block" style="display:none;background:var(--white);border:1.5px solid var(--gray-light);border-radius:12px;padding:1.5rem;margin-top:1.5rem;text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:0.5rem;">🎉</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.05em;color:var(--charcoal);margin-bottom:0.35rem;">Share Shurget, Get $20 Off</div>
+      <p style="color:var(--gray-mid);font-size:0.9rem;margin:0 0 1.25rem;">Your friend gets $20 off their first haul. You earn $20 credit. Win-win.</p>
+      <div style="background:var(--off-white);border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
+        <span id="conf-share-url" style="font-size:0.82rem;font-weight:600;color:var(--charcoal);word-break:break-all;"></span>
+        <button onclick="copyConfShareLink()" id="btn-conf-copy" style="padding:0.45rem 0.9rem;background:var(--orange);color:var(--white);border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;">Copy Link</button>
+      </div>
+      <p style="color:var(--gray-mid);font-size:0.78rem;margin:0;">Check your email for your full referral code details.</p>
+    </div>
+  </div>
+  <% } %>
+
+  <script>
+    (async function verifyPayment() {
+      const params = new URLSearchParams(window.location.search);
+      const paymentStatus = params.get('payment');
+      const sessionId     = params.get('session_id');
+      const orderId       = '<%= order ? order.id : "" %>';
+
+      if (paymentStatus === 'success' && sessionId && orderId) {
+        try {
+          const res = await fetch(`/api/booking/success?session_id=${encodeURIComponent(sessionId)}&order_id=${orderId}`);
+          const data = await res.json();
+          if (data.paymentStatus === 'paid') {
+            showBanner('✅ Payment confirmed — your order is paid.');
+            // GA4 purchase event
+            if (typeof gtag === 'function') {
+              gtag('event', 'purchase', {
+                transaction_id: orderId,
+                value: <%= order ? order.price_total : 0 %>,
+                currency: 'USD',
+                items: [{ item_name: '<%= order ? order.item_type : "" %>' }],
+              });
+            }
+          } else {
+            showBanner('⏳ Payment pending — we will update your order shortly.');
+          }
+        } catch {
+          showBanner('⚠️ Could not verify payment — contact support if charged.');
+        }
+      } else if (params.get('payment') === 'cancelled') {
+        showBanner('❌ Payment cancelled — <a href="/book" style="color:inherit;font-weight:700;">try again</a>.', 'unpaid');
+      } else if (params.get('payment') === 'failed') {
+        const reason = params.get('reason') || 'Your card was declined.';
+        showBanner(
+          `❌ Payment failed — ${decodeURIComponent(reason)} <a href="/book" style="color:inherit;font-weight:700;">Retry payment</a>`,
+          'unpaid'
+        );
+      }
+    })();
+
+    function showBanner(msg, type) {
+      const el = document.getElementById('payment-banner');
+      if (!el) return;
+      el.textContent = '';
+      el.innerHTML = msg;
+      el.className = 'payment-banner ' + (type || (msg.startsWith('✅') ? 'paid' : 'unpaid'));
+      el.style.display = 'flex';
+    }
+
+    // Load referral share block when order is paid
+    (async function loadConfirmationReferral() {
+      const custEmail = '<%= order && order.customer_email ? order.customer_email : "" %>';
+      if (!custEmail) return;
+      try {
+        const r = await fetch('/api/referral/stats?email=' + encodeURIComponent(custEmail));
+        if (!r.ok) return;
+        const data = await r.json();
+        if (!data.code) return;
+        const shareUrl = 'https://shurget.com/book?ref=' + data.code.code;
+        const urlEl = document.getElementById('conf-share-url');
+        const block = document.getElementById('referral-share-block');
+        if (urlEl) urlEl.textContent = shareUrl;
+        if (block) block.style.display = 'block';
+      } catch {}
+    })();
+
+    function copyConfShareLink() {
+      const urlEl = document.getElementById('conf-share-url');
+      const btn   = document.getElementById('btn-conf-copy');
+      if (!urlEl) return;
+      const text = urlEl.textContent.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000); }
+      }).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000); }
+      });
+    }
+
+    // Poll for driver location updates
+    (function pollDriverLocation() {
+      const card  = document.getElementById('driver-location-card');
+      const timeEl = document.getElementById('location-update-time');
+      if (!card || !timeEl) return;
+
+      const orderId = '<%= order ? order.id : "" %>';
+      let pollCount = 0;
+
+      function check() {
+        fetch('/api/orders/' + orderId)
+          .then(r => r.json())
+          .then(data => {
+            if (data.driver && data.driver.location) {
+              card.style.display = 'flex';
+              const updated = new Date(data.driver.location.updatedAt);
+              const diff = Math.round((Date.now() - updated) / 1000);
+              timeEl.textContent = diff < 60
+                ? 'Updated ' + diff + 's ago'
+                : 'Updated ' + Math.round(diff / 60) + 'm ago';
+            }
+          })
+          .catch(() => {})
+          .finally(() => {
+            if (++pollCount < 30) { // poll for up to 5 minutes
+              setTimeout(check, 10000);
+            }
+          });
+      }
+
+      check();
+    })();
+  </script>
+</body>
+</html>

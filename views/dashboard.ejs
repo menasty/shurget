@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Dashboard — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--bg); }
+
+    .dash-page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 80px 1.5rem 4rem;
+    }
+
+    /* ── Header ── */
+    .dash-header { margin-bottom: 2rem; }
+    .dash-header .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.25rem;
+    }
+    .dash-header .page-sub {
+      color: var(--gray-mid);
+      font-size: 0.95rem;
+    }
+
+    /* ── Email lookup ── */
+    .lookup-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .lookup-card label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--orange);
+      margin-bottom: 0.5rem;
+    }
+    .lookup-form { display: flex; gap: 0.75rem; }
+    .lookup-form input[type="email"] {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--gray-light);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--charcoal);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .lookup-form input[type="email"]:focus { border-color: var(--orange); }
+    .lookup-form input[type="email"]::placeholder { color: var(--gray-light); }
+    .btn-lookup {
+      padding: 0.75rem 1.25rem;
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .btn-lookup:hover { background: var(--orange-light); }
+
+    /* ── Order list ── */
+    .orders-list { display: flex; flex-direction: column; gap: 1rem; }
+
+    .order-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 12px;
+      overflow: hidden;
+      text-decoration: none;
+      display: block;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .order-card:hover {
+      border-color: var(--orange);
+      box-shadow: 0 4px 20px rgba(232,93,4,0.12);
+    }
+
+    .order-card-top {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .order-card-info .order-item-type {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.2rem;
+    }
+    .order-card-info .order-addresses {
+      font-size: 0.85rem;
+      color: var(--gray-mid);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+    .order-card-info .order-date {
+      font-size: 0.8rem;
+      color: var(--gray-light);
+    }
+
+    .order-card-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    /* Status badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 99px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .status-badge.paid         { background: #F0FAF5; color: #166534; border: 1px solid #86C9A0; }
+    .status-badge.confirmed    { background: #EFF6FF; color: #1D4ED8; border: 1px solid #93C5FD; }
+    .status-badge.pending_payment { background: #FFF7ED; color: #92400E; border: 1px solid #F5C77E; }
+    .status-badge.pending     { background: #F5F5F5; color: #6B6B6B; border: 1px solid #D0D0D0; }
+
+    .order-price {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      color: var(--orange);
+      letter-spacing: 0.05em;
+    }
+
+    /* Driver info strip */
+    .order-card-driver {
+      padding: 0.85rem 1.5rem;
+      background: var(--off-white);
+      border-top: 1px solid #EDE9E3;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .driver-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--charcoal);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .driver-info-text .driver-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--orange);
+      margin-bottom: 0.1rem;
+    }
+    .driver-info-text .driver-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--charcoal);
+    }
+    .driver-info-text .driver-eta {
+      font-size: 0.8rem;
+      color: var(--gray-mid);
+    }
+    .driver-info-text .driver-no {
+      font-size: 0.8rem;
+      color: var(--gray-mid);
+    }
+
+    /* View tracking link */
+    .track-link {
+      font-size: 0.8rem;
+      color: var(--orange);
+      font-weight: 600;
+      text-decoration: none;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      white-space: nowrap;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--gray-mid);
+    }
+    .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-state h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.75rem;
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+    .empty-state p { font-size: 0.9rem; color: var(--gray-mid); }
+
+    /* Section divider */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .section-header span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      letter-spacing: 0.08em;
+      color: var(--charcoal);
+    }
+
+    /* Nav */
+    .dash-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 clamp(1.5rem, 4vw, 3rem);
+      background: rgba(26,26,26,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.75rem;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-btn {
+      padding: 0.45rem 1rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s;
+    }
+    .nav-btn-primary { background: var(--orange); color: var(--white); }
+    .nav-btn-primary:hover { background: var(--orange-light); }
+    .nav-btn-secondary { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+    .nav-btn-secondary:hover { background: rgba(255,255,255,0.18); }
+  </style>
+</head>
+<body>
+  <nav class="dash-nav">
+    <a href="/" class="nav-logo">HAULR</a>
+    <div class="nav-right">
+      <a href="/contact" class="nav-btn nav-btn-secondary">Contact</a>
+      <a href="/dashboard" class="nav-btn nav-btn-secondary">Dashboard</a>
+      <a href="/book" class="nav-btn nav-btn-primary">New Booking</a>
+    </div>
+  </nav>
+
+  <div class="dash-page">
+    <div class="dash-header">
+      <h1 class="page-title">My Deliveries</h1>
+      <p class="page-sub">Track your orders and view your booking history.</p>
+    </div>
+
+    <!-- Email lookup form -->
+    <div class="lookup-card">
+      <label for="email-input">Find your orders</label>
+      <form class="lookup-form" method="get" action="/dashboard">
+        <input
+          id="email-input"
+          type="email"
+          name="email"
+          placeholder="Enter your email address"
+          value="<%= email %>"
+          required
+        >
+        <button type="submit" class="btn-lookup">Look Up</button>
+      </form>
+    </div>
+
+    <% if (email) { %>
+
+      <!-- Referral section — loaded via JS, shown only if customer has a code -->
+      <div id="referral-section" style="display:none;background:var(--white);border:1.5px solid var(--gray-light);border-radius:12px;padding:1.5rem;margin-bottom:1.75rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+          <div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.05em;color:var(--charcoal);">Give $20, Get $20</div>
+            <div style="font-size:0.85rem;color:var(--gray-mid);margin-top:0.2rem;">Share your link — your friend gets $20 off, you earn $20 credit.</div>
+          </div>
+          <div id="referral-stats-badge" style="display:none;background:#FFF7ED;border:1px solid #F5C77E;border-radius:8px;padding:0.5rem 1rem;text-align:center;flex-shrink:0;">
+            <div style="font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--orange);">Friends Referred</div>
+            <div id="referral-referred-count" style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--charcoal);">0</div>
+          </div>
+        </div>
+
+        <div style="background:#FFF7ED;border:1.5px solid var(--orange);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1rem;text-align:center;">
+          <div style="font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--orange);margin-bottom:0.35rem;">Your Referral Code</div>
+          <div id="referral-code-display" style="font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.3em;color:var(--charcoal);">—</div>
+        </div>
+
+        <div style="background:var(--off-white);border-radius:8px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.75rem;justify-content:space-between;flex-wrap:wrap;">
+          <div id="referral-share-url" style="font-size:0.82rem;color:var(--charcoal);font-weight:500;word-break:break-all;flex:1;"></div>
+          <button onclick="copyReferralLink()" style="padding:0.5rem 1rem;background:var(--charcoal);color:var(--white);border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;" id="btn-copy-link">Copy Link</button>
+        </div>
+
+        <div style="font-size:0.78rem;color:var(--gray-mid);">No purchase required from your friend to share. $20 credit posts after their first completed delivery.</div>
+      </div>
+
+      <% if (orders.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-state-icon">📦</div>
+          <h2>No orders found</h2>
+          <p>We couldn't find any orders for <strong><%= email %></strong>.<br>Try a different email or make a new booking.</p>
+          <br>
+          <a href="/book" class="btn-lookup" style="display:inline-block;text-decoration:none;">Make a Booking</a>
+        </div>
+      <% } else { %>
+        <div class="section-header">
+          <span><%= orders.length %> <%= orders.length === 1 ? 'Order' : 'Orders' %> Found</span>
+        </div>
+
+        <div class="orders-list">
+          <% for (const order of orders) { %>
+            <div class="order-card" href="/confirmation/<%= order.id %>">
+              <div class="order-card-top">
+                <div class="order-card-info">
+                  <div class="order-item-type" style="text-transform:capitalize"><%= order.item_type %></div>
+                  <div class="order-addresses">
+                    <span>📍</span>
+                    <span><%= order.pickup_address %> → <%= order.dropoff_address %></span>
+                  </div>
+                  <div class="order-date">
+                    <%= new Date(order.created_at).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) %>
+                    &nbsp;·&nbsp; Order #<%= order.id %>
+                  </div>
+                </div>
+                <div class="order-card-right">
+                  <span class="status-badge <%= order.status %>"><%= order.status.replace('_', ' ') %></span>
+                  <span class="order-price">$<%= (order.price_total || 0).toFixed(2) %></span>
+                </div>
+              </div>
+
+              <% if (order.driver_name || order.eta_minutes) { %>
+              <div class="order-card-driver">
+                <div class="driver-dot"><%= order.driver_name ? order.driver_name.split(' ').map(n => n[0]).join('') : '?' %></div>
+                <div class="driver-info-text">
+                  <div class="driver-label">Driver</div>
+                  <div class="driver-name"><%= order.driver_name || 'Assigned soon' %></div>
+                  <% if (order.eta_minutes) { %>
+                  <div class="driver-eta">ETA: <%= order.eta_minutes %> min</div>
+                  <% } %>
+                </div>
+                <a href="/confirmation/<%= order.id %>" class="track-link">
+                  Track → <span style="font-weight:400;font-size:0.75rem"></span>
+                </a>
+              </div>
+              <% } else { %>
+              <div class="order-card-driver" style="justify-content:flex-end;">
+                <a href="/confirmation/<%= order.id %>" class="track-link">
+                  View Details →
+                </a>
+              </div>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+    <% } else { %>
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <h2>Look Up Your Orders</h2>
+        <p>Enter your email address above to see all your Shurget deliveries and their current status.</p>
+      </div>
+    <% } %>
+  </div>
+
+  <% if (email) { %>
+  <script>
+    (async function loadReferralStats() {
+      try {
+        const r = await fetch('/api/referral/stats?email=' + encodeURIComponent('<%= email %>'));
+        if (!r.ok) return;
+        const data = await r.json();
+        if (!data.code) return;
+
+        const section  = document.getElementById('referral-section');
+        const codeDisp = document.getElementById('referral-code-display');
+        const urlDisp  = document.getElementById('referral-share-url');
+        const badge    = document.getElementById('referral-stats-badge');
+        const countEl  = document.getElementById('referral-referred-count');
+
+        if (!section || !codeDisp || !urlDisp) return;
+
+        const code     = data.code.code;
+        const shareUrl = 'https://shurget.com/book?ref=' + code;
+
+        codeDisp.textContent = code;
+        urlDisp.textContent  = shareUrl;
+        section.style.display = 'block';
+
+        if (data.referredCount > 0) {
+          countEl.textContent = data.referredCount;
+          badge.style.display = 'block';
+        }
+      } catch (e) {
+        // Silently skip — referral section stays hidden
+      }
+    })();
+
+    function copyReferralLink() {
+      const urlEl = document.getElementById('referral-share-url');
+      const btn   = document.getElementById('btn-copy-link');
+      if (!urlEl) return;
+      const text = urlEl.textContent.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000); }
+      }).catch(() => {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy Link'; }, 2000); }
+      });
+    }
+  </script>
+  <% } %>
+</body>
+</html>

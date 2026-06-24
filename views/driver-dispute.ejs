@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Contest Rating — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0F0F0F;color:#fff;font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:2rem}
+    .header{background:#1A1A1A;border-bottom:1px solid rgba(255,255,255,.08);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem}
+    .header-logo{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.12em;color:#fff;text-decoration:none}
+    .back-btn{font-size:.85rem;color:rgba(255,255,255,.5);text-decoration:none;display:flex;align-items:center;gap:.3rem}
+    .back-btn:hover{color:#fff}
+    .page{max-width:480px;margin:0 auto;padding:1.5rem 1.25rem}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.05em;margin-bottom:.35rem}
+    .sub{color:rgba(255,255,255,.45);font-size:.85rem;margin-bottom:2rem;line-height:1.6}
+    .card{background:#1A1A1A;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+    .field{margin-bottom:1.25rem}
+    .field label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:.5rem}
+    .field input,.field textarea{width:100%;background:#0F0F0F;border:1.5px solid rgba(255,255,255,.12);border-radius:8px;padding:.875rem;color:#fff;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
+    .field input:focus,.field textarea:focus{border-color:#E85D04}
+    .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.3)}
+    .field textarea{resize:vertical;min-height:120px}
+    .stars-display{font-size:2rem;color:#F59E0B;letter-spacing:4px;margin:.5rem 0}
+    .order-chip{background:rgba(255,255,255,.06);border-radius:8px;padding:.875rem;font-size:.82rem;color:rgba(255,255,255,.6);margin-bottom:1.25rem}
+    .order-chip strong{color:#fff}
+    .btn-submit{display:block;width:100%;padding:.9rem;background:#E85D04;color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .2s}
+    .btn-submit:hover{background:#F4841F}
+    .btn-submit:disabled{background:#2D2D2D;color:rgba(255,255,255,.3);cursor:not-allowed}
+    .toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#22C55E;color:#fff;padding:.875rem 1.5rem;border-radius:8px;font-size:.85rem;font-weight:600;display:none;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+    .toast.visible{display:block}
+    .success-card{background:#1A1A1A;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:2.5rem 1.5rem;text-align:center}
+    .success-icon{font-size:3rem;margin-bottom:1rem}
+    .success-title{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;margin-bottom:.75rem}
+    .success-sub{color:rgba(255,255,255,.5);font-size:.85rem;line-height:1.6;margin-bottom:1.75rem}
+    .btn-primary{display:inline-block;padding:.875rem 2rem;background:#E85D04;color:#fff;border-radius:8px;font-weight:700;font-size:.9rem;text-decoration:none}
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <a href="/" class="header-logo">HAULR</a>
+  <a href="javascript:history.back()" class="back-btn">← Back</a>
+</header>
+
+<div class="page">
+
+  <% if (submitted) { %>
+    <!-- Success screen -->
+    <div class="success-card">
+      <div class="success-icon">📋</div>
+      <div class="success-title">Dispute Submitted</div>
+      <p class="success-sub">Our team will review your dispute and reach out if needed. You can check the status of this dispute from your driver portal.</p>
+      <a href="/driver/jobs?email=<%= encodeURIComponent(driverEmail || '') %>" class="btn-primary">Back to Jobs</a>
+    </div>
+  <% } else { %>
+    <h1>Contest This Rating</h1>
+    <p class="sub">If you believe this rating is inaccurate or unfair, let us know. Our team reviews every dispute within 1–2 business days.</p>
+
+    <div class="card">
+      <% if (order) { %>
+      <div class="order-chip">
+        <strong>Order #<%= order.id %></strong> — <%= (order.item_type || 'delivery').replace(/-/g, ' ') %>
+        <br><%= order.pickup_address || '' %> → <%= order.dropoff_address || '' %>
+      </div>
+      <% if (rating) { %>
+      <div class="field">
+        <label>Customer Rating</label>
+        <div class="stars-display"><%= '★'.repeat(rating) %><%= '☆'.repeat(5 - rating) %></div>
+      </div>
+      <% } %>
+      <% } %>
+
+      <form id="dispute-form" onsubmit="submitDispute(event)">
+        <input type="hidden" name="orderId" value="<%= order ? order.id : '' %>">
+        <input type="hidden" name="driverEmail" value="<%= driverEmail || '' %>">
+
+        <div class="field">
+          <label>Why do you believe this rating is unfair? *</label>
+          <textarea name="reason" id="reason" required placeholder="e.g. Customer refused to help carry item, gave 1 star. I navigated around construction, was on time..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Any additional details (optional)</label>
+          <textarea name="comment" id="comment" placeholder="Anything else that helps explain the situation..." style="min-height:80px"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submit-btn">Submit Dispute</button>
+      </form>
+    </div>
+  <% } %>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('visible');
+    setTimeout(() => t.classList.remove('visible'), 3500);
+  }
+
+  async function submitDispute(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const reason = document.getElementById('reason').value.trim();
+    if (!reason) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    const orderId = <%= order ? order.id : 0 %>;
+    const driverEmail = '<%= escapeJs(driverEmail || '') %>';
+
+    try {
+      const res = await fetch('/api/driver/disputes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, driverEmail, reason, comment: document.getElementById('comment').value }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('dispute-form').style.display = 'none';
+        document.querySelector('.card').innerHTML = `
+          <div class="success-card" style="margin:-1.5rem;padding:2rem;">
+            <div class="success-icon">📋</div>
+            <div class="success-title">Dispute Submitted</div>
+            <p class="success-sub">Our team will review your dispute within 1–2 business days. We'll contact you if we need more information.</p>
+            <a href="/driver/jobs?email=${encodeURIComponent(driverEmail)}" class="btn-primary">Back to Jobs</a>
+          </div>`;
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Submit Dispute';
+        showToast(data.error || 'Submission failed — please try again.');
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Submit Dispute';
+      showToast('Network error — please try again.');
+    }
+  }
+
+  function escapeJs(str) {
+    return String(str || '').replace(/[\\'"]/g, '\\$&');
+  }
+</script>
+</body>
+</html>

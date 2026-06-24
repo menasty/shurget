@@ -1,0 +1,271 @@
+/* ─── Austin SEO Landing Pages — supplemental styles ─── */
+/* Extends theme.css; does NOT redefine global tokens. */
+
+/* Hero */
+.seo-hero {
+  background: var(--charcoal);
+  padding: 7rem clamp(1.5rem, 6vw, 5rem) 5rem;
+  min-height: 50vh;
+  display: flex;
+  align-items: flex-end;
+}
+.seo-hero-inner {
+  max-width: 760px;
+}
+.seo-h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  color: var(--white);
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  margin-bottom: 1.25rem;
+}
+.seo-sub {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.65;
+  max-width: 580px;
+  margin-bottom: 2rem;
+}
+.seo-cta {
+  margin-top: 0;
+  font-size: 1rem;
+  padding: 1rem 2.25rem;
+}
+
+/* Body copy + sidebar layout */
+.seo-copy {
+  padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem);
+  background: var(--bg);
+}
+.seo-copy-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 4rem;
+  align-items: start;
+}
+.seo-copy-main h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.75rem);
+  color: var(--charcoal);
+  margin-bottom: 1.25rem;
+}
+.seo-copy-main h3 {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  color: var(--charcoal);
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+.seo-copy-main p {
+  font-size: 1rem;
+  color: var(--gray-mid);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+.seo-list {
+  list-style: none;
+  margin: 0.75rem 0 1.25rem;
+  padding: 0;
+}
+.seo-list li {
+  padding: 0.45rem 0 0.45rem 1.4rem;
+  position: relative;
+  font-size: 0.95rem;
+  color: var(--gray-mid);
+  line-height: 1.6;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.seo-list li:last-child { border-bottom: none; }
+.seo-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--orange);
+  font-weight: 700;
+}
+.seo-list--ordered {
+  counter-reset: seo-counter;
+}
+.seo-list--ordered li {
+  counter-increment: seo-counter;
+  padding-left: 2rem;
+}
+.seo-list--ordered li::before {
+  content: counter(seo-counter);
+  background: var(--orange);
+  color: var(--white);
+  font-size: 0.72rem;
+  font-weight: 700;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0.5rem;
+}
+
+/* Sidebar trust cards */
+.seo-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: sticky;
+  top: 80px;
+}
+.seo-trust-card {
+  background: var(--white);
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+}
+.seo-trust-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.seo-trust-card strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 0.35rem;
+}
+.seo-trust-card p {
+  font-size: 0.85rem;
+  color: var(--gray-mid);
+  line-height: 1.5;
+  margin: 0;
+}
+.seo-trust-card a {
+  color: var(--orange);
+  text-decoration: none;
+  font-weight: 500;
+}
+.seo-trust-card a:hover { text-decoration: underline; }
+
+/* FAQ section */
+.seo-faq {
+  background: var(--off-white);
+  padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem);
+}
+.seo-faq-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.faq-list {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.faq-item {
+  background: var(--white);
+  border: 1.5px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.faq-item summary {
+  padding: 1.1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: '+';
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--orange);
+  flex-shrink: 0;
+  margin-left: 1rem;
+  transition: transform 0.2s;
+}
+.faq-item[open] summary::after {
+  transform: rotate(45deg);
+}
+.faq-item p {
+  padding: 0 1.5rem 1.1rem;
+  font-size: 0.9rem;
+  color: var(--gray-mid);
+  line-height: 1.75;
+  margin: 0;
+}
+.faq-item a {
+  color: var(--orange);
+  text-decoration: none;
+}
+.faq-item a:hover { text-decoration: underline; }
+
+/* Bottom CTA + internal links */
+.seo-links {
+  background: var(--charcoal);
+  padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem);
+  text-align: center;
+}
+.seo-links-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.seo-links h2 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  color: var(--white);
+  margin-bottom: 0.75rem;
+}
+.seo-links p {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 2rem;
+}
+.seo-related {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  align-items: center;
+}
+.seo-related span {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  width: 100%;
+}
+.seo-related a {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.65);
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 4px;
+  padding: 0.35rem 0.85rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+.seo-related a:hover {
+  border-color: var(--orange);
+  color: var(--white);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .seo-copy-inner {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .seo-sidebar {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .seo-trust-card { flex: 1 1 200px; }
+}
+@media (max-width: 600px) {
+  .seo-hero { padding-top: 6rem; min-height: 60vh; }
+  .seo-sidebar { flex-direction: column; }
+}

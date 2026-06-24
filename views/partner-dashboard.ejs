@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= partner.store_name %> Dashboard — Shurget Partners</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--off-white); }
+    .dash-header {
+      background: var(--charcoal);
+      color: #fff;
+      padding: 2rem clamp(1.5rem, 6vw, 4rem);
+    }
+    .dash-header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+    .dash-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.08em;
+      color: var(--orange-light);
+      text-decoration: none;
+    }
+    .dash-store-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.7);
+      letter-spacing: 0.04em;
+    }
+    .dash-body { max-width: 1100px; margin: 0 auto; padding: 2rem clamp(1.5rem, 6vw, 4rem); }
+
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .stat-card {
+      background: var(--white);
+      border: 1.5px solid rgba(0,0,0,0.08);
+      border-radius: 12px;
+      padding: 1.5rem 1.25rem;
+    }
+    .stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-mid); font-weight: 600; margin-bottom: 0.5rem; }
+    .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--charcoal); letter-spacing: 0.02em; }
+    .stat-sub { font-size: 0.8rem; color: var(--gray-mid); margin-top: 0.25rem; }
+    .stat-card.highlight { border-color: var(--orange); }
+    .stat-card.highlight .stat-value { color: var(--orange); }
+
+    /* Commission note */
+    .commission-note {
+      background: #fff8f2;
+      border: 1px solid var(--orange);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: 0.88rem;
+      color: var(--charcoal);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .commission-note svg { flex-shrink: 0; color: var(--orange); }
+
+    /* Widget snippet */
+    .snippet-card {
+      background: var(--white);
+      border: 1.5px solid rgba(0,0,0,0.08);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+    }
+    .snippet-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.25rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+    .snippet-sub { font-size: 0.85rem; color: var(--gray-mid); margin-bottom: 1rem; }
+    .snippet-code {
+      background: #1a1a1a;
+      color: #a3e6b5;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .snippet-code:hover { background: #2a2a2a; }
+    .copied-msg { font-size: 0.8rem; color: #15803d; margin-top: 0.5rem; display: none; }
+
+    /* Orders table */
+    .orders-section {}
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+    }
+    .orders-table {
+      background: var(--white);
+      border: 1.5px solid rgba(0,0,0,0.08);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .orders-table table { width: 100%; border-collapse: collapse; }
+    .orders-table th {
+      padding: 0.75rem 1.25rem;
+      text-align: left;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gray-mid);
+      font-weight: 600;
+      background: #fafaf8;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .orders-table td {
+      padding: 0.85rem 1.25rem;
+      font-size: 0.88rem;
+      color: var(--charcoal);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    .orders-table tr:last-child td { border-bottom: none; }
+    .status-badge {
+      display: inline-block;
+      padding: 0.2rem 0.65rem;
+      border-radius: 99px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .status-paid { background: #dcfce7; color: #15803d; }
+    .status-pending_payment { background: #fef3c7; color: #b45309; }
+    .status-dispatched, .status-in_progress { background: #eff6ff; color: #1d4ed8; }
+    .status-delivered { background: #dcfce7; color: #15803d; }
+    .status-cancelled { background: #fee2e2; color: #991b1b; }
+    .no-orders { padding: 3rem; text-align: center; color: var(--gray-mid); font-size: 0.9rem; }
+    .logout-btn {
+      background: none;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.7);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .logout-btn:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .dash-header-inner { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .snippet-code { font-size: 0.72rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="dash-header">
+    <div class="dash-header-inner">
+      <div>
+        <a href="/" class="dash-logo">HAULR</a>
+        <div class="dash-store-name"><%= partner.store_name %></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <span style="font-size:0.8rem;color:rgba(255,255,255,0.5);">Partner Dashboard</span>
+        <form action="/partners/<%= partner.slug %>/logout" method="post" style="display:inline;">
+          <button type="submit" class="logout-btn">Sign Out</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="dash-body">
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Bookings</div>
+        <div class="stat-value"><%= stats.total_bookings || 0 %></div>
+        <div class="stat-sub">Via your widget</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value">$<%= ((stats.total_revenue_cents || 0) / 100).toFixed(0) %></div>
+        <div class="stat-sub">Customer payments</div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-label">Commission Earned</div>
+        <div class="stat-value">$<%= ((stats.commission_earned_cents || 0) / 100).toFixed(2) %></div>
+        <div class="stat-sub"><%= (partner.commission_rate * 100).toFixed(0) %>% of platform fee</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Payout Status</div>
+        <div class="stat-value" style="font-size:1.2rem;">
+          <% if (partner.commission_balance_cents > 2500) { %>
+            Ready
+          <% } else { %>
+            Pending
+          <% } %>
+        </div>
+        <div class="stat-sub">
+          <% if (!partner.stripe_account_id) { %>
+            Connect bank to receive payouts →
+          <% } else { %>
+            Threshold: $25 min
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Commission notice -->
+    <% if (!partner.stripe_account_id) { %>
+    <div class="commission-note">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>
+        <strong>Connect your bank account</strong> to receive commission payouts. Set up your Stripe account to get paid automatically when your balance reaches $25.
+        <a href="/partners/<%= partner.slug %>/setup" style="color:var(--orange);font-weight:600;">Set up now →</a>
+      </div>
+    </div>
+    <% } else { %>
+    <div class="commission-note" style="background:#f0fdf4;border-color:#bbf7d0;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <div>
+        Stripe connected. Commission payouts are processed automatically when your balance reaches $25.
+        <% if (partner.last_payout_at) { %>
+          Last payout: $<%= (partner.last_payout_amount_cents / 100).toFixed(2) %> on <%= new Date(partner.last_payout_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>.
+        <% } %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Widget snippet -->
+    <div class="snippet-card">
+      <div class="snippet-title">Your Embed Snippet</div>
+      <p class="snippet-sub">Add this to every product page. Replace <code>sofa</code> with your item type and your store ZIP.</p>
+      <div class="snippet-code" id="widget-snippet" onclick="copySnippet()">
+        &lt;script src="https://shurget.com/widget.js"
+          data-item="sofa"
+          data-origin-zip="<%= partner.slug.split('-')[0] === partner.slug ? 'YOUR-ZIP' : partner.slug.split('-').slice(-1)[0] %>"
+          data-partner="<%= partner.slug %>"
+          data-label="Shurget it home"
+        >&lt;/script>
+      </div>
+      <div class="copied-msg" id="copied-msg">Copied! Paste it on your product pages.</div>
+    </div>
+
+    <!-- Orders -->
+    <div class="orders-section">
+      <div class="section-header">
+        <div class="section-title">Recent Bookings</div>
+      </div>
+
+      <div class="orders-table">
+        <% if (orders.length === 0) { %>
+          <div class="no-orders">No bookings yet. Add the widget to your product pages to start tracking orders.</div>
+        <% } else { %>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Order ID</th>
+                <th>Item</th>
+                <th>Route</th>
+                <th>Revenue</th>
+                <th>Commission</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% orders.forEach(function(order) { %>
+                <tr>
+                  <td><%= new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
+                  <td style="font-family:'Courier New',monospace;font-size:0.8rem;">#<%= order.id %></td>
+                  <td><%= (order.item_type || '').replace(/-/g, ' ').replace(/\b\/g, function(s){return s.toUpperCase();}) %></td>
+                  <td style="font-size:0.82rem;color:var(--gray-mid);">
+                    <%= (order.pickup_address || '').split(',')[0] %> → <%= (order.dropoff_address || '').split(',')[0] %>
+                  </td>
+                  <td style="font-weight:600;">$<%= (order.price_total_cents / 100).toFixed(2) %></td>
+                  <td style="color:var(--orange);font-weight:600;">
+                    <% if (order.partner_commission_cents) { %>
+                      $<%= (order.partner_commission_cents / 100).toFixed(2) %>
+                    <% } else { %>
+                      —
+                    <% } %>
+                  </td>
+                  <td>
+                    <span class="status-badge status-<%= order.status %>"><%= order.status.replace(/_/g, ' ') %></span>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function copySnippet() {
+      const el = document.getElementById('widget-snippet');
+      const text = el.textContent.trim();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+          document.getElementById('copied-msg').style.display = 'block';
+          setTimeout(() => { document.getElementById('copied-msg').style.display = 'none'; }, 3000);
+        });
+      }
+    }
+  </script>
+</body>
+</html>

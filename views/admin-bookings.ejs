@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookings — Admin — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--bg); }
+
+    .dash-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 1.5rem 4rem;
+    }
+
+    /* ── Header ── */
+    .dash-header { margin-bottom: 1.5rem; }
+    .dash-header .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.25rem;
+    }
+    .dash-header .page-sub { color: var(--gray-mid); font-size: 0.95rem; }
+
+    /* ── Alerts ── */
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+    .alert-success { background: #F0FAF5; color: #166534; border: 1px solid #86C9A0; }
+    .alert-error   { background: #FFF7ED; color: #92400E; border: 1px solid #F5C77E; }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gray-mid);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+    }
+    .back-link:hover { color: var(--orange); }
+
+    /* ── Admin sidebar nav ── */
+    .admin-nav {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .admin-nav-link {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1.5px solid transparent;
+      transition: all 0.15s;
+      color: var(--gray-mid);
+      background: var(--white);
+    }
+    .admin-nav-link:hover { border-color: var(--orange); color: var(--orange); }
+    .admin-nav-link.active { background: var(--charcoal); color: var(--white); border-color: var(--charcoal); }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .filter-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gray-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .filter-bar select,
+    .filter-bar input {
+      padding: 0.4rem 0.75rem;
+      border: 1.5px solid var(--gray-light);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      color: var(--charcoal);
+      background: var(--white);
+      cursor: pointer;
+    }
+    .filter-bar select:focus,
+    .filter-bar input:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+    .filter-bar .btn {
+      padding: 0.4rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: background 0.15s;
+    }
+    .btn-orange { background: var(--orange); color: var(--white); }
+    .btn-orange:hover { background: var(--orange-light); }
+    .btn-gray   { background: var(--gray-light); color: var(--gray-mid); }
+
+    .results-count {
+      margin-left: auto;
+      font-size: 0.82rem;
+      color: var(--gray-mid);
+    }
+
+    /* ── Orders table ── */
+    .orders-table {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .orders-thead th {
+      background: var(--off-white);
+      padding: 0.75rem 1rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray-mid);
+      text-align: left;
+      border-bottom: 1.5px solid var(--gray-light);
+      white-space: nowrap;
+    }
+    .orders-thead th.sortable { cursor: pointer; user-select: none; }
+    .orders-thead th.sortable:hover { color: var(--orange); }
+
+    .orders-tbody tr {
+      border-bottom: 1px solid var(--gray-light);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .orders-tbody tr:last-child { border-bottom: none; }
+    .orders-tbody tr:hover { background: #FAFAF7; }
+
+    .orders-tbody td {
+      padding: 0.85rem 1rem;
+      font-size: 0.85rem;
+      color: var(--charcoal);
+      vertical-align: middle;
+    }
+
+    .order-id-badge {
+      background: var(--off-white);
+      border: 1px solid var(--gray-light);
+      border-radius: 4px;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      font-family: monospace;
+      color: var(--charcoal);
+    }
+
+    .customer-name { font-weight: 600; }
+    .customer-email { font-size: 0.78rem; color: var(--gray-mid); }
+
+    .address-text {
+      font-size: 0.82rem;
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .price-value { font-weight: 700; font-size: 0.9rem; }
+    .price-breakdown { font-size: 0.72rem; color: var(--gray-mid); margin-top: 0.1rem; }
+
+    /* Status badge */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 99px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+    .status-badge.pending        { background: #FFF7ED; color: #92400E; border: 1px solid #F5C77E; }
+    .status-badge.paid           { background: #EFF6FF; color: #1E40AF; border: 1px solid #93C5FD; }
+    .status-badge.assigned       { background: #EFF6FF; color: #1E40AF; border: 1px solid #93C5FD; }
+    .status-badge.in_progress    { background: #F0FDF4; color: #166534; border: 1px solid #86C9A0; }
+    .status-badge.delivered      { background: #F0FDF4; color: #166534; border: 1px solid #86C9A0; }
+    .status-badge.cancelled      { background: #FFF7ED; color: #92400E; border: 1px solid #F5C77E; }
+
+    .driver-name { font-weight: 500; font-size: 0.82rem; }
+    .driver-phone { font-size: 0.75rem; color: var(--gray-mid); }
+
+    .date-text { font-size: 0.8rem; color: var(--gray-mid); }
+
+    .actions-cell {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    .btn-action {
+      padding: 0.3rem 0.65rem;
+      border: none;
+      border-radius: 5px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-action:hover { opacity: 0.8; }
+    .btn-cancel  { background: #FEE2E2; color: #991B1B; }
+    .btn-reassign{ background: var(--off-white); color: var(--charcoal); border: 1px solid var(--gray-light); }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--gray-mid);
+    }
+    .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty-state h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--charcoal); margin-bottom: 0.5rem; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* ── Detail Drawer ── */
+    .drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      backdrop-filter: blur(2px);
+    }
+    .drawer-overlay.open { display: block; }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(560px, 100vw);
+      background: var(--white);
+      z-index: 201;
+      overflow-y: auto;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      box-shadow: -8px 0 32px rgba(0,0,0,0.15);
+    }
+    .drawer.open { transform: translateX(0); }
+
+    .drawer-header {
+      position: sticky;
+      top: 0;
+      background: var(--white);
+      border-bottom: 1.5px solid var(--gray-light);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 1;
+    }
+    .drawer-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+    }
+    .drawer-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--gray-mid);
+      padding: 0.25rem;
+      line-height: 1;
+    }
+    .drawer-close:hover { color: var(--charcoal); }
+
+    .drawer-body { padding: 1.5rem; }
+
+    .detail-section {
+      margin-bottom: 1.75rem;
+    }
+    .detail-section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray-mid);
+      margin-bottom: 0.75rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .detail-item {}
+    .detail-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-mid); margin-bottom: 0.2rem; }
+    .detail-value { font-size: 0.88rem; font-weight: 500; color: var(--charcoal); }
+    .detail-value.mono { font-family: monospace; font-size: 0.85rem; }
+
+    .detail-full { margin-bottom: 0.5rem; }
+    .detail-full .detail-label { margin-bottom: 0.15rem; }
+    .detail-full .detail-value { font-size: 0.88rem; line-height: 1.4; }
+
+    .price-box {
+      background: var(--off-white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .price-box .price-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
+    }
+    .price-box .price-row:last-child {
+      margin-bottom: 0;
+      padding-top: 0.5rem;
+      border-top: 1.5px solid var(--gray-light);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .price-box .price-row .muted { color: var(--gray-mid); }
+
+    .items-list { list-style: none; padding: 0; margin: 0; }
+    .items-list li {
+      background: var(--off-white);
+      border: 1px solid var(--gray-light);
+      border-radius: 6px;
+      padding: 0.6rem 0.85rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+    }
+    .items-list li:last-child { margin-bottom: 0; }
+
+    .drawer-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1.5px solid var(--gray-light);
+    }
+    .drawer-actions .btn {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s;
+    }
+    .btn-red-drawer   { background: #DC2626; color: var(--white); }
+    .btn-red-drawer:hover { background: #B91C1C; }
+    .btn-orange-drawer { background: var(--orange); color: var(--white); }
+    .btn-orange-drawer:hover { background: var(--orange-light); }
+    .btn-gray-drawer  { background: var(--gray-light); color: var(--gray-mid); cursor: default; }
+
+    .reassign-form { margin-top: 1rem; }
+    .reassign-form select {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border: 1.5px solid var(--gray-light);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: var(--charcoal);
+      background: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .reassign-form select:focus { outline: none; border-color: var(--orange); }
+
+    /* ── Nav ── */
+    .dash-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 0 clamp(1.5rem, 4vw, 3rem);
+      background: rgba(26,26,26,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.75rem;
+      letter-spacing: 0.12em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-btn {
+      padding: 0.45rem 1rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s;
+    }
+    .nav-btn-primary { background: var(--orange); color: var(--white); }
+    .nav-btn-primary:hover { background: var(--orange-light); }
+    .nav-btn-secondary { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+    .nav-btn-secondary:hover { background: rgba(255,255,255,0.18); }
+
+    @media (max-width: 768px) {
+      .detail-grid { grid-template-columns: 1fr; }
+      .filter-bar { flex-direction: column; align-items: flex-start; }
+      .results-count { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="dash-nav">
+    <a href="/" class="nav-logo">HAULR</a>
+    <div class="nav-right">
+      <a href="/dashboard" class="nav-btn nav-btn-secondary">Dashboard</a>
+      <a href="/book" class="nav-btn nav-btn-primary">New Booking</a>
+      <a href="/admin/logout" class="nav-btn nav-btn-secondary">Logout</a>
+    </div>
+  </nav>
+
+  <div class="dash-page">
+    <div class="dash-header">
+      <h1 class="page-title">Bookings</h1>
+      <p class="page-sub">All orders — full history with filters, sort, and detail view.</p>
+    </div>
+
+    <a class="back-link" href="/admin">← Back to Admin</a>
+
+    <!-- Flash alerts -->
+    <% if (flash === 'cancelled') { %>
+      <div class="alert alert-success">Order cancelled successfully.</div>
+    <% } %>
+    <% if (flash === 'assigned') { %>
+      <div class="alert alert-success">Driver assigned successfully.</div>
+    <% } %>
+
+    <!-- Admin sidebar nav -->
+    <div class="admin-nav">
+      <a class="admin-nav-link" href="/admin">Overview</a>
+      <a class="admin-nav-link" href="/admin/bookings">Bookings</a>
+      <a class="admin-nav-link" href="/admin/dispatch">Dispatch</a>
+      <a class="admin-nav-link" href="/admin/drivers">Drivers</a>
+      <a class="admin-nav-link" href="/admin/metrics">Metrics</a>
+      <a class="admin-nav-link" href="/admin/ratings">Ratings</a>
+    </div>
+
+    <!-- Filter bar -->
+    <form method="get" class="filter-bar">
+      <input type="hidden" name="admin" value="<%= adminEmail || '' %>">
+
+      <div class="filter-group">
+        <span class="filter-label">Status</span>
+        <select name="status" onchange="this.form.submit()">
+          <option value="all" <%= filters.status === 'all' ? 'selected' : '' %>>All</option>
+          <option value="pending" <%= filters.status === 'pending' ? 'selected' : '' %>>Pending</option>
+          <option value="paid" <%= filters.status === 'paid' ? 'selected' : '' %>>Paid</option>
+          <option value="assigned" <%= filters.status === 'assigned' ? 'selected' : '' %>>Assigned</option>
+          <option value="in_progress" <%= filters.status === 'in_progress' ? 'selected' : '' %>>In Progress</option>
+          <option value="delivered" <%= filters.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+          <option value="cancelled" <%= filters.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Sort</span>
+        <select name="sort" onchange="this.form.submit()">
+          <option value="created_at" <%= filters.sort === 'created_at' ? 'selected' : '' %>>Date</option>
+          <option value="price_total" <%= filters.sort === 'price_total' ? 'selected' : '' %>>Price</option>
+          <option value="status" <%= filters.sort === 'status' ? 'selected' : '' %>>Status</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <span class="filter-label">Direction</span>
+        <select name="dir" onchange="this.form.submit()">
+          <option value="desc" <%= filters.dir === 'desc' ? 'selected' : '' %>>Newest First</option>
+          <option value="asc" <%= filters.dir === 'asc' ? 'selected' : '' %>>Oldest First</option>
+        </select>
+      </div>
+
+      <a href="/admin/bookings" class="btn btn-gray" style="text-decoration:none;">Clear filters</a>
+
+      <span class="results-count"><%= total %> order<%= total === 1 ? '' : 's' %></span>
+    </form>
+
+    <!-- Orders table -->
+    <% if (orders.length === 0) { %>
+      <div class="orders-table">
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <h2>No orders found</h2>
+          <p>Try adjusting your filters.</p>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="orders-table">
+        <table style="width:100%; border-collapse:collapse;">
+          <thead class="orders-thead">
+            <tr>
+              <th class="sortable" onclick="sortBy('id')">#</th>
+              <th>Customer</th>
+              <th>Pickup</th>
+              <th>Dropoff</th>
+              <th>Item</th>
+              <th class="sortable" onclick="sortBy('price_total')">Price</th>
+              <th class="sortable" onclick="sortBy('status')">Status</th>
+              <th>Driver</th>
+              <th>Payout</th>
+              <th class="sortable" onclick="sortBy('created_at')">Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="orders-tbody">
+            <% for (const order of orders) { %>
+              <tr onclick="openDrawer(<%= order.id %>)" data-order-id="<%= order.id %>">
+                <td><span class="order-id-badge">#<%= order.id %></span></td>
+                <td>
+                  <div class="customer-name"><%= order.customer_name || '—' %></div>
+                  <% if (order.customer_email) { %>
+                    <div class="customer-email"><%= order.customer_email %></div>
+                  <% } %>
+                </td>
+                <td>
+                  <div class="address-text" title="<%= order.pickup_address %>"><%= order.pickup_address || '—' %></div>
+                </td>
+                <td>
+                  <div class="address-text" title="<%= order.dropoff_address %>"><%= order.dropoff_address || '—' %></div>
+                </td>
+                <td>
+                  <div style="font-size:0.85rem; font-weight:500;"><%= ((order.item_type || '').replace(/-/g, ' ')).replace(/\b\//g, m => m[1] ? m[1].toUpperCase() : m) %></div>
+                  <% if (order.distance_miles) { %>
+                    <div style="font-size:0.75rem; color:var(--gray-mid);"><%= Number(order.distance_miles).toFixed(1) %> mi</div>
+                  <% } %>
+                </td>
+                <td>
+                  <div class="price-value">$<%= Number(order.price_total).toFixed(2) %></div>
+                  <% if (order.price_base) { %>
+                    <div class="price-breakdown">base $<%= Number(order.price_base).toFixed(2) %></div>
+                  <% } %>
+                </td>
+                <td>
+                  <span class="status-badge <%= order.status %>"><%= order.status.replace('_', ' ') %></span>
+                  <% if (order.driver_status === 'accepted') { %>
+                    <div style="font-size:0.7rem; color:var(--gray-mid); margin-top:0.2rem;">accepted</div>
+                  <% } %>
+                </td>
+                <td>
+                  <% if (order.driver_name) { %>
+                    <div class="driver-name"><%= order.driver_name %></div>
+                    <% if (order.driver_phone) { %>
+                      <div class="driver-phone"><%= order.driver_phone %></div>
+                    <% } %>
+                  <% } else { %>
+                    <div style="color:var(--gray-mid); font-size:0.82rem;">—</div>
+                  <% } %>
+                </td>
+                <td>
+                  <% if (order.status === 'delivered') { %>
+                    <% const ps = order.payout_status || 'pending'; %>
+                    <% const psColors = { paid: '#22C55E', pending: '#FACC15', failed: '#F87171', na: '#9CA3AF' }; %>
+                    <span style="font-size:.7rem;font-weight:700;text-transform:uppercase;color:<%= psColors[ps] || '#9CA3AF' %>">
+                      <%= ps %>
+                    </span>
+                    <% if (order.stripe_transfer_id) { %>
+                      <div style="font-size:.65rem;color:var(--gray-mid);font-family:monospace;margin-top:.1rem;"><%= order.stripe_transfer_id.slice(0,10) %>…</div>
+                    <% } %>
+                  <% } else { %>
+                    <span style="font-size:.7rem;color:var(--gray-mid);">N/A</span>
+                  <% } %>
+                </td>
+                <td>
+                  <div class="date-text"><%= new Date(order.created_at).toLocaleDateString('en-US', {month:'short',day:'numeric'}) %></div>
+                  <div style="font-size:0.72rem; color:var(--gray-mid);"><%= new Date(order.created_at).toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'}) %></div>
+                </td>
+                <td onclick="event.stopPropagation()">
+                  <div class="actions-cell">
+                    <% if (order.status !== 'cancelled' && order.status !== 'delivered') { %>
+                      <form method="post" action="/admin/bookings/<%= order.id %>/cancel" onsubmit="return confirm('Cancel order #<%= order.id %>? This cannot be undone.');" style="display:inline;">
+                        <button type="submit" class="btn-action btn-cancel">Cancel</button>
+                      </form>
+                    <% } %>
+                    <button class="btn-action btn-reassign" onclick="openDrawer(<%= order.id %>)">View</button>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Detail Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <span class="drawer-title" id="drawerTitle">Order Details</span>
+      <button class="drawer-close" onclick="closeDrawer()">×</button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <script>
+    // Order data embedded for JS access
+    const allOrders = <%- JSON.stringify(orders) %>;
+    const driversList = <%- JSON.stringify(drivers.map(d => ({ id: d.id, name: d.name, phone: d.phone, city: d.city, vehicle_type: d.vehicle_type }))) %>;
+
+    function openDrawer(orderId) {
+      const order = allOrders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const body = document.getElementById('drawerBody');
+      const title = document.getElementById('drawerTitle');
+
+      title.textContent = `Order #${order.id}`;
+
+      const items = Array.isArray(order.items) ? order.items : [];
+      const itemsHTML = items.length > 0
+        ? items.map(it => `<li><strong>${it.description || 'Item'}</strong>${it.quantity > 1 ? ' ×' + it.quantity : ''} ${it.length_in ? `· ${it.length_in}×${it.width_in || '?'}×${it.height_in || '?'} in` : ''}</li>`).join('')
+        : '<li style="color:var(--gray-mid);">No item details recorded.</li>';
+
+      const statusBadgeClass = order.status;
+      const canCancel = order.status !== 'cancelled' && order.status !== 'delivered';
+      const hasDriver = order.driver_id;
+
+      body.innerHTML = `
+        <div class="detail-section">
+          <div class="detail-section-title">Status</div>
+          <span class="status-badge ${statusBadgeClass}">${order.status.replace('_', ' ')}</span>
+          ${order.driver_status ? `<div style="margin-top:0.5rem; font-size:0.82rem; color:var(--gray-mid);">Driver status: ${order.driver_status}</div>` : ''}
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Customer</div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <div class="detail-label">Name</div>
+              <div class="detail-value">${order.customer_name || '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Email</div>
+              <div class="detail-value">${order.customer_email || '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Phone</div>
+              <div class="detail-value">${order.customer_phone || '—'}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Route</div>
+          <div class="detail-full">
+            <div class="detail-label">Pickup</div>
+            <div class="detail-value">${order.pickup_address || '—'}</div>
+          </div>
+          <div class="detail-full">
+            <div class="detail-label">Dropoff</div>
+            <div class="detail-value">${order.dropoff_address || '—'}</div>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <div class="detail-label">Distance</div>
+              <div class="detail-value">${order.distance_miles ? Number(order.distance_miles).toFixed(1) + ' mi' : '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Item Type</div>
+              <div class="detail-value" style="text-transform:capitalize;">${(order.item_type || '').replace(/-/g, ' ')}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Items</div>
+          <ul class="items-list">${itemsHTML}</ul>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Pricing</div>
+          <div class="price-box">
+            <div class="price-row">
+              <span class="muted">Base rate</span>
+              <span>${order.price_base ? '$' + Number(order.price_base).toFixed(2) : '—'}</span>
+            </div>
+            <div class="price-row">
+              <span class="muted">Service fee (15%)</span>
+              <span>${order.price_fee ? '$' + Number(order.price_fee).toFixed(2) : '—'}</span>
+            </div>
+            <div class="price-row">
+              <span>Total</span>
+              <span>$${Number(order.price_total || 0).toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Driver</div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <div class="detail-label">Name</div>
+              <div class="detail-value">${order.driver_name || '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Phone</div>
+              <div class="detail-value">${order.driver_phone || '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">ETA</div>
+              <div class="detail-value">${order.eta_minutes ? order.eta_minutes + ' min' : '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Accepted</div>
+              <div class="detail-value">${order.driver_status || '—'}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <div class="detail-section-title">Timeline</div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <div class="detail-label">Created</div>
+              <div class="detail-value">${new Date(order.created_at).toLocaleString('en-US', {month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Confirmed</div>
+              <div class="detail-value">${order.confirmed_at ? new Date(order.confirmed_at).toLocaleString('en-US', {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Paid</div>
+              <div class="detail-value">${order.paid_at ? new Date(order.paid_at).toLocaleString('en-US', {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '—'}</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Updated</div>
+              <div class="detail-value">${order.updated_at ? new Date(order.updated_at).toLocaleString('en-US', {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '—'}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="drawer-actions">
+          ${canCancel ? `
+            <form method="post" action="/admin/bookings/${order.id}/cancel" onsubmit="return confirm('Cancel order #' + ${order.id} + '? This cannot be undone.');">
+              <button type="submit" class="btn btn-red-drawer">Cancel Order</button>
+            </form>
+          ` : `<div class="btn btn-gray-drawer">${order.status === 'delivered' ? 'Completed' : 'Cancelled'}</div>`}
+        </div>
+
+        ${canCancel ? `
+        <div class="reassign-form" style="margin-top:1rem;">
+          <div class="detail-section-title">Reassign Driver</div>
+          <form method="post" action="/admin/bookings/${order.id}/reassign">
+            <select name="driverId" required>
+              <option value="">Select a driver…</option>
+              ${driversList.map(d => `<option value="${d.id}">${d.name} · ${d.city} · ${d.vehicle_type}</option>`).join('')}
+            </select>
+            <button type="submit" class="btn btn-orange-drawer" style="width:100%;">Assign Driver</button>
+          </form>
+        </div>
+        ` : ''}
+      `;
+
+      document.getElementById('drawerOverlay').classList.add('open');
+      document.getElementById('drawer').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawerOverlay').classList.remove('open');
+      document.getElementById('drawer').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function sortBy(field) {
+      const params = new URLSearchParams(window.location.search);
+      const currentSort = params.get('sort') || 'created_at';
+      const currentDir = params.get('dir') || 'desc';
+      params.set('sort', field);
+      params.set('dir', field === currentSort && currentDir === 'desc' ? 'asc' : 'desc');
+      window.location.search = params.toString();
+    }
+
+    // ESC key closes drawer
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+  </script>
+</body>
+</html>

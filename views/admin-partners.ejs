@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partner Management — Shurget Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: #f5f4f0; color: #1a1a1a; font-size: 14px; }
+    .admin-wrap { display: flex; min-height: 100vh; }
+    .admin-sidebar { width: 220px; background: #1a1a1a; color: #fff; padding: 1.5rem 0; flex-shrink: 0; }
+    .sidebar-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.08em; color: #E86A00; padding: 0 1.5rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem; }
+    .sidebar-nav { list-style: none; }
+    .sidebar-nav li a { display: block; padding: 0.65rem 1.5rem; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.88rem; transition: color 0.15s; }
+    .sidebar-nav li a:hover, .sidebar-nav li a.active { color: #fff; background: rgba(255,255,255,0.07); }
+    .sidebar-nav li a span { display: inline-block; background: #E86A00; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 99px; margin-left: 6px; vertical-align: middle; }
+    .admin-main { flex: 1; padding: 2rem 2.5rem; overflow-y: auto; }
+    .admin-page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+    .admin-page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.04em; }
+    .section { background: #fff; border-radius: 10px; padding: 1.75rem; margin-bottom: 2rem; border: 1.5px solid rgba(0,0,0,0.07); }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; letter-spacing: 0.05em; margin-bottom: 1.25rem; color: #1a1a1a; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 0.6rem 0.75rem; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: #888; font-weight: 600; border-bottom: 1px solid rgba(0,0,0,0.08); }
+    td { padding: 0.75rem 0.75rem; font-size: 0.88rem; border-bottom: 1px solid rgba(0,0,0,0.04); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .status-badge { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 99px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .status-pending { background: #fef3c7; color: #b45309; }
+    .status-approved { background: #dcfce7; color: #15803d; }
+    .status-rejected { background: #fee2e2; color: #991b1b; }
+    .status-active { background: #dcfce7; color: #15803d; }
+    .actions { display: flex; gap: 0.5rem; }
+    .btn-sm { padding: 0.4rem 0.85rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.15s; }
+    .btn-sm:hover { opacity: 0.85; }
+    .btn-approve { background: #15803d; color: #fff; }
+    .btn-reject { background: #dc2626; color: #fff; }
+    .btn-view { background: #1a1a1a; color: #fff; }
+    .empty-state { padding: 2.5rem; text-align: center; color: #888; }
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-box { background: #f7f7f5; border-radius: 8px; padding: 1rem 1.25rem; }
+    .stat-box-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: #888; font-weight: 600; margin-bottom: 0.35rem; }
+    .stat-box-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem; color: #1a1a1a; }
+  </style>
+</head>
+<body>
+<div class="admin-wrap">
+  <div class="admin-sidebar">
+    <div class="sidebar-logo">HAULR</div>
+    <ul class="sidebar-nav">
+      <li><a href="/admin">Dashboard</a></li>
+      <li><a href="/admin/dispatch">Dispatch</a></li>
+      <li><a href="/admin/bookings">Bookings</a></li>
+      <li><a href="/admin/drivers">Drivers</a></li>
+      <li><a href="/admin/partners" class="active">Partners <span><%= applications.filter(function(a){return a.status==='pending';}).length %></span></a></li>
+      <li><a href="/admin/logout">Sign Out</a></li>
+    </ul>
+  </div>
+
+  <div class="admin-main">
+    <div class="admin-page-header">
+      <div class="admin-page-title">Partner Management</div>
+      <a href="/partners/apply" style="background:#E86A00;color:#fff;padding:0.6rem 1.25rem;border-radius:8px;font-weight:600;text-decoration:none;font-size:0.9rem;">+ New Partner</a>
+    </div>
+
+    <!-- Summary stats -->
+    <div class="section">
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-box-label">Total Partners</div>
+          <div class="stat-box-val"><%= partners.length %></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">Pending Applications</div>
+          <div class="stat-box-val"><%= applications.filter(function(a){return a.status==='pending';}).length %></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">Total Commission Paid</div>
+          <div class="stat-box-val">$<%= (partners.reduce(function(s,p){return s+(p.last_payout_amount_cents||0);},0)/100).toFixed(0) %></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending Applications -->
+    <div class="section">
+      <div class="section-title">Pending Applications (<%= applications.filter(function(a){return a.status==='pending';}).length %>)</div>
+      <% var pendingApps = applications.filter(function(a){return a.status==='pending';}); %>
+      <% if (pendingApps.length === 0) { %>
+        <div class="empty-state">No pending applications.</div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr><th>Store</th><th>Contact</th><th>Volume</th><th>ZIPs Served</th><th>Applied</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            <% pendingApps.forEach(function(app) { %>
+              <tr>
+                <td>
+                  <div style="font-weight:600;"><%= app.store_name %></div>
+                  <div style="font-size:0.8rem;color:#888;margin-top:2px;"><%= app.website_url || '' %></div>
+                </td>
+                <td>
+                  <div><%= app.contact_name %></div>
+                  <div style="font-size:0.8rem;color:#888;"><%= app.contact_email %></div>
+                </td>
+                <td><%= app.monthly_volume %></td>
+                <td style="font-size:0.82rem;color:#666;"><%= (app.zip_codes_served || '').substring(0,60) %></td>
+                <td style="font-size:0.82rem;color:#888;"><%= new Date(app.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) %></td>
+                <td class="actions">
+                  <form action="/api/partners/<%= app.id %>/approve" method="post" style="display:inline;">
+                    <button type="submit" class="btn-sm btn-approve">Approve</button>
+                  </form>
+                  <form action="/api/partners/<%= app.id %>/reject" method="post" style="display:inline;">
+                    <button type="submit" class="btn-sm btn-reject">Reject</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+
+    <!-- All Applications -->
+    <div class="section">
+      <div class="section-title">All Applications</div>
+      <% if (applications.length === 0) { %>
+        <div class="empty-state">No applications yet.</div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr><th>Store</th><th>Contact</th><th>Volume</th><th>Status</th><th>Reviewed</th><th>Reviewed By</th></tr>
+          </thead>
+          <tbody>
+            <% applications.filter(function(a){return a.status!=='pending';}).forEach(function(app) { %>
+              <tr>
+                <td><div style="font-weight:600;"><%= app.store_name %></div></td>
+                <td><div style="font-size:0.82rem;"><%= app.contact_name %> · <%= app.contact_email %></div></td>
+                <td><%= app.monthly_volume %></td>
+                <td><span class="status-badge status-<%= app.status %>"><%= app.status %></span></td>
+                <td style="font-size:0.8rem;color:#888;"><%= app.reviewed_at ? new Date(app.reviewed_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—' %></td>
+                <td style="font-size:0.8rem;color:#888;"><%= app.reviewed_by || '—' %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+
+    <!-- Active Partners -->
+    <div class="section">
+      <div class="section-title">Active Partners (<%= partners.length %>)</div>
+      <% if (partners.length === 0) { %>
+        <div class="empty-state">No active partners yet. Approve applications above to create partner accounts.</div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr><th>Store</th><th>Slug</th><th>Commission Rate</th><th>Commission Balance</th><th>Stripe Account</th><th>Created</th><th>Dashboard</th></tr>
+          </thead>
+          <tbody>
+            <% partners.forEach(function(p) { %>
+              <tr>
+                <td><div style="font-weight:600;"><%= p.store_name %></div></td>
+                <td style="font-family:'Courier New',monospace;font-size:0.8rem;color:#888;"><%= p.slug %></td>
+                <td><%= (p.commission_rate * 100).toFixed(0) %>%</td>
+                <td style="font-weight:600;color:<%= p.commission_balance_cents > 2500 ? '#15803d' : '#1a1a1a' %>;">$<%= (p.commission_balance_cents / 100).toFixed(2) %></td>
+                <td><% if (p.stripe_account_id) { %><span class="status-badge status-active">Connected</span><% } else { %><span style="color:#b45309;font-size:0.8rem;">Not connected</span><% } %></td>
+                <td style="font-size:0.8rem;color:#888;"><%= new Date(p.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) %></td>
+                <td><a href="/partners/<%= p.slug %>" target="_blank" class="btn-sm btn-view">Dashboard</a></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+</div>
+</body>
+</html>

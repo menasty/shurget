@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--bg); }
+
+    .not-found-page {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 120px 1.5rem 4rem;
+      text-align: center;
+    }
+
+    .not-found-illustration {
+      font-size: 5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--gray-mid);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      margin-bottom: 2.5rem;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 0.9rem 2rem;
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--orange-light); }
+
+    .btn-secondary {
+      display: inline-block;
+      padding: 0.75rem 1.75rem;
+      background: transparent;
+      color: var(--charcoal);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .btn-secondary:hover { border-color: var(--charcoal); }
+
+    .links-row {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .links-row a {
+      color: var(--gray-mid);
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .links-row a:hover { color: var(--orange); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">HAULR</a>
+      <div class="nav-right">
+        <a href="/book" class="nav-badge">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="not-found-page">
+    <div class="not-found-illustration">🚛</div>
+    <h1>Page Not Found</h1>
+    <p class="subtitle">
+      This page doesn't exist or may have moved.<br>
+      Let's get you back on the road.
+    </p>
+
+    <div class="cta-group">
+      <a href="/book" class="btn-primary">Book a Haul</a>
+      <a href="/" class="btn-secondary">Go to Homepage</a>
+    </div>
+
+    <div class="links-row">
+      <a href="/track">Track an Order</a>
+      <a href="/help">Help & FAQ</a>
+      <a href="/contact">Contact</a>
+    </div>
+  </div>
+</body>
+</html>

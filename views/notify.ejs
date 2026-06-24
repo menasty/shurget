@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Driver Availability — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--bg); }
+
+    .notify-page {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 100px 1.5rem 3rem;
+    }
+
+    .notify-hero {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .truck-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--gray-mid);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    /* Form */
+    .notify-form-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 2rem;
+    }
+
+    .form-row {
+      margin-bottom: 1rem;
+    }
+
+    .form-row label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--orange);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-row input,
+    .form-row select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 1.5px solid var(--gray-light);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--charcoal);
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    .form-row input:focus,
+    .form-row select:focus {
+      border-color: var(--orange);
+    }
+
+    .form-row input::placeholder { color: var(--gray-light); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .btn-primary:hover { background: var(--orange-light); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Success state */
+    .success-card {
+      background: var(--white);
+      border: 1.5px solid #86C9A0;
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      display: none;
+    }
+
+    .success-card.show { display: block; }
+
+    .success-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .success-card h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+
+    .success-card p {
+      color: var(--gray-mid);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background: transparent;
+      color: var(--orange);
+      border: 2px solid var(--orange);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:hover { background: #FEF3E8; }
+
+    /* Error */
+    .error-msg {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      color: #991b1b;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .error-msg.show { display: block; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">HAULR</a>
+      <div class="nav-right">
+        <a href="/contact" class="nav-link">Contact</a>
+        <a href="/book" class="nav-badge">Book Now</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="notify-page">
+    <div class="notify-hero">
+      <div class="truck-icon">🚛</div>
+      <h1>No Trucks Available</h1>
+      <p class="subtitle">
+        We don't have drivers in your area right now.
+        Leave your email and we'll notify you the moment a driver becomes available.
+      </p>
+    </div>
+
+    <div id="error-msg" class="error-msg"></div>
+
+    <div class="notify-form-card" id="form-card">
+      <div class="form-row">
+        <label for="email">Your Email</label>
+        <input type="email" id="email" placeholder="you@example.com" required>
+      </div>
+      <div class="form-row">
+        <label for="pickup-zip">Pickup ZIP Code</label>
+        <input type="text" id="pickup-zip" placeholder="e.g. 78701" maxlength="10" required>
+      </div>
+      <div class="form-row">
+        <label for="item-type">What do you need moved? (optional)</label>
+        <select id="item-type">
+          <option value="">Select an item...</option>
+          <option value="sofa">Sofa</option>
+          <option value="mattress">Mattress</option>
+          <option value="dresser">Dresser</option>
+          <option value="refrigerator">Refrigerator</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <button type="button" class="btn-primary" id="btn-submit" onclick="submitWaitlist()">
+        Notify Me When Available
+      </button>
+    </div>
+
+    <div class="success-card" id="success-card">
+      <div class="success-icon">✅</div>
+      <h2>You're on the List!</h2>
+      <p>We'll email you the moment a driver becomes available in your area. Usually within a few hours.</p>
+      <a href="/book" class="btn-secondary">Book Again</a>
+    </div>
+  </div>
+
+  <script>
+    async function submitWaitlist() {
+      const email     = document.getElementById('email').value.trim();
+      const pickupZip = document.getElementById('pickup-zip').value.trim();
+      const itemType  = document.getElementById('item-type').value;
+      const errEl     = document.getElementById('error-msg');
+      const btn       = document.getElementById('btn-submit');
+
+      errEl.classList.remove('show');
+      errEl.textContent = '';
+
+      if (!email || !pickupZip) {
+        errEl.textContent = 'Please fill in your email and pickup ZIP code.';
+        errEl.classList.add('show');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+
+      try {
+        const res = await fetch('/api/booking/waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, pickupZip, itemType }),
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('form-card').style.display = 'none';
+          document.getElementById('success-card').classList.add('show');
+        } else {
+          errEl.textContent = data.error || 'Something went wrong. Please try again.';
+          errEl.classList.add('show');
+          btn.disabled = false;
+          btn.textContent = 'Notify Me When Available';
+        }
+      } catch {
+        errEl.textContent = 'Network error — please check your connection and try again.';
+        errEl.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = 'Notify Me When Available';
+      }
+    }
+  </script>
+</body>
+</html>

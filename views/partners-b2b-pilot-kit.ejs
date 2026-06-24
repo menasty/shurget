@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2B Pilot Program — Shurget for Partners</title>
+  <meta name="description" content="Join the Shurget B2B pilot program — zero upfront cost, same-day pickup truck delivery, scale as you grow. Apply in minutes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <%- include('partials/ga4') %>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #1a1a2e;
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    /* ─── Nav ─── */
+    .kit-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .kit-nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.05em;
+      color: #fff;
+      text-decoration: none;
+    }
+    .kit-nav-logo span { color: #ff6b35; }
+    .kit-nav-back {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .kit-nav-back:hover { color: rgba(255,255,255,0.8); }
+
+    /* ─── Hero ─── */
+    .kit-hero {
+      text-align: center;
+      padding: 5rem 2rem 4rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .kit-hero-badge {
+      display: inline-block;
+      background: rgba(255,107,53,0.15);
+      border: 1px solid rgba(255,107,53,0.35);
+      color: #ff6b35;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 0.3rem 0.9rem;
+      border-radius: 99px;
+      margin-bottom: 1.5rem;
+    }
+    .kit-hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      margin-bottom: 1.25rem;
+    }
+    .kit-hero h1 span { color: #ff6b35; }
+    .kit-hero-sub {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.6);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.75;
+    }
+
+    /* ─── Section ─── */
+    .kit-section {
+      padding: 4rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .kit-section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #ff6b35;
+      margin-bottom: 0.75rem;
+    }
+    .kit-section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+    .kit-section-sub {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.95rem;
+      max-width: 540px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    /* ─── 3-Card Grid ─── */
+    .kit-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .kit-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+    }
+    .kit-card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .kit-card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .kit-card-desc { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.65; }
+
+    /* ─── Integration Options ─── */
+    .kit-options-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .kit-option-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .kit-option-card--available { border-color: rgba(255,107,53,0.35); }
+    .kit-option-status {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.25rem 0.7rem;
+      border-radius: 99px;
+      margin-bottom: 1rem;
+      align-self: flex-start;
+    }
+    .kit-option-status--live { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .kit-option-status--roadmap { background: rgba(234,179,8,0.15); color: #facc15; }
+    .kit-option-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .kit-option-desc { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.65; flex: 1; }
+    .kit-option-link {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #ff6b35;
+      text-decoration: none;
+    }
+    .kit-option-link:hover { color: #ff8c5a; }
+
+    /* ─── 3-Step Process ─── */
+    .kit-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .kit-step-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      position: relative;
+    }
+    .kit-step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      color: rgba(255,107,53,0.2);
+      position: absolute;
+      top: 0.75rem;
+      right: 1.25rem;
+      line-height: 1;
+    }
+    .kit-step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .kit-step-desc { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.65; }
+
+    /* ─── Form ─── */
+    .kit-form-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .kit-form-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 2.5rem;
+    }
+    .kit-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .kit-form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .kit-form-group.full { grid-column: 1 / -1; }
+    .kit-form-group label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .kit-form-group input,
+    .kit-form-group select,
+    .kit-form-group textarea {
+      padding: 0.7rem 0.9rem;
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+      background: rgba(255,255,255,0.06);
+    }
+    .kit-form-group input::placeholder,
+    .kit-form-group textarea::placeholder { color: rgba(255,255,255,0.3); }
+    .kit-form-group input:focus,
+    .kit-form-group select:focus,
+    .kit-form-group textarea:focus { border-color: #ff6b35; }
+    .kit-form-group select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.9rem center; padding-right: 2.5rem; }
+    .kit-form-group textarea { resize: vertical; min-height: 80px; }
+    .kit-form-group select option { background: #1a1a2e; color: #fff; }
+    .kit-btn-submit {
+      background: #ff6b35;
+      color: #fff;
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.15s;
+      margin-top: 0.5rem;
+    }
+    .kit-btn-submit:hover { background: #e55a25; }
+    .kit-btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .kit-form-error {
+      color: #f87171;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .kit-form-success {
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: #4ade80;
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+    .kit-form-note {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.35);
+    }
+
+    /* ─── CTA ─── */
+    .kit-cta {
+      text-align: center;
+      padding: 5rem 2rem;
+    }
+    .kit-cta h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+    .kit-cta-sub {
+      color: rgba(255,255,255,0.5);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .kit-cta-btn {
+      display: inline-block;
+      background: #ff6b35;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.9rem 2.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .kit-cta-btn:hover { background: #e55a25; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .kit-cards, .kit-options-grid, .kit-steps { grid-template-columns: 1fr; }
+      .kit-nav { padding: 1rem 1.25rem; }
+      .kit-hero { padding: 3.5rem 1.5rem 3rem; }
+      .kit-section { padding: 3rem 1.5rem; }
+      .kit-form-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .kit-hero h1 { font-size: 2.75rem; }
+      .kit-nav-logo { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Nav ─── -->
+  <nav class="kit-nav">
+    <a href="/" class="kit-nav-logo">Shur<span>get</span></a>
+    <a href="/partners" class="kit-nav-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Partners
+    </a>
+  </nav>
+
+  <!-- ─── Hero ─── -->
+  <section class="kit-hero">
+    <div class="kit-hero-badge">For Retailers</div>
+    <h1>The Shurget <span>B2B</span> Pilot Program</h1>
+    <p class="kit-hero-sub">Ship your first 5–10 oversized-item deliveries with zero upfront commitment. Prove the model for your store, then scale from there. No integration required to start.</p>
+  </section>
+
+  <!-- ─── Program Benefits ─── -->
+  <section class="kit-section">
+    <div class="kit-section-label">Program Benefits</div>
+    <h2 class="kit-section-title">Why pilot partners love us</h2>
+    <div class="kit-cards">
+      <div class="kit-card">
+        <div class="kit-card-icon">$</div>
+        <div class="kit-card-title">Zero Setup Cost</div>
+        <p class="kit-card-desc">No integration fees, no monthly minimums, no subscription. Add Shurget to your delivery options and only pay when deliveries complete.</p>
+      </div>
+      <div class="kit-card">
+        <div class="kit-card-icon">%</div>
+        <div class="kit-card-title">Partner-First Revenue</div>
+        <p class="kit-card-desc">You keep 100% of your product revenue. Shurget earns its service fee only when a driver completes the delivery — no fee unless it works.</p>
+      </div>
+      <div class="kit-card">
+        <div class="kit-card-icon">✨</div>
+        <div class="kit-card-title">White-Glove Support</div>
+        <p class="kit-card-desc">A dedicated point of contact from day one. We help you scope the pilot, coordinate logistics, and make sure every delivery lands right.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Integration Options ─── -->
+  <section class="kit-section">
+    <div class="kit-section-label">Integration Options</div>
+    <h2 class="kit-section-title">Choose your integration path</h2>
+    <p class="kit-section-sub">Whether you want to start manual or go programmatic, we have an option that fits your timeline. All integration paths include live driver tracking, Stripe payments, and SMS notifications to your customers.</p>
+    <div class="kit-options-grid">
+      <div class="kit-option-card kit-option-card--available">
+        <span class="kit-option-status kit-option-status--live">Available Now</span>
+        <div class="kit-option-title">Checkout Widget</div>
+        <p class="kit-option-desc">One script tag on your product pages. Customers see live Shurget pricing without leaving your checkout. No redirect, no new account. Converts at the moment of intent.</p>
+        <a href="/partners/integration-kit" class="kit-option-link">View Integration Kit →</a>
+      </div>
+      <div class="kit-option-card kit-option-card--available">
+        <span class="kit-option-status kit-option-status--live">Available Now</span>
+        <div class="kit-option-title">Dashboard Handoff</div>
+        <p class="kit-option-desc">Submit delivery orders manually through the Shurget dispatch dashboard. Operational in one day. No API keys or engineering required.</p>
+        <a href="/partners/integration-kit#how-it-works" class="kit-option-link">Learn More →</a>
+      </div>
+      <div class="kit-option-card">
+        <span class="kit-option-status kit-option-status--roadmap">On Roadmap</span>
+        <div class="kit-option-title">REST API</div>
+        <p class="kit-option-desc">Full programmatic control for high-volume partners. POST orders from your OMS, receive webhook events on status changes, and embed live tracking into your own UI.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── How the Pilot Works ─── -->
+  <section class="kit-section">
+    <div class="kit-section-label">How It Works</div>
+    <h2 class="kit-section-title">Three steps to your first pilot delivery</h2>
+    <div class="kit-steps">
+      <div class="kit-step-card">
+        <div class="kit-step-num">01</div>
+        <div class="kit-step-title">Apply</div>
+        <p class="kit-step-desc">Fill out the contact form below. Tell us about your store, what you ship, and the ZIP codes you serve. Takes about 5 minutes.</p>
+      </div>
+      <div class="kit-step-card">
+        <div class="kit-step-num">02</div>
+        <div class="kit-step-title">We Reach Out</div>
+        <p class="kit-step-desc">Our team follows up within 1 business day to schedule an intro call, answer questions, and scope a pilot that makes sense for your volume.</p>
+      </div>
+      <div class="kit-step-card">
+        <div class="kit-step-num">03</div>
+        <div class="kit-step-title">Run 5–10 Deliveries</div>
+        <p class="kit-step-desc">We onboard you to the dashboard or embed the widget — whichever path fits. You run 5–10 deliveries, we track results together, then decide on next steps.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Contact Form ─── -->
+  <section class="kit-section">
+    <div class="kit-section-label">Get Started</div>
+    <h2 class="kit-section-title" style="text-align:center;">Apply for the pilot program</h2>
+    <p style="text-align:center;color:rgba(255,255,255,0.45);font-size:0.95rem;max-width:500px;margin:0 auto 2.5rem;line-height:1.7;">No commitment. We'll review your application and follow up within 1 business day to start the conversation.</p>
+    <div class="kit-form-wrap">
+      <div class="kit-form-card">
+        <div id="form-error" class="kit-form-error"></div>
+        <div id="form-success" class="kit-form-success"></div>
+        <form id="pilot-form">
+          <div class="kit-form-grid">
+            <div class="kit-form-group">
+              <label for="company_name">Company Name *</label>
+              <input type="text" id="company_name" name="company_name" placeholder="Acme Furniture Co." required>
+            </div>
+            <div class="kit-form-group">
+              <label for="name">Your Name *</label>
+              <input type="text" id="name" name="name" placeholder="Jane Smith" required>
+            </div>
+            <div class="kit-form-group">
+              <label for="email">Work Email *</label>
+              <input type="email" id="email" name="email" placeholder="jane@acmefurniture.com" required>
+            </div>
+            <div class="kit-form-group">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" placeholder="(512) 555-0100">
+            </div>
+            <div class="kit-form-group">
+              <label for="monthly_volume">Monthly Oversized-Item Volume *</label>
+              <select id="monthly_volume" name="monthly_volume" required>
+                <option value="" disabled selected>Select a range</option>
+                <option value="1-10">1–10 deliveries/month</option>
+                <option value="11-50">11–50 deliveries/month</option>
+                <option value="51-200">51–200 deliveries/month</option>
+                <option value="200+">200+ deliveries/month</option>
+              </select>
+            </div>
+            <div class="kit-form-group">
+              <label for="zip_codes_served">ZIP Codes You Serve *</label>
+              <input type="text" id="zip_codes_served" name="zip_codes_served" placeholder="78701, 78704, 78705" required>
+            </div>
+            <div class="kit-form-group full">
+              <label for="item_description">Items You Ship Most</label>
+              <textarea id="item_description" name="item_description" placeholder="e.g. sofas, dining sets, commercial refrigerators, gym equipment"></textarea>
+            </div>
+          </div>
+          <button type="submit" class="kit-btn-submit" id="submit-btn">Apply for Pilot →</button>
+          <p class="kit-form-note">No commitment. We'll follow up within 1 business day.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA Footer ─── -->
+  <section class="kit-cta">
+    <h2>Ready to get started?</h2>
+    <p class="kit-cta-sub">Have questions first? Reach out directly and we'll get back to you.</p>
+    <a href="mailto:partners@shurget.com?subject=B2B%20Pilot%20Program" class="kit-cta-btn">Talk to Us →</a>
+  </section>
+
+  <script>
+    const form = document.getElementById('pilot-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const formError = document.getElementById('form-error');
+    const formSuccess = document.getElementById('form-success');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      formError.style.display = 'none';
+      formSuccess.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+
+      const data = {
+        company_name:      document.getElementById('company_name').value.trim(),
+        name:              document.getElementById('name').value.trim(),
+        email:             document.getElementById('email').value.trim(),
+        phone:             document.getElementById('phone').value.trim(),
+        monthly_volume:    document.getElementById('monthly_volume').value,
+        zip_codes_served:  document.getElementById('zip_codes_served').value.trim(),
+        item_description:  document.getElementById('item_description').value.trim(),
+      };
+
+      try {
+        const res = await fetch('/api/partners/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || 'Something went wrong.');
+        formSuccess.textContent = json.message;
+        formSuccess.style.display = 'block';
+        form.reset();
+        formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } catch (err) {
+        formError.textContent = err.message;
+        formError.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Apply for Pilot →';
+      }
+    });
+  </script>
+  <!-- Polsia Analytics --><script>(function(){var slug="shurget-5";if(!slug)return;var vid=localStorage.getItem('polsia_vid');if(!vid){vid='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});localStorage.setItem('polsia_vid',vid);}new Image().src='https://polsia.com/api/beacon/pixel?s='+encodeURIComponent(slug)+'&v='+encodeURIComponent(vid);})();</script>
+</body>
+</html>

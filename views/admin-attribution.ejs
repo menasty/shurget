@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attribution — Shurget Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { font-family: 'DM Sans', sans-serif; background: #f4f4f5; color: #111; margin: 0; }
+    .admin-header { background: #1a1a2e; color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .admin-header a { color: rgba(255,255,255,.65); text-decoration: none; font-size: .85rem; }
+    .admin-header a:hover { color: #fff; }
+    .admin-nav { display: flex; gap: 20px; }
+    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+    h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 4px; }
+    .sub { color: #6b7280; font-size: .9rem; margin: 0 0 24px; }
+    /* Date filter */
+    .filter-row { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+    .filter-label { font-size: .85rem; color: #6b7280; }
+    .filter-btn { padding: 6px 14px; border-radius: 6px; border: 1px solid #d1d5db; background: #fff; font-size: .85rem; cursor: pointer; color: #374151; text-decoration: none; }
+    .filter-btn.active { background: #1a1a2e; color: #fff; border-color: #1a1a2e; }
+    .export-btn { margin-left: auto; padding: 6px 14px; border-radius: 6px; border: 1px solid #d1d5db; background: #fff; font-size: .85rem; cursor: pointer; color: #374151; text-decoration: none; }
+    .export-btn:hover { background: #f9fafb; }
+    /* Section */
+    .section-title { font-size: 1.05rem; font-weight: 700; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+    .section-wrap { background: #fff; border-radius: 10px; border: 1px solid #e5e7eb; padding: 20px 24px; margin-bottom: 32px; overflow-x: auto; }
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+    th { text-align: left; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #9ca3af; padding: 0 12px 10px 0; border-bottom: 1px solid #e5e7eb; white-space: nowrap; }
+    td { padding: 10px 12px 10px 0; border-bottom: 1px solid #f3f4f6; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .source-chip { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: .75rem; font-weight: 600; background: #eff6ff; color: #1d4ed8; }
+    .source-chip.referral { background: #fff7ed; color: #c2410c; }
+    .source-chip.seo { background: #f0fdf4; color: #166534; }
+    .source-chip.widget { background: #fdf4ff; color: #7e22ce; }
+    .source-chip.drive_earn { background: #fff1f2; color: #be123c; }
+    .source-chip.twitter { background: #eff6ff; color: #0369a1; }
+    .source-chip.direct { background: #f9fafb; color: #6b7280; }
+    .empty { color: #9ca3af; font-size: .9rem; padding: 16px 0; }
+    /* Summary cards */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 18px 20px; }
+    .card-label { font-size: .78rem; color: #9ca3af; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+    .card-value { font-size: 1.6rem; font-weight: 700; color: #111; line-height: 1.1; }
+    .card-sub { font-size: .78rem; color: #9ca3af; margin-top: 2px; }
+    /* Tabs */
+    .tabs { display: flex; gap: 0; border-bottom: 2px solid #e5e7eb; margin-bottom: 24px; }
+    .tab { padding: 8px 18px; font-size: .9rem; font-weight: 500; color: #6b7280; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+    .tab.active { color: #1a1a2e; border-bottom-color: #1a1a2e; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+<div class="admin-header">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="/" style="font-size:1.1rem;font-weight:700;color:#fff;text-decoration:none;">HAULR</a>
+    <span style="opacity:.3">|</span>
+    <span style="font-size:.85rem;opacity:.7">Admin</span>
+  </div>
+  <nav class="admin-nav">
+    <a href="/admin">Dashboard</a>
+    <a href="/admin/bookings">Bookings</a>
+    <a href="/admin/dispatch">Dispatch</a>
+    <a href="/admin/drivers">Drivers</a>
+    <a href="/admin/metrics">Metrics</a>
+    <a href="/admin/attribution" style="color:#fff;font-weight:600;">Attribution</a>
+    <a href="/admin/partners">Partners</a>
+    <a href="/admin/logout">Logout</a>
+  </nav>
+</div>
+
+<div class="page-wrap">
+  <h1>Attribution Dashboard</h1>
+  <p class="sub">Bookings and driver signups by UTM source. Last-touch for bookings; first-touch for signups.</p>
+
+  <!-- Date range filter -->
+  <div class="filter-row">
+    <span class="filter-label">Period:</span>
+    <% ['7d','30d','all'].forEach(function(r){ %>
+      <a href="/admin/attribution?range=<%= r %>"
+         class="filter-btn<%= range === r ? ' active' : '' %>">
+        <%= r === '7d' ? 'Last 7 days' : r === '30d' ? 'Last 30 days' : 'All time' %>
+      </a>
+    <% }); %>
+  </div>
+
+  <%
+    const totalBookings = bookings.reduce((s, r) => s + (r.bookings || 0), 0);
+    const totalRevenue  = bookings.reduce((s, r) => s + parseFloat(r.gross_revenue || 0), 0);
+    const totalNetFee   = bookings.reduce((s, r) => s + parseFloat(r.net_fee || 0), 0);
+    const totalDrivers  = drivers.reduce((s, r) => s + (r.signups || 0), 0);
+    const avgOrderValue = totalBookings > 0 ? totalRevenue / totalBookings : 0;
+  %>
+  <!-- Summary cards -->
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Total Bookings</div>
+      <div class="card-value"><%= totalBookings %></div>
+      <div class="card-sub">with UTM or direct</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Gross Revenue</div>
+      <div class="card-value">$<%= totalRevenue.toFixed(0) %></div>
+      <div class="card-sub">all attributed orders</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Service Fee Net</div>
+      <div class="card-value">$<%= totalNetFee.toFixed(0) %></div>
+      <div class="card-sub">15% platform fee</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Avg Order Value</div>
+      <div class="card-value">$<%= avgOrderValue.toFixed(0) %></div>
+      <div class="card-sub">across all sources</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Driver Signups</div>
+      <div class="card-value"><%= totalDrivers %></div>
+      <div class="card-sub">attributed applications</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('bookings')">Bookings by Source</div>
+    <div class="tab" onclick="showTab('drivers')">Driver Signups</div>
+    <div class="tab" onclick="showTab('referrals')">Referral Funnel</div>
+  </div>
+
+  <!-- Bookings tab -->
+  <div id="tab-bookings" class="tab-panel active">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+      <a href="/admin/attribution/export.csv?range=<%= range %>&type=bookings" class="export-btn">⬇ Export CSV</a>
+    </div>
+    <div class="section-wrap">
+      <% if (bookings.length === 0) { %>
+        <p class="empty">No booking attribution data yet. UTM params will be captured on new orders.</p>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Medium</th>
+              <th>Campaign</th>
+              <th class="num">Bookings</th>
+              <th class="num">Gross Revenue</th>
+              <th class="num">Net Fee</th>
+              <th class="num">Avg Order Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% bookings.forEach(function(r){ %>
+              <tr>
+                <td>
+                  <span class="source-chip <%= r.source %>"><%= r.source %></span>
+                </td>
+                <td style="color:#6b7280;"><%= r.medium %></td>
+                <td style="color:#6b7280;font-size:.82rem;"><%= r.campaign %></td>
+                <td class="num" style="font-weight:600;"><%= r.bookings %></td>
+                <td class="num">$<%= parseFloat(r.gross_revenue || 0).toFixed(2) %></td>
+                <td class="num">$<%= parseFloat(r.net_fee || 0).toFixed(2) %></td>
+                <td class="num">$<%= parseFloat(r.avg_order_value || 0).toFixed(2) %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Driver Signups tab -->
+  <div id="tab-drivers" class="tab-panel">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+      <a href="/admin/attribution/export.csv?range=<%= range %>&type=drivers" class="export-btn">⬇ Export CSV</a>
+    </div>
+    <div class="section-wrap">
+      <% if (drivers.length === 0) { %>
+        <p class="empty">No driver signup attribution data yet. UTM params will be captured on new applications.</p>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Source</th>
+              <th>Medium</th>
+              <th>Campaign</th>
+              <th class="num">Signups</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% drivers.forEach(function(r){ %>
+              <tr>
+                <td><span class="source-chip <%= r.source %>"><%= r.source %></span></td>
+                <td style="color:#6b7280;"><%= r.medium %></td>
+                <td style="color:#6b7280;font-size:.82rem;"><%= r.campaign %></td>
+                <td class="num" style="font-weight:600;"><%= r.signups %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+
+    <!-- Twitter UTM convention note -->
+    <div class="section-wrap" style="background:#eff6ff;border-color:#bfdbfe;">
+      <div class="section-title">🐦 Twitter Driver Recruitment — UTM Convention</div>
+      <p style="margin:0 0 8px;font-size:.88rem;color:#1e3a5f;">Tag all Twitter/X driver recruitment links with:</p>
+      <code style="display:block;background:#fff;padding:10px 14px;border-radius:6px;font-size:.85rem;color:#1e40af;border:1px solid #bfdbfe;">
+        utm_source=twitter&utm_medium=social&utm_campaign=driver_recruit_jun
+      </code>
+      <p style="margin:8px 0 0;font-size:.82rem;color:#6b7280;">Increment campaign suffix (jun → jul) monthly so you can compare cohorts.</p>
+    </div>
+  </div>
+
+  <!-- Referral Funnel tab -->
+  <div id="tab-referrals" class="tab-panel">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+      <a href="/admin/attribution/export.csv?range=<%= range %>&type=referrals" class="export-btn">⬇ Export CSV</a>
+    </div>
+    <div class="section-wrap">
+      <% if (referrals.length === 0) { %>
+        <p class="empty">No referral codes issued yet.</p>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Owner Email</th>
+              <th class="num">Redemptions</th>
+              <th class="num">Paid Orders</th>
+              <th class="num">Discount Paid</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% referrals.forEach(function(r){ %>
+              <tr>
+                <td style="font-family:monospace;font-weight:700;letter-spacing:.1em;"><%= r.code %></td>
+                <td style="color:#6b7280;font-size:.85rem;"><%= r.owner_email %></td>
+                <td class="num"><%= r.redemptions || 0 %></td>
+                <td class="num"><%= r.paid_orders || 0 %></td>
+                <td class="num">$<%= r.discount_paid_cents ? (r.discount_paid_cents / 100).toFixed(2) : '0.00' %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+    <div class="section-wrap" style="background:#f0fdf4;border-color:#bbf7d0;margin-top:0;">
+      <div class="section-title">📐 Referral Funnel Summary</div>
+      <%
+        const codesIssued = referrals.length;
+        const totalRedemptions = referrals.reduce((s, r) => s + parseInt(r.redemptions || 0), 0);
+        const totalPaid = referrals.reduce((s, r) => s + parseInt(r.paid_orders || 0), 0);
+        const totalDiscount = referrals.reduce((s, r) => s + parseInt(r.discount_paid_cents || 0), 0);
+      %>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;">
+        <div><div style="font-size:.75rem;color:#166534;text-transform:uppercase;letter-spacing:.05em;">Codes Issued</div><div style="font-size:1.4rem;font-weight:700;"><%= codesIssued %></div></div>
+        <div><div style="font-size:.75rem;color:#166534;text-transform:uppercase;letter-spacing:.05em;">Redemptions</div><div style="font-size:1.4rem;font-weight:700;"><%= totalRedemptions %></div></div>
+        <div><div style="font-size:.75rem;color:#166534;text-transform:uppercase;letter-spacing:.05em;">Paid Orders</div><div style="font-size:1.4rem;font-weight:700;"><%= totalPaid %></div></div>
+        <div><div style="font-size:.75rem;color:#166534;text-transform:uppercase;letter-spacing:.05em;">$20 Discounts Paid</div><div style="font-size:1.4rem;font-weight:700;">$<%= (totalDiscount / 100).toFixed(0) %></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    document.querySelectorAll('.tab')[['bookings','drivers','referrals'].indexOf(name)].classList.add('active');
+  }
+</script>
+
+</body>
+</html>

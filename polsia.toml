@@ -1,0 +1,23 @@
+runtime = "node"
+start = "npm start"
+build = "npm install --include=dev && npm run build --if-present"
+port_env_var = "PORT"
+healthcheck_path = "/api/health"
+
+[env]
+DATABASE_URL = { source = "rdbms" }
+
+[[env]]
+key = "STRIPE_SECRET_KEY"
+value = "sk_test_placeholder"
+
+[[env]]
+key = "STRIPE_WEBHOOK_SECRET"
+value = "whsec_placeholder"
+
+# Post-delivery review email worker — runs every 15 minutes
+# Picks up orders where scheduled_review_email_at <= NOW() and review_email_sent_at IS NULL
+[[crons]]
+name     = "review-email-worker"
+schedule = "*/15 * * * *"
+command  = "node jobs/review-email-worker.js"

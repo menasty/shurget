@@ -1,0 +1,205 @@
+<%
+const title = 'Facebook Marketplace & Craigslist Pickup Service in Austin | Shurget';
+const metaDescription = 'Facebook Marketplace and Craigslist pickup service in Austin, TX. We pick up your furniture find and deliver it same-day. Instant quote, vetted drivers.';
+const canonicalPath = '/marketplace-pickup-austin';
+const eyebrow = 'Austin · Marketplace Pickup Service';
+const h1 = 'Facebook Marketplace & Craigslist pickup service in Austin';
+const subhead = 'Found the perfect piece — but the seller won\'t deliver? We will. Send your driver to pick up any Marketplace or Craigslist item today.';
+const pageCampaign = 'marketplace';
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "name": "Shurget",
+      "description": "Facebook Marketplace and Craigslist pickup and delivery service in Austin, TX",
+      "url": "https://shurget.com",
+      "areaServed": [
+        { "@type": "City", "name": "Austin" },
+        { "@type": "City", "name": "Round Rock" },
+        { "@type": "City", "name": "Cedar Park" },
+        { "@type": "City", "name": "Pflugerville" },
+        { "@type": "City", "name": "Georgetown" }
+      ],
+      "serviceType": "Marketplace Pickup and Delivery"
+    },
+    {
+      "@type": "Service",
+      "name": "Facebook Marketplace & Craigslist Pickup Service in Austin TX",
+      "provider": { "@type": "LocalBusiness", "name": "Shurget" },
+      "areaServed": { "@type": "City", "name": "Austin, TX" },
+      "description": "Same-day pickup and delivery for items purchased on Facebook Marketplace, Craigslist, OfferUp, and other Austin-area classified platforms. Sofas, dressers, appliances, and more.",
+      "offers": {
+        "@type": "Offer",
+        "price": "59",
+        "priceCurrency": "USD",
+        "description": "Starting price for Marketplace pickup within 30 miles"
+      }
+    }
+  ]
+});
+%>
+<%
+const bodyContent = '<section class="seo-copy">
+    <div class="seo-copy-inner">
+      <div class="seo-copy-main">
+        <h2>Austin's Marketplace pickup problem — solved</h2>
+        <p>Facebook Marketplace and Craigslist are full of deeply underpriced furniture in Austin. The catch: the seller is in Cedar Park, the listing says "local pickup only," and you drive a Prius. Shurget is the answer. Book a driver to the seller's address, and it'll be at your door the same day.</p>
+        <p>We've handled thousands of Marketplace runs across Austin — vintage mid-century chairs from East Austin, barely-used appliances from Round Rock, Ikea wardrobes disassembled in Pflugerville and reassembled in Mueller. Whatever you found, we'll get it to you.</p>
+
+        <h3>How it works for Marketplace hauls</h3>
+        <ol class="seo-list seo-list--ordered">
+          <li><strong>Buy the item</strong> — confirm with the seller and agree on a pickup window.</li>
+          <li><strong>Book a Shurget driver</strong> — enter the seller's address as pickup, your address as dropoff. Get an instant price.</li>
+          <li><strong>Driver picks up</strong> — they handle the loading, strapping, and transport. You don't have to be at the pickup location (just the dropoff).</li>
+          <li><strong>Track live</strong> — watch the driver on a map from seller to your door. Get a text when they're 5 minutes out.</li>
+        </ol>
+
+        <h3>What we pick up from Austin sellers</h3>
+        <ul class="seo-list">
+          <li><strong>Sofas, sectionals, loveseats</strong> — the #1 Marketplace haul in Austin</li>
+          <li><strong>Dressers, wardrobes, nightstands</strong> — common vintage and mid-century finds</li>
+          <li><strong>Dining tables &amp; chairs</strong> — popular in Mueller, Bouldin Creek, and SoCo</li>
+          <li><strong>Refrigerators, washers, dryers</strong> — heavy; always add a helper</li>
+          <li><strong>Desks, bookcases, office chairs</strong> — home office upgrades and downsizes</li>
+          <li><strong>Exercise equipment</strong> — treadmills, weight benches, Pelotons</li>
+          <li><strong>Patio furniture</strong> — outdoor sectionals, fire pits, tables</li>
+        </ul>
+
+        <h3>Austin Marketplace pickup zones</h3>
+        <p>Sellers and buyers span the full metro. Our most common pickup routes include Cedar Park → South Austin, Round Rock → East Austin, Pflugerville → Downtown, and Georgetown → Mueller. Distance is factored into your quote — enter both addresses and the price is instant.</p>
+
+        <h3>Tips for stress-free Marketplace pickups</h3>
+        <p>Confirm with the seller before booking your driver — we want to arrive at a confirmed window. Have the seller ready to help with loading if there's no helper booked. Photograph the item at pickup (the driver typically does this) in case of any transit questions. If the item is on a second floor at the seller's location, add a helper at checkout.</p>
+      </div>
+
+      <div class="seo-sidebar">
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">📱</div>
+          <strong>You don't need to be there</strong>
+          <p>Send the driver to the seller — you just need to be at the dropoff.</p>
+        </div>
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">⚡</div>
+          <strong>Same-day across Austin</strong>
+          <p>Book before 8 PM for same-day Marketplace pickup anywhere in the metro.</p>
+        </div>
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">📍</div>
+          <strong>Live tracking</strong>
+          <p>Watch the driver go from seller to your door. Real-time map, not guessing.</p>
+        </div>
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">🛡</div>
+          <strong>Vetted drivers</strong>
+          <p>Background-checked before their first job. Peace of mind for both parties.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <div class="pricing-inner">
+      <span class="section-label">Simple, Honest Pricing</span>
+      <h2 class="section-title">Marketplace pickup pricing</h2>
+      <p class="pricing-sub">Price is based on distance from seller to you. Enter both addresses for an exact quote — no surprises. <a href="/pricing">See full pricing →</a></p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-card-header">
+            <div class="pricing-tier-label">Small Haul</div>
+            <div class="pricing-price-wrap"><span class="pricing-from">from</span><span class="pricing-price">$59</span></div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> Single small-medium item</li>
+            <li><span class="pricing-check">✓</span> Solo driver, moving blankets</li>
+            <li><span class="pricing-check">✓</span> Up to 30 miles (seller → you)</li>
+            <li><span class="pricing-check">✓</span> Same-day available</li>
+          </ul>
+          <a href="/book?utm_source=seo&utm_campaign=austin_marketplace" class="btn-pricing">Get a Quote →</a>
+        </div>
+        <div class="pricing-card pricing-card--featured">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-card-header">
+            <div class="pricing-tier-label">Medium Haul</div>
+            <div class="pricing-price-wrap"><span class="pricing-from">from</span><span class="pricing-price">$89</span></div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> Sofa, sectional, or appliance</li>
+            <li><span class="pricing-check">✓</span> Helper available (+$25)</li>
+            <li><span class="pricing-check">✓</span> Up to 40 miles included</li>
+            <li><span class="pricing-check">✓</span> Straps + blankets included</li>
+          </ul>
+          <a href="/book?utm_source=seo&utm_campaign=austin_marketplace" class="btn-pricing btn-pricing--light">Get a Quote →</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-card-header">
+            <div class="pricing-tier-label">Large Haul</div>
+            <div class="pricing-price-wrap"><span class="pricing-from">from</span><span class="pricing-price">$129</span></div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> Multiple large items</li>
+            <li><span class="pricing-check">✓</span> Full living / bedroom load</li>
+            <li><span class="pricing-check">✓</span> Up to 60 miles included</li>
+            <li><span class="pricing-check">✓</span> Up to 2 helpers available</li>
+          </ul>
+          <a href="/book?utm_source=seo&utm_campaign=austin_marketplace" class="btn-pricing">Get a Quote →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="seo-faq">
+    <div class="seo-faq-inner">
+      <span class="section-label">Common Questions</span>
+      <h2 class="section-title">Marketplace pickup FAQ</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Do I have to go to the seller's house?</summary>
+          <p>No. The driver handles the entire pickup. You just need to be available at your delivery address when the driver arrives. The driver will photograph the item at pickup so there's a record of its condition before transport.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if the seller cancels or isn't home?</summary>
+          <p>Contact us via your order confirmation email as soon as possible. If the driver arrives and cannot complete the pickup, a trip fee may apply. We recommend confirming with the seller right before dispatching your driver.</p>
+        </details>
+        <details class="faq-item">
+          <summary>How fast can you do a same-day Marketplace pickup?</summary>
+          <p>Within 15–30 minutes of booking on active days. The seller just needs to be available at that time. Same-day bookings are accepted until 8 PM.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What about stairs at the seller's location?</summary>
+          <p>Add a helper at checkout — it covers both the pickup stairs and any stairs at your delivery address. Costs $25 for one helper, $45 for two.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can you pick up from OfferUp or other platforms too?</summary>
+          <p>Yes — we don't care which app the listing came from. Facebook Marketplace, Craigslist, OfferUp, Nextdoor, or even a neighborhood garage sale. Wherever the item is, we'll pick it up.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if the item is damaged when the driver picks it up?</summary>
+          <p>Drivers photograph items at pickup. If the item arrives to you damaged and it wasn't documented at pickup, file a claim within 24 hours. If damage pre-existed pickup (visible in photos), that's a seller issue — we'll help document it.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA + internal links -->
+  <section class="seo-links">
+    <div class="seo-links-inner">
+      <h2>Found something great on Marketplace?</h2>
+      <p>Book a driver now. Instant price, matches in minutes.</p>
+      <a href="/book?utm_source=seo&utm_campaign=austin_marketplace" class="btn-cta">Book a pickup →</a>
+      <div class="seo-related">
+        <span>Also explore:</span>
+        <a href="/austin-furniture-delivery">Furniture delivery Austin</a>
+        <a href="/sofa-delivery-austin">Sofa delivery Austin</a>
+        <a href="/mattress-delivery-austin">Mattress delivery Austin</a>
+        <a href="/pricing">Pricing guide</a>
+        <a href="/partners">Partner with Shurget</a>
+      </div>
+    </div>
+  </section>
+';
+%>
+<%- include('partials/seo-page-shell', { title, metaDescription, canonicalPath, eyebrow, h1, subhead, pageCampaign, schema, bodyContent }) %>

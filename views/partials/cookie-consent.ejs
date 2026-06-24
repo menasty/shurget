@@ -1,0 +1,152 @@
+<%
+/* Cookie Consent Banner
+   - Shows on first visit if no haulr_consent key in localStorage
+   - Two actions: "Accept all" (enables GA4) or "Essential only" (blocks GA4)
+   - Persists consent in localStorage for 12 months
+   - GA4 init is gated: only fires if consent === 'accepted'
+*/
+%>
+<style>
+.cc-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: var(--charcoal);
+  color: var(--white);
+  padding: 1.25rem clamp(1rem, 4vw, 2rem);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
+  display: none;
+}
+.cc-banner.visible { display: block; }
+.cc-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.cc-text {
+  flex: 1;
+  min-width: 240px;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.82);
+}
+.cc-text a { color: var(--orange-light); text-decoration: none; }
+.cc-text a:hover { text-decoration: underline; }
+.cc-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+.cc-btn {
+  padding: 0.55rem 1.25rem;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.03em;
+  transition: background 0.15s, transform 0.12s;
+}
+.cc-btn-accept {
+  background: var(--orange);
+  color: var(--white);
+}
+.cc-btn-accept:hover { background: var(--orange-light); transform: translateY(-1px); }
+.cc-btn-essential {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.cc-btn-essential:hover { background: rgba(255,255,255,0.18); }
+</style>
+
+<div id="cc-banner" class="cc-banner" role="dialog" aria-label="Cookie consent" aria-modal="true">
+  <div class="cc-inner">
+    <div class="cc-text">
+      We use cookies to improve your experience and analyze site traffic.
+      <a href="/cookies">Cookie Policy</a> &nbsp;·&nbsp; <a href="/privacy">Privacy Policy</a>
+    </div>
+    <div class="cc-actions">
+      <button class="cc-btn cc-btn-accept" id="cc-accept">Accept all</button>
+      <button class="cc-btn cc-btn-essential" id="cc-essential">Essential only</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var BANNER = document.getElementById('cc-banner');
+  var HTML = document.documentElement;
+  var KEY = 'haulr_consent';
+  var TS_KEY = 'haulr_consent_ts';
+  var TTL_MS = 365 * 24 * 60 * 60 * 1000; // 12 months
+
+  function getConsent() {
+    try {
+      var val = localStorage.getItem(KEY);
+      var ts  = parseInt(localStorage.getItem(TS_KEY) || '0', 10);
+      if (val && ts && (Date.now() - ts) < TTL_MS) return val;
+    } catch (e) {}
+    return null;
+  }
+
+  function saveConsent(value) {
+    try {
+      localStorage.setItem(KEY, value);
+      localStorage.setItem(TS_KEY, String(Date.now()));
+    } catch (e) {}
+  }
+
+  function initGA4() {
+    var ga4Id = (HTML.dataset && HTML.dataset.ga4Id) || '';
+    if (!ga4Id || ga4Id === 'G-XXXXXXXXXX') return;
+    // Only load GA4 if not already loaded
+    if (window._ga4Loaded) return;
+    window._ga4Loaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + ga4Id;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', ga4Id);
+  }
+
+  function applyConsent(value) {
+    if (value === 'accepted') {
+      HTML.setAttribute('data-cc-granted', 'true');
+      HTML.setAttribute('data-cc-analytics', 'true');
+      initGA4();
+    } else {
+      HTML.setAttribute('data-cc-granted', value === 'declined' ? 'false' : '');
+      HTML.setAttribute('data-cc-analytics', 'false');
+    }
+  }
+
+  var existing = getConsent();
+  if (!existing) {
+    BANNER.classList.add('visible');
+    HTML.setAttribute('data-cc-analytics', 'false');
+  } else {
+    applyConsent(existing);
+  }
+
+  document.getElementById('cc-accept').addEventListener('click', function () {
+    saveConsent('accepted');
+    applyConsent('accepted');
+    BANNER.classList.remove('visible');
+  });
+
+  document.getElementById('cc-essential').addEventListener('click', function () {
+    saveConsent('declined');
+    applyConsent('declined');
+    BANNER.classList.remove('visible');
+  });
+})();
+</script>

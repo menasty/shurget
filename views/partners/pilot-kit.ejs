@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haulr Delivery Partner Pilot — Austin Stores</title>
+  <meta name="description" content="Free 60-day pilot program for Austin furniture and mattress stores. Embed the Haulr delivery widget and earn 8% commission on every completed haul.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <%- include('partials/ga4') %>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #1A1A1A;
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    /* ─── Nav ─── */
+    .kit-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .kit-nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.05em;
+      color: #fff;
+      text-decoration: none;
+    }
+    .kit-nav-logo span { color: #E85D04; }
+    .kit-nav-back {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .kit-nav-back:hover { color: rgba(255,255,255,0.8); }
+
+    /* ─── Hero ─── */
+    .kit-hero {
+      text-align: center;
+      padding: 5rem 2rem 4rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .kit-hero-badge {
+      display: inline-block;
+      background: rgba(232,93,4,0.15);
+      border: 1px solid rgba(232,93,4,0.35);
+      color: #E85D04;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 0.3rem 0.9rem;
+      border-radius: 99px;
+      margin-bottom: 1.5rem;
+    }
+    .kit-hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      margin-bottom: 1.25rem;
+    }
+    .kit-hero h1 span { color: #E85D04; }
+    .kit-hero-sub {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.6);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.75;
+    }
+
+    /* ─── Section ─── */
+    .kit-section {
+      padding: 4rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .kit-section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #E85D04;
+      margin-bottom: 0.75rem;
+    }
+    .kit-section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+    .kit-section-sub {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.95rem;
+      max-width: 540px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    /* ─── 3-Card Grid ─── */
+    .kit-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .kit-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+    }
+    .kit-card-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .kit-card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .kit-card-desc { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.65; }
+
+    /* ─── 3-Step Process ─── */
+    .kit-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .kit-step-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      position: relative;
+    }
+    .kit-step-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem;
+      color: rgba(232,93,4,0.2);
+      position: absolute;
+      top: 0.75rem;
+      right: 1.25rem;
+      line-height: 1;
+    }
+    .kit-step-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .kit-step-desc { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.65; }
+
+    /* ─── Feature Badges ─── */
+    .kit-feature-badges {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .kit-feature-badge {
+      background: rgba(232,93,4,0.08);
+      border: 1px solid rgba(232,93,4,0.2);
+      border-radius: 10px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+    }
+    .kit-feature-badge-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .kit-feature-badge-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      color: #F4841F;
+    }
+
+    /* ─── Pilot Terms Table ─── */
+    .kit-terms-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+    .kit-terms-table th {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4);
+      text-align: left;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .kit-terms-table td {
+      padding: 0.9rem 1.25rem;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .kit-terms-table tr:last-child td { border-bottom: none; }
+    .kit-terms-table td:first-child { color: rgba(255,255,255,0.45); width: 40%; }
+    .kit-terms-table .kit-term-value { color: #fff; font-weight: 500; }
+
+    /* ─── Pricing Cards ─── */
+    .kit-pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .kit-pricing-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+    }
+    .kit-pricing-card--featured {
+      border-color: rgba(232,93,4,0.35);
+      background: rgba(232,93,4,0.06);
+    }
+    .kit-pricing-tier {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    .kit-pricing-amount {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      color: #E85D04;
+      line-height: 1;
+      margin-bottom: 0.75rem;
+    }
+    .kit-pricing-amount span { font-size: 1rem; color: rgba(255,255,255,0.5); font-family: 'DM Sans', sans-serif; }
+    .kit-pricing-desc { font-size: 0.85rem; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+    /* ─── Commission Table ─── */
+    .kit-commission-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+    }
+    .kit-commission-table th {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4);
+      text-align: left;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .kit-commission-table td {
+      padding: 0.85rem 1.25rem;
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.8);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .kit-commission-table tr:last-child td { border-bottom: none; }
+    .kit-commission-table td:last-child { color: #4ade80; font-weight: 600; text-align: right; }
+
+    /* ─── Volume Table ─── */
+    .kit-volume-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+    .kit-volume-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+    .kit-volume-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      color: #E85D04;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .kit-volume-label { font-size: 0.85rem; color: rgba(255,255,255,0.5); }
+    .kit-volume-rev { font-size: 0.78rem; color: #4ade80; font-weight: 600; margin-top: 0.3rem; }
+
+    /* ─── Loom Placeholder ─── */
+    .kit-loom-placeholder {
+      max-width: 720px;
+      margin: 0 auto 3rem;
+      aspect-ratio: 16 / 9;
+      background: rgba(255,255,255,0.03);
+      border: 2px solid rgba(232,93,4,0.3);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .kit-loom-placeholder svg { opacity: 0.4; }
+    .kit-loom-placeholder-text {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.45);
+      text-align: center;
+    }
+
+    /* ─── CTA ─── */
+    .kit-cta {
+      text-align: center;
+      padding: 5rem 2rem;
+    }
+    .kit-cta h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+    .kit-cta-sub {
+      color: rgba(255,255,255,0.5);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .kit-cta-btn {
+      display: inline-block;
+      background: #E85D04;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.9rem 2.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .kit-cta-btn:hover { background: #c24a00; }
+    .kit-cta-contact {
+      margin-top: 1.5rem;
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.4);
+    }
+    .kit-cta-contact a { color: rgba(255,255,255,0.6); text-decoration: none; }
+    .kit-cta-contact a:hover { color: rgba(255,255,255,0.9); }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .kit-cards, .kit-steps, .kit-pricing-grid { grid-template-columns: 1fr; }
+      .kit-feature-badges { grid-template-columns: repeat(2, 1fr); }
+      .kit-volume-grid { grid-template-columns: repeat(2, 1fr); }
+      .kit-nav { padding: 1rem 1.25rem; }
+      .kit-hero { padding: 3.5rem 1.5rem 3rem; }
+      .kit-section { padding: 3rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .kit-hero h1 { font-size: 2.75rem; }
+      .kit-nav-logo { font-size: 1.3rem; }
+      .kit-feature-badges { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Nav ─── -->
+  <nav class="kit-nav">
+    <a href="/" class="kit-nav-logo">Shur<span>get</span></a>
+    <a href="/partners" class="kit-nav-back">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Partners
+    </a>
+  </nav>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SECTION 1 — ONE-PAGER
+       ════════════════════════════════════════════════════════════ -->
+
+  <!-- ─── Hero ─── -->
+  <section class="kit-hero">
+    <div class="kit-hero-badge">For Austin Furniture &amp; Mattress Stores</div>
+    <h1>Add delivery to your store.<br><span>Earn commission on every haul.</span></h1>
+    <p class="kit-hero-sub">A free 60-day pilot program. Embed the Shurget widget on your product pages and earn 8% commission on every delivery you originate — with zero upfront cost.</p>
+  </section>
+
+  <!-- ─── The Problem ─── -->
+  <section class="kit-section">
+    <div class="kit-section-label">The Problem</div>
+    <h2 class="kit-section-title">Furniture delivery is a liability for stores.</h2>
+    <p class="kit-section-sub">Most retailers either absorb delivery costs or lose customers who won't wait. Shurget flips that equation.</p>
+    <div class="kit-cards">
+      <div class="kit-card">
+        <div class="kit-card-icon">💸</div>
+        <div class="kit-card-title">Absorbing Delivery Costs</div>
+        <p class="kit-card-desc">White-glove delivery runs $150–$300 per order. Stores that offer "free delivery" quietly build it into prices — hurting price competitiveness.</p>
+      </div>
+      <div class="kit-card">
+        <div class="kit-card-icon">😬</div>
+        <div class="kit-card-title">Losing Customers at Checkout</div>
+        <p class="kit-card-desc">When customers see expensive or unavailable delivery options at checkout, they abandon the cart. You lose the sale — and the customer.</p>
+      </div>
+      <div class="kit-card">
+        <div class="kit-card-icon">🛒</div>
+        <div class="kit-card-title">No Carrier for Oversized Items</div>
+        <p class="kit-card-desc">UPS and FedEx won't touch a sectional sofa. Specialty freight is slow, expensive, and a poor customer experience.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Solution ─── -->
+  <section class="kit-section" style="padding-top: 0;">
+    <div class="kit-section-label">The Solution</div>
+    <h2 class="kit-section-title">The Shurget embeddable widget</h2>
+    <p class="kit-section-sub">One snippet of code on your product pages. Customers see instant Shurget pricing, book same-day delivery, and you earn 8% commission on every order.</p>
+    <div style="background: rgba(232,93,4,0.08);border:1px solid rgba(232,93,4,0.25);border-radius:12px;padding:2rem 2.5rem;display:flex;align-items:center;gap:2rem;flex-wrap:wrap;">
+      <div style="flex: 1; min-width: 220px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:#E85D04;line-height:1;margin-bottom:0.5rem;">8%</div>
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.6);">Commission on every haul<br>you originate</div>
+      </div>
+      <div style="flex: 1; min-width: 220px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:#E85D04;line-height:1;margin-bottom:0.5rem;">$0</div>
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.6);">To set up. To integrate.<br>To maintain.</div>
+      </div>
+      <div style="flex: 1; min-width: 220px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:#E85D04;line-height:1;margin-bottom:0.5rem;">Same Day</div>
+        <div style="font-size:0.9rem;color:rgba(255,255,255,0.6);">Pickup available within<br>hours of booking</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── How It Works ─── -->
+  <section class="kit-section" style="padding-top: 0;">
+    <div class="kit-section-label">How It Works</div>
+    <h2 class="kit-section-title">Three steps. That's it.</h2>
+    <div class="kit-steps">
+      <div class="kit-step-card">
+        <div class="kit-step-num">01</div>
+        <div class="kit-step-title">Embed the Widget</div>
+        <p class="kit-step-desc">Paste one JavaScript snippet next to your "Add to Cart" button. Takes a developer about 30 minutes. No engineering marathon.</p>
+      </div>
+      <div class="kit-step-card">
+        <div class="kit-step-num">02</div>
+        <div class="kit-step-title">Customer Self-Books</div>
+        <p class="kit-step-desc">At checkout, customers see instant Shurget pricing, select a time window, and pay directly. You get a notification when they book.</p>
+      </div>
+      <div class="kit-step-card">
+        <div class="kit-step-num">03</div>
+        <div class="kit-step-title">You Get Paid</div>
+        <p class="kit-step-desc">8% of the delivery ticket lands in your partner account after each completed haul. Paid out monthly. No invoicing, no chasing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Widget Features ─── -->
+  <section class="kit-section" style="padding-top: 0;">
+    <div class="kit-section-label">What the Widget Does</div>
+    <h2 class="kit-section-title">Built for oversized items</h2>
+    <div class="kit-feature-badges">
+      <div class="kit-feature-badge">
+        <div class="kit-feature-badge-icon">⚡</div>
+        <div class="kit-feature-badge-title">Instant Pricing</div>
+      </div>
+      <div class="kit-feature-badge">
+        <div class="kit-feature-badge-icon">📅</div>
+        <div class="kit-feature-badge-title">Same-Day Availability</div>
+      </div>
+      <div class="kit-feature-badge">
+        <div class="kit-feature-badge-icon">📍</div>
+        <div class="kit-feature-badge-title">Real-Time Tracking</div>
+      </div>
+      <div class="kit-feature-badge">
+        <div class="kit-feature-badge-icon">🛋️</div>
+        <div class="kit-feature-badge-title">Handles Big Stuff</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Pilot Terms ─── -->
+  <section class="kit-section" style="padding-top: 0;">
+    <div class="kit-section-label">Pilot Terms</div>
+    <h2 class="kit-section-title">No catch. Seriously.</h2>
+    <table class="kit-terms-table">
+      <thead>
+        <tr>
+          <th>Term</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Duration</td>
+          <td class="kit-term-value">60 days free</td>
+        </tr>
+        <tr>
+          <td>Setup Cost</td>
+          <td class="kit-term-value">$0</td>
+        </tr>
+        <tr>
+          <td>Commission</td>
+          <td class="kit-term-value">8% of delivery ticket</td>
+        </tr>
+        <tr>
+          <td>Minimum Orders</td>
+          <td class="kit-term-value">None</td>
+        </tr>
+        <tr>
+          <td>Exclusivity</td>
+          <td class="kit-term-value">None — continue using other carriers</td>
+        </tr>
+        <tr>
+          <td>After Pilot</td>
+          <td class="kit-term-value">Month-to-month, cancel anytime</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SECTION 2 — PRICING SHEET
+       ════════════════════════════════════════════════════════════ -->
+
+  <!-- ─── Customer Pricing ─── -->
+  <section class="kit-section">
+    <div class="kit-section-label">Pricing Sheet</div>
+    <h2 class="kit-section-title">What customers pay</h2>
+    <div class="kit-pricing-grid">
+      <div class="kit-pricing-card">
+        <div class="kit-pricing-tier">Small</div>
+        <div class="kit-pricing-amount">$59<span>+/order</span></div>
+        <p class="kit-pricing-desc">Single items: chairs, small appliances, lamps, side tables. Up to ~5 miles included.</p>
+      </div>
+      <div class="kit-pricing-card kit-pricing-card--featured">
+        <div class="kit-pricing-tier">Medium</div>
+        <div class="kit-pricing-amount">$89<span>+//order</span></div>
+        <p class="kit-pricing-desc">Sofas, dressers, desks, mirrors, mattress sets. Most common size tier.</p>
+      </div>
+      <div class="kit-pricing-card">
+        <div class="kit-pricing-tier">Large</div>
+        <div class="kit-pricing-amount">$129<span>+//order</span></div>
+        <p class="kit-pricing-desc">Appliances, sectionals, large freight. Includes extended pickup window.</p>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;margin-top:1.5rem;">
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:1.5rem;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;margin-bottom:0.5rem;">Helper Add-On</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#E85D04;line-height:1;margin-bottom:0.5rem;">$25–$45</div>
+        <p style="font-size:0.85rem;color:rgba(255,255,255,0.45);line-height:1.6;">Add extra hands at pickup or dropoff. Required for items needing assembly or stairs above 2 flights.</p>
+      </div>
+      <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:1.5rem;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;margin-bottom:0.5rem;">Weight Surcharges</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#E85D04;line-height:1;margin-bottom:0.5rem;">$100–$250</div>
+        <p style="font-size:0.85rem;color:rgba(255,255,255,0.45);line-height:1.6;">Heavy items over 500 lbs (large appliances, commercial equipment). Applies to heaviest items only.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Partner Commission ─── -->
+  <section class="kit-section" style="padding-top: 0;">
+    <div class="kit-section-label">Partner Commission</div>
+    <h2 class="kit-section-title">8% on ticket size</h2>
+    <p class="kit-section-sub">You earn 8% of the delivery price every time a customer books through your embedded widget.</p>
+    <table class="kit-commission-table">
+      <thead>
+        <tr>
+          <th>Customer Pays (Delivery Ticket)</th>
+          <th style="text-align:right;">Your Commission (8%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>$70</td>
+          <td>$5.60</td>
+        </tr>
+        <tr>
+          <td>$140</td>
+          <td>$11.20</td>
+        </tr>
+        <tr>
+          <td>$210</td>
+          <td>$16.80</td>
+        </tr>
+        <tr>
+          <td>$280</td>
+          <td>$22.40</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ─── Volume Projections ─── -->
+  <section class="kit-section" style="padding-top: 0;">
+    <div class="kit-section-label">Volume Projections</div>
+    <h2 class="kit-section-title">Revenue at average $140 ticket</h2>
+    <div class="kit-volume-grid">
+      <div class="kit-volume-card">
+        <div class="kit-volume-num">10</div>
+        <div class="kit-volume-label">deliveries/month</div>
+        <div class="kit-volume-rev">~$112/mo commission</div>
+      </div>
+      <div class="kit-volume-card">
+        <div class="kit-volume-num">25</div>
+        <div class="kit-volume-label">deliveries/month</div>
+        <div class="kit-volume-rev">~$280/mo commission</div>
+      </div>
+      <div class="kit-volume-card">
+        <div class="kit-volume-num">50</div>
+        <div class="kit-volume-label">deliveries/month</div>
+        <div class="kit-volume-rev">~$560/mo commission</div>
+      </div>
+      <div class="kit-volume-card">
+        <div class="kit-volume-num">100</div>
+        <div class="kit-volume-label">deliveries/month</div>
+        <div class="kit-volume-rev">~$1,120/mo commission</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════
+       SECTION 3 — CTA
+       ════════════════════════════════════════════════════════════ -->
+
+  <section class="kit-cta">
+    <div class="kit-section-label" style="margin-bottom:1rem;">See It In Action</div>
+
+    <!-- Loom video placeholder -->
+    <div class="loom-embed kit-loom-placeholder">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#E85D04" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polygon points="10 8 16 12 10 16 10 8" fill="#E85D04" stroke="none"/>
+      </svg>
+      <div class="kit-loom-placeholder-text">60-Second Widget Walkthrough — [Loom video coming soon]</div>
+    </div>
+
+    <h2>Ready to start your pilot?</h2>
+    <p class="kit-cta-sub">Set up takes 30 minutes. We'll be with you the whole way.</p>
+    <a href="/partners" class="kit-cta-btn">Start the Pilot →</a>
+    <p class="kit-cta-contact">Questions? Email <a href="mailto:haulr-5@polsia.app">haulr-5@polsia.app</a></p>
+  </section>
+
+  <!-- Polsia Analytics --><script>(function(){var slug="shurget-5";if(!slug)return;var vid=localStorage.getItem('polsia_vid');if(!vid){vid='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});localStorage.setItem('polsia_vid',vid);}new Image().src='https://polsia.com/api/beacon/pixel?s='+encodeURIComponent(slug)+'&v='+encodeURIComponent(vid);})();</script>
+</body>
+</html>

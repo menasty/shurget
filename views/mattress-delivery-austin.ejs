@@ -1,0 +1,195 @@
+<%
+const title = 'Mattress Pickup & Delivery in Austin, TX | Shurget';
+const metaDescription = 'Mattress pickup and delivery in Austin, TX — same day. Twin, full, queen, king. Store delivery or Marketplace pickup. Instant quote. No hidden fees.';
+const canonicalPath = '/mattress-delivery-austin';
+const eyebrow = 'Austin · Mattress Delivery';
+const h1 = 'Mattress pickup and delivery in Austin';
+const subhead = 'New mattress arrived but you need it moved? Old one gone by tonight? We handle both. Instant quote, same-day service.';
+const pageCampaign = 'mattress';
+
+const schema = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "name": "Shurget",
+      "description": "Same-day mattress pickup and delivery in Austin, TX",
+      "url": "https://shurget.com",
+      "areaServed": [
+        { "@type": "City", "name": "Austin" },
+        { "@type": "City", "name": "Round Rock" },
+        { "@type": "City", "name": "Cedar Park" },
+        { "@type": "City", "name": "Georgetown" }
+      ],
+      "serviceType": "Mattress Delivery"
+    },
+    {
+      "@type": "Service",
+      "name": "Mattress Pickup and Delivery in Austin TX",
+      "provider": { "@type": "LocalBusiness", "name": "Shurget" },
+      "areaServed": { "@type": "City", "name": "Austin, TX" },
+      "description": "Same-day pickup truck delivery for mattresses of all sizes across Austin and surrounding suburbs. Store pickup, Marketplace hauls, and disposal runs.",
+      "offers": {
+        "@type": "Offer",
+        "price": "59",
+        "priceCurrency": "USD",
+        "description": "Starting price for mattress delivery within 30 miles"
+      }
+    }
+  ]
+});
+%>
+<%
+const bodyContent = '<section class="seo-copy">
+    <div class="seo-copy-inner">
+      <div class="seo-copy-main">
+        <h2>Austin mattress delivery — no waiting until next week</h2>
+        <p>Furniture stores in Austin routinely book delivery windows two weeks out. Shurget operates same-day. Buy your mattress at any Austin-area store — Mattress Firm, Ikea, Ashley, Costco, or a local boutique — and we'll pick it up and have it at your door today.</p>
+        <p>We also handle the other half of the job that retailers ignore: removing the old mattress. Add a disposal run to your booking and we'll coordinate both pickups in one trip. No more sleeping on the floor waiting for a delivery window.</p>
+
+        <h3>All mattress sizes, all Austin neighborhoods</h3>
+        <ul class="seo-list">
+          <li><strong>Twin &amp; twin XL</strong> — dorms near UT, bunk beds, guest rooms</li>
+          <li><strong>Full / double</strong> — apartment moves across South Congress, East Austin, Hyde Park</li>
+          <li><strong>Queen</strong> — the most common haul; fits solo in most cases</li>
+          <li><strong>King &amp; California king</strong> — add a helper for upper-floor deliveries</li>
+          <li><strong>Foam/memory foam in a box</strong> — we'll transport the box unrolled or rolled depending on your preference</li>
+        </ul>
+
+        <h3>Three reasons mattress store delivery fails Austin customers</h3>
+        <p><strong>1. Scheduling windows are wide.</strong> "Tuesday between 8 AM and 6 PM" means taking a day off work. Shurget gives you a 15-minute ETA window, not a 10-hour one.</p>
+        <p><strong>2. They don't haul away the old mattress.</strong> Most retailers charge extra for removal — if they offer it at all. Shurget handles both in one booking.</p>
+        <p><strong>3. Stores don't deliver from Marketplace.</strong> Bought a barely-used king on Facebook Marketplace? The seller isn't delivering it. We are.</p>
+
+        <h3>How to book a mattress delivery</h3>
+        <p>Enter the pickup address (store or seller's address) and your delivery address. We price by distance. Choose a helper if you need it upstairs. Confirm the booking with a credit card — no charge until a driver is matched. Track your driver live. Done.</p>
+      </div>
+
+      <div class="seo-sidebar">
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">🛏</div>
+          <strong>All sizes handled</strong>
+          <p>Twin through California king. Foam-in-box and traditional spring.</p>
+        </div>
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">⚡</div>
+          <strong>Same-day guaranteed</strong>
+          <p>Book before 8 PM for same-day delivery across Austin.</p>
+        </div>
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">🔄</div>
+          <strong>Old mattress removal</strong>
+          <p>Add a disposal run at checkout — we handle the whole swap.</p>
+        </div>
+        <div class="seo-trust-card">
+          <div class="seo-trust-icon">📍</div>
+          <strong>Live driver tracking</strong>
+          <p>Know exactly when your driver arrives. No "between 8 and 6" nonsense.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing" id="pricing">
+    <div class="pricing-inner">
+      <span class="section-label">Simple, Honest Pricing</span>
+      <h2 class="section-title">No hidden fees. Instant quotes.</h2>
+      <p class="pricing-sub">Price includes driver, truck, and straps. Mattress bags available on request. <a href="/pricing">Full pricing details →</a></p>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-card-header">
+            <div class="pricing-tier-label">Small Haul</div>
+            <div class="pricing-price-wrap"><span class="pricing-from">from</span><span class="pricing-price">$59</span></div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> Twin / full / queen mattress</li>
+            <li><span class="pricing-check">✓</span> Solo driver</li>
+            <li><span class="pricing-check">✓</span> Up to 30 miles included</li>
+            <li><span class="pricing-check">✓</span> Ground or elevator access</li>
+          </ul>
+          <a href="/book?utm_source=seo&utm_campaign=austin_mattress" class="btn-pricing">Get a Quote →</a>
+        </div>
+        <div class="pricing-card pricing-card--featured">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-card-header">
+            <div class="pricing-tier-label">Medium Haul</div>
+            <div class="pricing-price-wrap"><span class="pricing-from">from</span><span class="pricing-price">$89</span></div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> King or Cal-king mattress</li>
+            <li><span class="pricing-check">✓</span> Helper for stair carries</li>
+            <li><span class="pricing-check">✓</span> Up to 40 miles included</li>
+            <li><span class="pricing-check">✓</span> Old mattress removal add-on</li>
+          </ul>
+          <a href="/book?utm_source=seo&utm_campaign=austin_mattress" class="btn-pricing btn-pricing--light">Get a Quote →</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-card-header">
+            <div class="pricing-tier-label">Large Haul</div>
+            <div class="pricing-price-wrap"><span class="pricing-from">from</span><span class="pricing-price">$129</span></div>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> Mattress + bed frame + box spring</li>
+            <li><span class="pricing-check">✓</span> Multi-item bedroom haul</li>
+            <li><span class="pricing-check">✓</span> Up to 60 miles included</li>
+            <li><span class="pricing-check">✓</span> Up to 2 helpers available</li>
+          </ul>
+          <a href="/book?utm_source=seo&utm_campaign=austin_mattress" class="btn-pricing">Get a Quote →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="seo-faq">
+    <div class="seo-faq-inner">
+      <span class="section-label">Common Questions</span>
+      <h2 class="section-title">Mattress delivery FAQ</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>How fast can you deliver a mattress in Austin?</summary>
+          <p>Most days in Austin we match a driver within 15–20 minutes of booking. You'll get a live ETA — not a 4-hour window. Same-day delivery is available for bookings placed before 8 PM.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Will a king mattress fit in a pickup truck?</summary>
+          <p>Yes. A king mattress (76" × 80") fits diagonally in a standard full-size truck bed with the tailgate down, secured with straps. California kings (72" × 84") fit the same way. For deliveries up narrow stairs, adding a helper makes the carry safe and fast.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can you pick up directly from a mattress store?</summary>
+          <p>Absolutely. Give us the store address as your pickup location. We'll coordinate with the store's loading dock or warehouse team. Mattress Firm, Ashley, Ikea Round Rock, Costco — all handled.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What's the same-day cutoff?</summary>
+          <p>8 PM for same-day service. After that you're booking for the next morning. Both options are confirmed instantly at checkout.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Do you remove old mattresses?</summary>
+          <p>Yes — add a disposal note in your delivery instructions. We'll bring the old mattress when we depart. Disposal fees depend on local drop-off points and will be quoted separately.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if the mattress gets dirty or wet during transport?</summary>
+          <p>Drivers secure mattresses in the truck bed with straps. For weather protection, we recommend a mattress bag (available at most hardware stores for ~$10) if rain is in the forecast. Damage claims must be filed within 24 hours of delivery.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA + internal links -->
+  <section class="seo-links">
+    <div class="seo-links-inner">
+      <h2>Sleep on it tonight — literally.</h2>
+      <p>Book your mattress delivery now. Instant price, driver matched in minutes.</p>
+      <a href="/book?utm_source=seo&utm_campaign=austin_mattress" class="btn-cta">Book mattress delivery →</a>
+      <div class="seo-related">
+        <span>Also explore:</span>
+        <a href="/austin-furniture-delivery">Furniture delivery Austin</a>
+        <a href="/sofa-delivery-austin">Sofa delivery Austin</a>
+        <a href="/marketplace-pickup-austin">Marketplace pickup Austin</a>
+        <a href="/pricing">Pricing guide</a>
+        <a href="/partners">Retail partners</a>
+      </div>
+    </div>
+  </section>';
+%>
+<%- include('partials/seo-page-shell', { title, metaDescription, canonicalPath, eyebrow, h1, subhead, pageCampaign, schema, bodyContent }) %>

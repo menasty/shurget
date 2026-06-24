@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Your Email — Shurget Partners</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--off-white); }
+    .sent-page { max-width: 440px; margin: 0 auto; padding: 5rem 1.5rem; text-align: center; }
+    .check-icon {
+      width: 72px;
+      height: 72px;
+      background: #dcfce7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+    .check-icon svg { width: 36px; height: 36px; }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.04em;
+      color: var(--charcoal);
+      margin-bottom: 0.75rem;
+    }
+    p { color: var(--gray-mid); font-size: 0.95rem; line-height: 1.7; margin-bottom: 1rem; }
+    .email-highlight { font-weight: 600; color: var(--charcoal); }
+    .hint { font-size: 0.82rem; color: var(--gray-mid); margin-top: 2rem; }
+    a { color: var(--orange); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="sent-page">
+    <div class="check-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+
+    <h1>Check Your Inbox</h1>
+    <p>We sent a secure login link to:</p>
+    <p class="email-highlight"><%= email %></p>
+    <p>Click the link to access your <strong><%= partner.store_name %></strong> partner dashboard. The link expires in 24 hours.</p>
+
+    <p class="hint">
+      Didn't get it? Check your spam folder, or<br>
+      <a href="/partners/<%= partner.slug %>">try again</a> with a different email.
+    </p>
+  </div>
+</body>
+</html>

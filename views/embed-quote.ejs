@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shurget — Same-Day Delivery Quote</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #fff;
+      color: #1a1a1a;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .widget-wrap { padding: 28px 24px 24px; }
+
+    /* Header */
+    .widget-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .widget-logo {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .widget-logo-icon {
+      background: #E86A00;
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .widget-logo-text {
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.01em;
+      color: #1a1a1a;
+    }
+    .widget-badge {
+      background: #fff3e0;
+      color: #E86A00;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 3px 8px;
+      border-radius: 99px;
+      margin-left: auto;
+    }
+
+    /* Item row */
+    .item-row {
+      background: #f7f7f5;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .item-icon { font-size: 1.4rem; }
+    .item-info { flex: 1; }
+    .item-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: #888; font-weight: 600; }
+    .item-name { font-weight: 600; font-size: 1rem; color: #1a1a1a; text-transform: capitalize; }
+
+    /* Form */
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .zip-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 18px; }
+    .zip-field { flex: 1; }
+    .zip-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #1a1a1a;
+      background: #fafafa;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .zip-input:focus { border-color: #E86A00; background: #fff; }
+    .zip-input:disabled { background: #f0f0f0; color: #888; }
+    .zip-arrow { font-size: 1.2rem; color: #bbb; padding-bottom: 10px; flex-shrink: 0; }
+
+    .btn-quote {
+      width: 100%;
+      background: #E86A00;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      margin-bottom: 4px;
+    }
+    .btn-quote:hover { background: #c25a00; }
+    .btn-quote:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Quote result */
+    .quote-result { display: none; margin-top: 18px; }
+    .quote-result.visible { display: block; }
+
+    .price-total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: #fff8f2;
+      border: 1.5px solid #E86A00;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+    .price-total-label { font-size: 0.88rem; color: #555; font-weight: 500; }
+    .price-total-amount { font-size: 1.5rem; font-weight: 700; color: #E86A00; }
+
+    .price-breakdown {
+      background: #f7f7f5;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: #666;
+      padding: 3px 0;
+    }
+    .price-row.total {
+      border-top: 1px solid #e0e0e0;
+      margin-top: 6px;
+      padding-top: 8px;
+      font-weight: 600;
+      color: #1a1a1a;
+      font-size: 0.92rem;
+    }
+
+    .btn-book {
+      width: 100%;
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      padding: 13px 20px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+    .btn-book:hover { background: #333; }
+
+    .quote-note {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #aaa;
+      margin-top: 10px;
+    }
+
+    .error-msg {
+      background: #fff0f0;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+
+    .loader {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Footer branding */
+    .widget-footer {
+      text-align: center;
+      font-size: 0.72rem;
+      color: #bbb;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .widget-footer a { color: #bbb; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="widget-wrap">
+    <!-- Header -->
+    <div class="widget-header">
+      <div class="widget-logo">
+        <div class="widget-logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <span class="widget-logo-text">Shurget</span>
+      </div>
+      <span class="widget-badge">Same-Day</span>
+    </div>
+
+    <!-- Item being delivered -->
+    <div class="item-row">
+      <span class="item-icon" id="item-icon">📦</span>
+      <div class="item-info">
+        <div class="item-label">Item to deliver</div>
+        <div class="item-name" id="item-display"><%= item.replace(/-/g, ' ') %></div>
+      </div>
+    </div>
+
+    <!-- Error message -->
+    <div class="error-msg" id="error-msg"></div>
+
+    <!-- ZIP code entry form -->
+    <form id="quote-form">
+      <div class="zip-row">
+        <div class="zip-field">
+          <label class="form-label" for="origin-zip">Pickup ZIP</label>
+          <input
+            type="text"
+            id="origin-zip"
+            class="zip-input"
+            placeholder="78704"
+            maxlength="5"
+            inputmode="numeric"
+            pattern="\d{5}"
+            value="<%= originZip %>"
+            <% if (originZip) { %>disabled<% } %>
+            required
+          >
+        </div>
+        <div class="zip-arrow">→</div>
+        <div class="zip-field">
+          <label class="form-label" for="dest-zip">Delivery ZIP</label>
+          <input
+            type="text"
+            id="dest-zip"
+            class="zip-input"
+            placeholder="78745"
+            maxlength="5"
+            inputmode="numeric"
+            pattern="\d{5}"
+            required
+            autofocus
+          >
+        </div>
+      </div>
+      <button type="submit" class="btn-quote" id="quote-btn">Get Instant Quote</button>
+    </form>
+
+    <!-- Quote result (hidden until API responds) -->
+    <div class="quote-result" id="quote-result">
+      <div class="price-total-row">
+        <div>
+          <div class="price-total-label">Same-day delivery</div>
+          <div style="font-size:0.78rem;color:#aaa;" id="distance-label"></div>
+        </div>
+        <div class="price-total-amount" id="price-total">—</div>
+      </div>
+
+      <div class="price-breakdown">
+        <div class="price-row"><span>Base rate</span><span id="pb-base">—</span></div>
+        <div class="price-row"><span>Distance</span><span id="pb-distance">—</span></div>
+        <div class="price-row"><span>Service fee (15%)</span><span id="pb-fee">—</span></div>
+        <div class="price-row total"><span>Total</span><span id="pb-total">—</span></div>
+      </div>
+
+      <a href="#" class="btn-book" id="book-btn" target="_top">Book Now — Confirm &amp; Pay →</a>
+      <p class="quote-note">Secure checkout via Stripe. Pickup in ~60 min.</p>
+    </div>
+
+    <div class="widget-footer">
+      Powered by <a href="https://shurget.com" target="_blank" rel="noopener">Shurget</a> — same-day pickup truck delivery
+    </div>
+  </div>
+
+  <script>
+    var ITEM       = '<%= item %>';
+    var ORIGIN_ZIP = '<%= originZip %>';
+    var PARTNER    = '<%= partner %>';
+
+    // Item → emoji map
+    var ITEM_ICONS = {
+      sofa: '🛋️', armchair: '🪑', mirror: '🪞', dresser: '🗄️',
+      mattress: '🛏️', 'bed-frame': '🛏️', refrigerator: '🧊',
+      'washer-dryer': '🫧', dishwasher: '🫧', tv: '📺',
+      'exercise-equipment': '🏋️', grill: '🔥', piano: '🎹',
+      'hot-tub': '🛁', trampoline: '🤸', shed: '🏚️',
+      'large-boxes': '📦', other: '📦',
+    };
+
+    var iconEl = document.getElementById('item-icon');
+    iconEl.textContent = ITEM_ICONS[ITEM] || '📦';
+
+    var form     = document.getElementById('quote-form');
+    var quoteBtn = document.getElementById('quote-btn');
+    var resultEl = document.getElementById('quote-result');
+    var errorEl  = document.getElementById('error-msg');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      errorEl.classList.remove('visible');
+      resultEl.classList.remove('visible');
+
+      var originZip = document.getElementById('origin-zip').value.trim();
+      var destZip   = document.getElementById('dest-zip').value.trim();
+
+      if (!/^\d{5}$/.test(originZip) || !/^\d{5}$/.test(destZip)) {
+        showError('Please enter valid 5-digit ZIP codes.');
+        return;
+      }
+
+      quoteBtn.disabled = true;
+      quoteBtn.innerHTML = '<span class="loader"></span>Calculating…';
+
+      try {
+        var res = await fetch('/api/embed/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ item: ITEM, originZip: originZip, destZip: destZip }),
+        });
+        var data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Calculation failed');
+
+        var p = data.pricing;
+        document.getElementById('price-total').textContent = '$' + p.priceTotal.toFixed(2);
+        document.getElementById('pb-base').textContent     = '$' + p.priceBaseRate.toFixed(2);
+        document.getElementById('pb-distance').textContent = '$' + p.priceDistance.toFixed(2);
+        document.getElementById('pb-fee').textContent      = '$' + p.priceFee.toFixed(2);
+        document.getElementById('pb-total').textContent    = '$' + p.priceTotal.toFixed(2);
+        document.getElementById('distance-label').textContent = data.distanceMiles + ' miles';
+
+        // Build the deep-link URL to /book with all params + UTM attribution pre-filled
+        var bookParams = new URLSearchParams({
+          item:        ITEM,
+          origin_zip:  originZip,
+          dest_zip:    destZip,
+          utm_source:  'widget',
+          utm_medium:  'embed',
+          utm_campaign: PARTNER || 'unknown',
+        });
+        if (PARTNER) bookParams.set('ref_partner', PARTNER);
+
+        var bookUrl = '/book?' + bookParams.toString();
+        var bookBtn = document.getElementById('book-btn');
+        bookBtn.href = bookUrl;
+
+        // Send message to parent window so the modal can navigate the top frame
+        bookBtn.addEventListener('click', function (ev) {
+          ev.preventDefault();
+          try {
+            window.parent.postMessage({ type: 'shurget:redirect', url: bookUrl }, '*');
+          } catch (err) {
+            window.top.location.href = bookUrl;
+          }
+        }, { once: true });
+
+        resultEl.classList.add('visible');
+      } catch (err) {
+        showError(err.message || 'Something went wrong. Please try again.');
+      } finally {
+        quoteBtn.disabled = false;
+        quoteBtn.textContent = 'Get Instant Quote';
+      }
+    });
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add('visible');
+    }
+  </script>
+</body>
+</html>

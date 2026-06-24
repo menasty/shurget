@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Payout Setup — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0F0F0F;color:#fff;font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:3rem}
+    .driver-header{background:#1A1A1A;border-bottom:1px solid rgba(255,255,255,0.08);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+    .driver-logo{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.12em;color:#fff;text-decoration:none}
+    .driver-email-dot{width:8px;height:8px;border-radius:50%;background:#22C55E;display:inline-block}
+    .page{max-width:520px;margin:2.5rem auto;padding:0 1.25rem}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:2.25rem;letter-spacing:.05em;margin-bottom:.5rem}
+    .sub{color:rgba(255,255,255,.5);font-size:.9rem;line-height:1.6;margin-bottom:2rem}
+    .status-card{background:#1A1A1A;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.75rem;margin-bottom:1.5rem}
+    .status-row{display:flex;align-items:center;gap:1rem}
+    .status-icon{font-size:2.5rem}
+    .status-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:.2rem}
+    .status-value{font-size:1.1rem;font-weight:700}
+    .status-value.not_connected{color:rgba(255,255,255,.5)}
+    .status-value.pending{color:#FACC15}
+    .status-value.ready{color:#22C55E}
+    .btn{display:block;width:100%;padding:1rem;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;transition:background .2s,opacity .2s;text-align:center;text-decoration:none}
+    .btn-primary{background:#E85D04;color:#fff}
+    .btn-primary:hover{background:#F4841F}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+    .btn-secondary{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12)}
+    .btn-secondary:hover{background:rgba(255,255,255,.12);color:#fff}
+    .info-box{background:rgba(234,88,4,.08);border:1px solid rgba(234,88,4,.25);border-radius:8px;padding:1rem 1.25rem;font-size:.85rem;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:1.5rem}
+    .info-box strong{color:#E85D04}
+    .success-box{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:8px;padding:1rem 1.25rem;font-size:.9rem;color:#22C55E;margin-bottom:1.5rem}
+    .nav-links{display:flex;gap:1rem;margin-top:1.5rem}
+    .nav-links a{font-size:.85rem;color:rgba(255,255,255,.4);text-decoration:none}
+    .nav-links a:hover{color:#fff}
+    .spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.4rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+<header class="driver-header">
+  <a href="/" class="driver-logo">HAULR</a>
+  <% if (driver) { %>
+  <div style="display:flex;align-items:center;gap:.5rem">
+    <span class="driver-email-dot"></span>
+    <span style="font-size:.85rem;font-weight:600"><%= driver.name %></span>
+  </div>
+  <% } %>
+</header>
+
+<div class="page">
+  <h1>Payout Setup</h1>
+  <p class="sub">Connect your bank account via Stripe so Shurget can automatically pay you 85% of every completed delivery.</p>
+
+  <% if (typeof query !== 'undefined' && query && query.connected === '1') { %>
+  <div class="success-box">✅ Bank account connected! You're ready to receive payouts after completed deliveries.</div>
+  <% } %>
+
+  <div class="status-card">
+    <div class="status-row">
+      <div class="status-icon">
+        <% if (payoutStatus === 'ready') { %>💳<% } else if (payoutStatus === 'pending') { %>⏳<% } else { %>🔗<% } %>
+      </div>
+      <div>
+        <div class="status-label">Payout Status</div>
+        <div class="status-value <%= payoutStatus %>">
+          <% if (payoutStatus === 'ready') { %>Ready to receive payouts
+          <% } else if (payoutStatus === 'pending') { %>Pending — finish verification
+          <% } else { %>Not connected<% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if (payoutStatus !== 'ready') { %>
+  <div class="info-box">
+    <strong>How it works:</strong> Click below to open Stripe's secure onboarding. You'll enter your bank details and verify your identity. Takes about 5 minutes. Shurget never sees your account numbers — everything goes through Stripe.
+  </div>
+  <button class="btn btn-primary" id="btn-connect" onclick="startConnect()">
+    <% if (payoutStatus === 'pending') { %>Continue Bank Setup →<% } else { %>Connect Bank Account →<% } %>
+  </button>
+  <% } else { %>
+  <div class="info-box" style="background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.2)">
+    <strong style="color:#22C55E">Connected.</strong> Payouts are sent automatically after each delivery is marked complete. Funds typically arrive in 1–2 business days via Stripe.
+  </div>
+  <% } %>
+
+  <div class="nav-links">
+    <a href="/driver/earnings?email=<%= encodeURIComponent(email) %>">View Earnings →</a>
+    <a href="/driver/jobs?email=<%= encodeURIComponent(email) %>">← Back to Jobs</a>
+  </div>
+</div>
+
+<script>
+async function startConnect() {
+  const btn = document.getElementById('btn-connect');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Setting up…';
+  try {
+    const res = await fetch('/api/driver/payouts/connect?email=<%= encodeURIComponent(email) %>', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await res.json();
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Try Again';
+      alert(data.error || 'Something went wrong. Please try again.');
+    }
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = 'Try Again';
+    alert('Network error. Please try again.');
+  }
+}
+</script>
+</body>
+</html>
