@@ -10,15 +10,16 @@
     label { font-weight: bold; }
     input, select, button { padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; }
     button { background: #ea580c; color: white; border: none; cursor: pointer; font-weight: bold; }
+    #price-estimate { font-size: 1.4rem; font-weight: bold; color: #ea580c; margin: 15px 0; }
   </style>
 </head>
 <body>
   <h1>Book a Pickup Truck</h1>
   <p>Get an instant quote and book same-day delivery.</p>
 
-  <form action="/book" method="POST">
+  <form action="/book" method="POST" id="bookingForm">
     <label>What are you moving?</label>
-    <select name="itemType" required>
+    <select name="itemType" id="itemType" required>
       <option value="">Select item</option>
       <option value="sofa">Sofa / Couch</option>
       <option value="mattress">Mattress</option>
@@ -28,21 +29,46 @@
     </select>
 
     <label>Pickup Address</label>
-    <input type="text" name="pickupAddress" placeholder="123 Main St, Castle Rock, CO" required>
+    <input type="text" name="pickupAddress" id="pickupAddress" placeholder="123 Main St, Castle Rock, CO" required>
 
     <label>Dropoff Address</label>
-    <input type="text" name="dropoffAddress" placeholder="456 Oak Ave, Denver, CO" required>
+    <input type="text" name="dropoffAddress" id="dropoffAddress" placeholder="456 Oak Ave, Denver, CO" required>
 
     <label>Need Helpers?</label>
-    <select name="helpers">
+    <select name="helpers" id="helpers">
       <option value="0">No helpers needed</option>
       <option value="1">1 Helper (+$25)</option>
       <option value="2">2 Helpers (+$45)</option>
     </select>
 
+    <div id="price-estimate">$0.00</div>
+
     <button type="submit">Get Quote & Book</button>
   </form>
 
   <p><a href="/">← Back to Home</a></p>
+
+  <script>
+    const form = document.getElementById('bookingForm');
+    const priceEl = document.getElementById('price-estimate');
+
+    function calculatePrice() {
+      const itemType = document.getElementById('itemType').value;
+      const helpers = parseInt(document.getElementById('helpers').value) || 0;
+      
+      let basePrice = 0;
+      if (itemType === 'sofa' || itemType === 'mattress') basePrice = 89;
+      else if (itemType === 'furniture') basePrice = 79;
+      else if (itemType === 'appliance') basePrice = 109;
+      else basePrice = 69;
+
+      const helperPrice = helpers * 25;
+      const total = basePrice + helperPrice;
+      
+      priceEl.textContent = '$' + total.toFixed(2);
+    }
+
+    form.addEventListener('change', calculatePrice);
+  </script>
 </body>
 </html>
