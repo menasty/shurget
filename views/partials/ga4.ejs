@@ -1,17 +1,3 @@
-<% if (ga4Id) { %>
-<!-- GA4 — loaded dynamically by cookie-consent.ejs only when user accepts analytics cookies -->
-<!-- Exposes GA4 ID to the consent banner via data attribute on <html> -->
-<script>
-document.documentElement.dataset.ga4Id = '<%= ga4Id %>';
-// Stub gtag so inline ga4Event() calls queued before consent don't throw
-window.dataLayer = window.dataLayer || [];
-if (!window.gtag) {
-  window.gtag = function() {
-    // Only push to dataLayer if analytics consented; cookie-consent.ejs replaces this with real gtag
-    if (document.documentElement.getAttribute('data-cc-analytics') !== 'false') {
-      dataLayer.push(arguments);
-    }
-  };
-}
-</script>
+<% if (typeof ga4Id !== 'undefined' && ga4Id) { %>
+<!-- GA4 placeholder -->
 <% } %>
