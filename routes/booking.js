@@ -19,9 +19,9 @@ router.post('/', async (req, res) => {
     const orderId = result.rows[0].id;
 
     res.send(`
-      <div style="max-width: 600px; margin: 40px auto; padding: 40px; text-align: center;">
+      <div style="max-width: 600px; margin: 40px auto; padding: 40px; text-align: center; font-family: system-ui;">
         <h1 style="color: #ea580c;">✅ Order #${orderId} Received!</h1>
-        <p>Thank you. Your booking has been created.</p>
+        <p>Thank you. Your booking has been created and is pending driver assignment.</p>
         <p><a href="/book">Book Another Haul</a> | <a href="/">← Back to Home</a></p>
       </div>
     `);
