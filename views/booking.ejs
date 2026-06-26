@@ -4,23 +4,24 @@
   <meta charset="UTF-8">
   <title>Book a Haul - Shurget</title>
   <style>
-    body { font-family: system-ui; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; }
-    h1 { color: #ea580c; }
-    form { display: grid; gap: 15px; max-width: 600px; }
-    label { font-weight: bold; }
-    input, select, button { padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; }
-    button { background: #ea580c; color: white; border: none; cursor: pointer; font-weight: bold; }
-    #price-estimate { font-size: 1.4rem; font-weight: bold; color: #ea580c; margin: 15px 0; }
+    body { font-family: system-ui; max-width: 800px; margin: 40px auto; padding: 20px; background: #f8f9fa; }
+    h1 { color: #ea580c; text-align: center; }
+    form { background: white; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
+    label { font-weight: bold; display: block; margin: 18px 0 6px; color: #333; }
+    input, select, button { width: 100%; padding: 16px; font-size: 17px; border: 2px solid #ddd; border-radius: 10px; }
+    button { background: #ea580c; color: white; font-weight: bold; cursor: pointer; margin-top: 25px; font-size: 18px; }
+    button:hover { background: #e04e00; }
+    #price-estimate { font-size: 2rem; font-weight: bold; color: #ea580c; text-align: center; margin: 25px 0; padding: 15px; background: #fff5f0; border-radius: 12px; }
   </style>
 </head>
 <body>
-  <h1>Book a Pickup Truck</h1>
-  <p>Get an instant quote and book same-day delivery.</p>
+  <h1>Book a Pickup Truck Haul</h1>
+  <p style="text-align:center; color:#555;">Same-day delivery for items that don't fit in your car.</p>
 
   <form action="/book" method="POST" id="bookingForm">
     <label>What are you moving?</label>
     <select name="itemType" id="itemType" required>
-      <option value="">Select item</option>
+      <option value="">Select item type</option>
       <option value="sofa">Sofa / Couch</option>
       <option value="mattress">Mattress</option>
       <option value="furniture">Furniture</option>
@@ -29,10 +30,10 @@
     </select>
 
     <label>Pickup Address</label>
-    <input type="text" name="pickupAddress" id="pickupAddress" placeholder="123 Main St, Castle Rock, CO" required>
+    <input type="text" name="pickupAddress" id="pickupAddress" placeholder="962 Oakwood Dr, Castle Rock, CO" required>
 
     <label>Dropoff Address</label>
-    <input type="text" name="dropoffAddress" id="dropoffAddress" placeholder="456 Oak Ave, Denver, CO" required>
+    <input type="text" name="dropoffAddress" id="dropoffAddress" placeholder="340 Colorado Blvd, Denver, CO" required>
 
     <label>Need Helpers?</label>
     <select name="helpers" id="helpers">
@@ -41,34 +42,22 @@
       <option value="2">2 Helpers (+$45)</option>
     </select>
 
-    <div id="price-estimate">$0.00</div>
+    <div id="price-estimate">$89.00</div>
 
-    <button type="submit">Get Quote & Book</button>
+    <button type="submit">Continue to Secure Payment →</button>
   </form>
 
-  <p><a href="/">← Back to Home</a></p>
+  <p style="text-align:center"><a href="/">← Back to Home</a></p>
 
   <script>
-    const form = document.getElementById('bookingForm');
-    const priceEl = document.getElementById('price-estimate');
-
     function calculatePrice() {
-      const itemType = document.getElementById('itemType').value;
+      const item = document.getElementById('itemType').value;
       const helpers = parseInt(document.getElementById('helpers').value) || 0;
-      
-      let basePrice = 0;
-      if (itemType === 'sofa' || itemType === 'mattress') basePrice = 89;
-      else if (itemType === 'furniture') basePrice = 79;
-      else if (itemType === 'appliance') basePrice = 109;
-      else basePrice = 69;
-
-      const helperPrice = helpers * 25;
-      const total = basePrice + helperPrice;
-      
-      priceEl.textContent = '$' + total.toFixed(2);
+      let base = item === 'appliance' ? 109 : (item === 'furniture' ? 79 : 89);
+      const total = base + (helpers * 25);
+      document.getElementById('price-estimate').textContent = '$' + total.toFixed(2);
     }
-
-    form.addEventListener('change', calculatePrice);
+    document.getElementById('bookingForm').addEventListener('change', calculatePrice);
   </script>
 </body>
 </html>
