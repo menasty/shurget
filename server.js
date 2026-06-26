@@ -3,8 +3,10 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const bodyLimit = process.env.BODY_LIMIT || '10mb';
+
+app.use(express.json({ limit: bodyLimit }));
+app.use(express.urlencoded({ extended: true, limit: bodyLimit }));
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
@@ -25,6 +27,15 @@ app.get('/', (req, res) => {
 });
 
 app.get('/health', (req, res) => res.json({ status: 'healthy' }));
+
+app.use((err, req, res, next) => {
+  if (err && (err.type === 'entity.too.large' || err.status === 413)) {
+    return res.status(413).json({
+      error: 'Request payload is too large. Please reduce upload size and try again.'
+    });
+  }
+  return next(err);
+});
 
 app.listen(port, () => {
   console.log(`✅ Shurget server running on port ${port}`);
