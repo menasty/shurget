@@ -1,97 +1,42 @@
-// routes/drive.js — Driver onboarding page, /drive/earn recruitment page, and application API
-// GET  /drive/earn          — public driver recruitment landing page (indexable)
-// GET  /drive               — render the onboarding wizard (optionally ?email= for status, ?ref=CODE for referral)
-// GET  /api/drive/status    — return application status by email
-// POST /api/drive           — submit the complete driver application
-
 const express = require('express');
 const router = express.Router();
-const {
-  createDriverApplication,
-  getDriverApplicationByEmail,
-  getDriverByReferralCode,
-} = require('../db/drivers');
+const { pool } = require('../db/index');
 
-const ga4Id = process.env.GA4_MEASUREMENT_ID || '';
-
-// GET /drive/earn — public recruitment landing page; accepts ?ref=CODE for driver referral tracking
-router.get('/earn', async (req, res) => {
-  const refCode = req.query.ref || null;
-  let referrerName = null;
-  if (refCode) {
-    const referrer = await getDriverByReferralCode(refCode).catch(() => null);
-    if (referrer) referrerName = referrer.name;
-  }
-  res.render('drive-earn', { refCode, referrerName, ga4Id });
+router.get('/', (req, res) => {
+  res.render('drive', { 
+    application: null,
+    ga4Id: process.env.GA4_MEASUREMENT_ID || ''
+  });
 });
 
-// GET /drive
-router.get('/', async (req, res) => {
-  const { email } = req.query;
-  let application = null;
-  if (email) {
-    application = await getDriverApplicationByEmail(email);
-  }
-  res.render('drive', { application, ga4Id });
+router.get('/earn', (req, res) => {
+  res.render('drive-earn', { refCode: null, referrerName: null });
 });
 
-// GET /api/drive/status?email=...
-router.get('/status', async (req, res) => {
-  const { email } = req.query;
-  if (!email) return res.status(400).json({ error: 'email is required' });
-  const app = await getDriverApplicationByEmail(email);
-  if (!app) return res.status(404).json({ error: 'No application found for that email.' });
-  res.json({ application: app });
-});
-
-// POST /api/drive — full onboarding submission
-// Accepts optional field referredByCode (driver referral code from ?ref= param on /drive wizard)
-// Accepts optional utmSource/utmMedium/utmCampaign for driver recruitment attribution
+// Handle driver application submission
 router.post('/', async (req, res) => {
   try {
-    const {
-      name, email, phone, vehicleType, city,
-      vehicleInsuranceDoc, driverLicenseDoc, vehicleRegistrationDoc,
-      backgroundCheckConsent, referredByCode,
-      utmSource, utmMedium, utmCampaign,
-    } = req.body;
+    const { name, email, phone, vehicleType, city } = req.body;
 
     if (!name || !email || !phone || !vehicleType || !city) {
-      return res.status(400).json({ error: 'Personal info (name, email, phone, vehicle, city) is required.' });
-    }
-    if (!backgroundCheckConsent) {
-      return res.status(400).json({ error: 'You must consent to the background check to continue.' });
+      return res.status(400).send('Missing required fields');
     }
 
-    // Resolve referring driver ID and name from referral code, if provided
-    let referredByDriverId = null;
-    let referredByDriverName = null;
-    if (referredByCode) {
-      const referrer = await getDriverByReferralCode(referredByCode).catch(() => null);
-      if (referrer) {
-        referredByDriverId = referrer.id;
-        referredByDriverName = referrer.name;
-      }
-    }
+    const result = await pool.query(`
+      INSERT INTO driver_applications (name, email, phone, vehicle_type, city, status, created_at)
+      VALUES ($1, $2, $3, $4, $5, 'pending', NOW())
+      RETURNING id
+    `, [name, email, phone, vehicleType, city]);
 
-    const application = await createDriverApplication({
-      name, email, phone, vehicleType, city,
-      vehicleInsuranceDoc, driverLicenseDoc, vehicleRegistrationDoc,
-      backgroundCheckConsent: !!backgroundCheckConsent,
-      referredByDriverId,
-      referredByDriverName,
-      utmSource:   utmSource   || null,
-      utmMedium:   utmMedium   || null,
-      utmCampaign: utmCampaign || null,
-    });
-
-    res.json({ success: true, application: { id: application.id, email: application.email } });
+    res.send(`
+      <h2 style="color:#ea580c">✅ Application Received!</h2>
+      <p>Thank you, ${name}. Your application has been submitted.</p>
+      <p>We'll review it and get back to you shortly.</p>
+      <p><a href="/drive">Submit Another Application</a> | <a href="/">Back to Home</a></p>
+    `);
   } catch (err) {
-    if (err.code === '23505') {
-      return res.status(409).json({ error: 'An application with that email already exists.' });
-    }
-    console.error('[/api/drive]', err);
-    res.status(500).json({ error: 'Failed to submit application.' });
+    console.error(err);
+    res.status(500).send('Error submitting application. Please try again.');
   }
 });
 
