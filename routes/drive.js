@@ -1,36 +1,115 @@
 const express = require('express');
 const router = express.Router();
-const { pool } = require('../db/index');
+const {
+  createDriverApplication,
+  getDriverApplicationByEmail,
+} = require('../db/drivers');
 
-router.get('/', (req, res) => {
-  res.render('drive', { application: null });
+function wantsJson(req) {
+  const accept = req.get('accept') || '';
+  return req.is('application/json') || accept.includes('application/json');
+}
+
+router.get('/', async (req, res) => {
+  try {
+    const email = (req.query.email || '').trim().toLowerCase();
+    if (!email) {
+      return res.render('drive', { application: null });
+    }
+
+    const application = await getDriverApplicationByEmail(email);
+    return res.render('drive', { application: application || null });
+  } catch (err) {
+    console.error(err);
+    return res.render('drive', { application: null });
+  }
 });
 
 router.post('/', async (req, res) => {
-  try {
-    const { name, email, phone, vehicleType, city } = req.body;
+  const expectsJson = wantsJson(req);
 
-    if (!name || !email || !phone || !vehicleType || !city) {
+  try {
+    const {
+      name,
+      email,
+      phone,
+      vehicleType,
+      city,
+      vehicleInsuranceDoc,
+      driverLicenseDoc,
+      vehicleRegistrationDoc,
+      backgroundCheckConsent,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+    } = req.body;
+
+    const normalizedEmail = (email || '').trim().toLowerCase();
+
+    if (!name || !normalizedEmail || !phone || !vehicleType || !city) {
+      if (expectsJson) {
+        return res.status(400).json({ error: 'Please fill out all required fields.' });
+      }
       return res.status(400).send('<h2 style="color:red">Please fill out all required fields.</h2>');
     }
 
-    await pool.query(`
-      INSERT INTO driver_applications (name, email, phone, vehicle_type, city, status, created_at)
-      VALUES ($1, $2, $3, $4, $5, 'pending', NOW())
-    `, [name, email, phone, vehicleType, city]);
+    const application = await createDriverApplication({
+      name,
+      email: normalizedEmail,
+      phone,
+      vehicleType,
+      city,
+      vehicleInsuranceDoc,
+      driverLicenseDoc,
+      vehicleRegistrationDoc,
+      backgroundCheckConsent,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+    });
 
-    res.send(`
-      <div style="max-width: 600px; margin: 80px auto; padding: 40px; text-align: center; font-family: system-ui;">
-        <h1 style="color: #ea580c;">✅ Application Submitted Successfully!</h1>
-        <p>Thank you, ${name}.</p>
-        <p>Your driver application has been received and is under review.</p>
-        <p>We will contact you shortly with next steps.</p>
-        <p><a href="/drive">Submit Another Application</a> | <a href="/">← Back to Home</a></p>
-      </div>
-    `);
+    if (expectsJson) {
+      return res.status(201).json({
+        success: true,
+        message: 'Thanks for Applying. Reviewing Application',
+        application,
+      });
+    }
+
+    return res.redirect('/drive?email=' + encodeURIComponent(normalizedEmail));
+
   } catch (err) {
+    const isDuplicateEmail = err && err.code === '23505' && err.constraint === 'driver_applications_email_key';
+
+    if (isDuplicateEmail) {
+      const normalizedEmail = (req.body.email || '').trim().toLowerCase();
+      const existing = await getDriverApplicationByEmail(normalizedEmail);
+
+      if (expectsJson) {
+        if (existing) {
+          return res.status(200).json({
+            success: true,
+            alreadyExists: true,
+            message: 'Thanks for Applying. Reviewing Application',
+            application: existing,
+          });
+        }
+        return res.status(409).json({ error: 'An application with this email already exists.' });
+      }
+
+      if (existing) {
+        return res.redirect('/drive?email=' + encodeURIComponent(normalizedEmail));
+      }
+      return res.status(409).send('<h2 style="color:red">An application with this email already exists.</h2>');
+    }
+
     console.error(err);
-    res.status(500).send('<h2 style="color:red">Error submitting application. Please try again.</h2>');
+
+    if (expectsJson) {
+      return res.status(500).json({ error: 'Error submitting application. Please try again.' });
+    }
+
+    return res.status(500).send('<h2 style="color:red">Error submitting application. Please try again.</h2>');
   }
 });
 

@@ -1042,7 +1042,7 @@
         });
         const app = json.application || {};
         const statusUrl = '/drive?email=' + encodeURIComponent(app.email || formData.email);
-        showSuccess('Application submitted! Redirecting to your status page…');
+        showSuccess(json.message || 'Thanks for Applying. Reviewing Application');
         setTimeout(() => { window.location.href = statusUrl; }, 1500);
 
       } catch (err) {
