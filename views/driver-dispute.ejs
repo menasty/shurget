@@ -115,7 +115,7 @@
     btn.textContent = 'Submitting…';
 
     const orderId = <%= order ? order.id : 0 %>;
-    const driverEmail = '<%= escapeJs(driverEmail || '') %>';
+    const driverEmail = <%- JSON.stringify(driverEmail || '') %>;
 
     try {
       const res = await fetch('/api/driver/disputes', {
@@ -145,9 +145,6 @@
     }
   }
 
-  function escapeJs(str) {
-    return String(str || '').replace(/[\\'"]/g, '\\$&');
-  }
 </script>
 </body>
 </html>

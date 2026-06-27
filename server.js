@@ -19,6 +19,7 @@ app.use('/confirmation', require('./routes/confirmation'));
 app.use('/admin', require('./routes/admin'));
 app.use('/drive', require('./routes/drive'));
 app.use('/driver', require('./routes/driver'));
+app.use(require('./routes/payouts'));
 
 app.get('/', (req, res) => {
   res.render('layout', { title: 'Shurget - Pickup Truck Delivery' });

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title || 'Shurget - Pickup Truck Delivery' %></title>
+  <title><%= typeof title !== 'undefined' ? title : 'Shurget - Pickup Truck Delivery' %></title>
   <link rel="stylesheet" href="/css/theme.css">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
@@ -29,7 +29,7 @@
   </header>
 
   <div class="main-content">
-    <%- body %>
+    <%- typeof body !== 'undefined' ? body : '' %>
   </div>
 
   <footer style="background:#111; color:#aaa; text-align:center; padding: 40px 20px; margin-top: 80px;">

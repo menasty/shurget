@@ -111,7 +111,7 @@
       <div class="login-logo">Shurget</div>
       <p class="login-tagline">Admin portal</p>
 
-      <% if (error) { %>
+      <% if (typeof error !== 'undefined' && error) { %>
         <div class="login-error"><%= error %></div>
       <% } %>
 

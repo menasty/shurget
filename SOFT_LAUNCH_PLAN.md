@@ -43,7 +43,7 @@
 2. Pickup checklist: photo on arrival, check-in with customer name
 3. Dropoff checklist: photo on arrival, customer signature or photo confirmation
 4. Emergency contact:  on-call number (placeholder until support agent wired)
-5. Payment timeline: drivers paid weekly, first payout after 5 deliveries
+5. Payment timeline: paid per completed delivery via Stripe Connect Express (85% of order total), transfer triggered when order is marked `delivered` (target release: within 24 hours)
 
 **Driver expectations during pilot:**
 - Respond to dispatch request within 10 minutes
@@ -155,7 +155,10 @@ If ANY of these occur, pause operations and fix before continuing:
 
 1. **Driver dispatch channel** — `/drive` is only a signup form. There is NO active dispatch API for a live driver to receive job assignments. Needs: a driver-facing endpoint (SMS push, email, or an authenticated GET /api/drive/available-jobs). Without this, the pilot cannot proceed beyond the first test order.
 2. **Delivery completion trigger** — No `PATCH /api/orders/:id/status` or equivalent exists. Orders have a `status` column but no route to set it to `delivered`. Needs: a driver-side "mark complete" endpoint wired to `confirmOrder` with `status: 'delivered'`.
-3. **Driver payment** — How are drivers paid? Weekly ACH? In-app payout? Define before onboarding drivers.
+3. ⚠️ **Driver payment (implementation complete, environment verification pending)** — Driver payouts are implemented via **Stripe Connect Express**. Each completed delivery should trigger a transfer of **85% of order total** after status `delivered`.
+	- Verified live: `GET /driver/payouts` (200 for active driver), `GET /api/driver/payouts/status` (200)
+	- Blocked in current environment: `POST /api/driver/payouts/connect` returns 500 because `STRIPE_SECRET_KEY` is not set
+	- Mark done for launch only after Stripe key is configured and connect endpoint returns onboarding URL
 4. **On-call contact** — Who do drivers call if something goes wrong mid-delivery?
 
 ---

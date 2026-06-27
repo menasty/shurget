@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <% const safeGa4Id = typeof ga4Id !== 'undefined' ? ga4Id : ''; %>
+  <% const safeRefCode = typeof refCode !== 'undefined' ? refCode : ''; %>
+  <% const safeReferrerName = typeof referrerName !== 'undefined' ? referrerName : ''; %>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Drive with Shurget — Earn $85+ per Haul with Your Pickup Truck in Austin</title>
@@ -61,13 +64,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/theme.css">
 
-  <% if (ga4Id) { %>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= ga4Id %>"></script>
+  <% if (safeGa4Id) { %>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= safeGa4Id %>"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', '<%= ga4Id %>');
+    gtag('config', '<%= safeGa4Id %>');
   </script>
   <% } %>
 
@@ -312,7 +315,7 @@
       <a href="/" class="nav-logo">
         <img src="/images/shurget-logo.png" alt="Shurget" height="48" style="vertical-align: middle;">
       </a>
-  <a href="/drive?utm_source=drive_earn&utm_medium=site<%= refCode ? '&ref=' + refCode : '' %>" class="nav-cta">Apply Now →</a>
+  <a href="/drive?utm_source=drive_earn&utm_medium=site<%= safeRefCode ? '&ref=' + safeRefCode : '' %>" class="nav-cta">Apply Now →</a>
 </nav>
 
 <!-- ─── HERO ─── -->
@@ -324,7 +327,7 @@
     Keep 85% of every job. Work when you want.
   </p>
   <div class="hero-cta-row">
-    <a href="/drive?utm_source=drive_earn&utm_medium=site<%= refCode ? '&ref=' + refCode : '' %>" class="btn-primary">Start Earning →</a>
+    <a href="/drive?utm_source=drive_earn&utm_medium=site<%= safeRefCode ? '&ref=' + safeRefCode : '' %>" class="btn-primary">Start Earning →</a>
     <a href="#how-it-works" class="btn-secondary">See how it works</a>
   </div>
   <div class="hero-proof">
@@ -510,16 +513,16 @@
 </section>
 
 <!-- ─── REFERRAL BANNER (shown if arriving via ?ref=CODE) ─── -->
-<% if (refCode && referrerName) { %>
+<% if (safeRefCode && safeReferrerName) { %>
 <section class="section" style="background:#0D0D0D;padding-top:2rem;padding-bottom:3rem">
   <div class="section-inner">
     <div class="referral-banner">
       <div class="referral-left">
-        <div class="referral-title">🤝 You were referred by <%= referrerName %></div>
+        <div class="referral-title">🤝 You were referred by <%= safeReferrerName %></div>
         <div class="referral-desc">Sign up, get approved, and complete 3 hauls — your referrer earns a $50 bonus. You get priority access to jobs.</div>
       </div>
       <div>
-        <a href="/drive?ref=<%= refCode %>" class="btn-primary">Join via Referral →</a>
+        <a href="/drive?ref=<%= safeRefCode %>" class="btn-primary">Join via Referral →</a>
       </div>
     </div>
   </div>
@@ -604,7 +607,7 @@
     Thousands of Austin homeowners need a truck this weekend.
     Start earning in 24 hours.
   </p>
-  <a href="/drive?utm_source=drive_earn&utm_medium=site<%= refCode ? '&ref=' + refCode : '' %>" class="btn-primary" style="font-size:1.1rem;padding:1rem 2.75rem">
+  <a href="/drive?utm_source=drive_earn&utm_medium=site<%= safeRefCode ? '&ref=' + safeRefCode : '' %>" class="btn-primary" style="font-size:1.1rem;padding:1rem 2.75rem">
     Apply to Drive →
   </a>
 </section>
