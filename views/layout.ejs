@@ -3,24 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shurget — Pickup Truck Delivery for Oversized Items</title>
-  <meta name="description" content="Same-day pickup truck delivery for sofas, mirrors, dressers, and anything that won't fit in a sedan.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <title><%= title || 'Shurget - Pickup Truck Delivery' %></title>
   <link rel="stylesheet" href="/css/theme.css">
-  <%- include('partials/ga4') %>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <%- include('partials/nav') %>
-  <%- include('partials/hero') %>
-  <%- include('partials/problem') %>
-  <%- include('partials/howitworks') %>
-  <%- include('partials/pricing') %>
-  <%- include('partials/gear') %>
-  <%- include('partials/closing') %>
-  <%- include('partials/footer') %>
-  <%- include('partials/cookie-consent') %>
-  <!--  Analytics --><script>(function(){var slug="shurget";if(!slug)return;var vid=localStorage.getItem('_vid');if(!vid){vid='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});localStorage.setItem('_vid',vid);}new Image().src='https://.com/api/beacon/pixel?s='+encodeURIComponent(slug)+'&v='+encodeURIComponent(vid);})();</script>
+  <nav>
+    <a href="/" class="nav-logo">
+      <img src="/images/shurget-logo.png" alt="Shurget" style="height: 52px;">
+    </a>
+    <div>
+      <a href="/book" class="btn-primary">Book a Haul</a>
+      <a href="/drive">Become a Driver</a>
+    </div>
+  </nav>
+
+  <!-- Dynamic Hero Section -->
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Need a Pickup Truck?</h1>
+      <p class="hero-subtitle">Same-day delivery for anything that won't fit in your car.<br>
+      Sofas, furniture, appliances, Marketplace hauls — we've got you.</p>
+      <a href="/book" class="btn-primary hero-btn">Book a Haul Now</a>
+    </div>
+  </header>
+
+  <div class="main-content">
+    <%- body %>
+  </div>
+
+  <footer style="background:#111; color:#aaa; text-align:center; padding: 40px 20px; margin-top: 80px;">
+    <p>&copy; 2026 Shurget. All Rights Reserved.</p>
+    <p>
+      <a href="/terms" style="color:#aaa; margin: 0 10px;">Terms</a>
+      <a href="/privacy" style="color:#aaa; margin: 0 10px;">Privacy</a>
+      <a href="/contact" style="color:#aaa; margin: 0 10px;">Contact</a>
+    </p>
+  </footer>
 </body>
 </html>

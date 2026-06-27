@@ -62,3 +62,30 @@ h1, h2 {
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   margin-bottom: 2rem;
 }
+
+.hero {
+  background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat;
+  color: white;
+  padding: 160px 20px 100px;
+  text-align: center;
+  position: relative;
+}
+
+.hero-content h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4.5rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 16px;
+}
+
+.hero-subtitle {
+  font-size: 1.35rem;
+  max-width: 700px;
+  margin: 0 auto 40px;
+  opacity: 0.95;
+}
+
+.hero-btn {
+  font-size: 1.3rem;
+  padding: 18px 48px;
+}
