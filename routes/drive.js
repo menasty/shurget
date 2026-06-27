@@ -8,9 +8,13 @@ router.get('/', (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
+    const wantsJson = req.is('application/json');
     const { name, email, phone, vehicleType, city } = req.body;
 
     if (!name || !email || !phone || !vehicleType || !city) {
+      if (wantsJson) {
+        return res.status(400).json({ error: 'All fields are required.' });
+      }
       return res.status(400).send('All fields are required.');
     }
 
@@ -19,6 +23,16 @@ router.post('/', async (req, res) => {
       VALUES ($1, $2, $3, $4, $5, 'pending', NOW())
       RETURNING id
     `, [name, email, phone, vehicleType, city]);
+
+    if (wantsJson) {
+      return res.json({
+        ok: true,
+        application: {
+          id: result.rows[0].id,
+          email,
+        },
+      });
+    }
 
     res.send(`
       <div style="max-width: 600px; margin: 80px auto; padding: 40px; text-align: center; font-family: system-ui;">
@@ -31,6 +45,9 @@ router.post('/', async (req, res) => {
     `);
   } catch (err) {
     console.error(err);
+    if (req.is('application/json')) {
+      return res.status(500).json({ error: 'Error submitting application. Please try again.' });
+    }
     res.status(500).send('Error submitting application. Please try again.');
   }
 });
