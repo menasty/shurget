@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
     const { name, email, phone, vehicleType, city } = req.body;
 
     if (!name || !email || !phone || !vehicleType || !city) {
-      return res.status(400).send('Please fill out all required fields.');
+      return res.status(400).json({ error: 'Please fill out all required fields.' });
     }
 
     const result = await pool.query(`
@@ -23,18 +23,16 @@ router.post('/', async (req, res) => {
       RETURNING id
     `, [name, email, phone, vehicleType, city]);
 
-    res.send(`
-      <h2 style="color:#ea580c; text-align:center; padding: 40px;">✅ Application Submitted!</h2>
-      <p style="text-align:center;">Thank you, ${name}. Your driver application has been received.</p>
-      <p style="text-align:center;">We'll review it and contact you soon.</p>
-      <p style="text-align:center;">
-        <a href="/drive">Submit Another Application</a> | 
-        <a href="/">Back to Home</a>
-      </p>
-    `);
+    return res.json({
+      success: true,
+      application: {
+        id: result.rows[0].id,
+        email
+      }
+    });
   } catch (err) {
     console.error('Driver apply error:', err);
-    res.status(500).send('Error submitting application. Please try again.');
+    return res.status(500).json({ error: 'Error submitting application. Please try again.' });
   }
 });
 

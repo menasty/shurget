@@ -1009,7 +1009,7 @@
       try {
         // Capture UTM from URL (last-touch at submission time)
         const _driveUtm = new URLSearchParams(window.location.search);
-        const res = await fetch('/api/drive', {
+        const res = await fetch('/drive', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
