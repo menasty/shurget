@@ -2,15 +2,11 @@
   --primary: #ea580c;
   --primary-dark: #d14a00;
   --dark: #111111;
-  --gray: #555555;
-  --light: #f8f9fa;
 }
 
 body {
   font-family: 'DM Sans', system-ui, sans-serif;
   margin: 0;
-  background: var(--light);
-  color: #222;
   line-height: 1.6;
 }
 
@@ -25,40 +21,56 @@ nav {
 }
 
 .nav-logo img {
-  height: 52px;
+  height: 72px;
   width: auto;
 }
 
-.main-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
+.hero {
+  background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat;
+  color: white;
+  text-align: center;
+  padding: 180px 20px 140px;
 }
 
-h1, h2 {
-  color: var(--dark);
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 5.2rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 20px;
+}
+
+.hero-subtitle {
+  font-size: 1.45rem;
+  max-width: 720px;
+  margin: 0 auto 40px;
+  opacity: 0.95;
 }
 
 .btn-primary {
   background: var(--primary);
   color: white;
-  padding: 14px 28px;
+  padding: 18px 48px;
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: 10px;
+  font-size: 1.35rem;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
 }
 
 .btn-primary:hover {
   background: var(--primary-dark);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  margin-bottom: 2rem;
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+}
+
+footer {
+  background: #111;
+  color: #aaa;
+  text-align: center;
+  padding: 50px 20px;
 }

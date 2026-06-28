@@ -10,7 +10,7 @@
 <body>
   <nav>
     <a href="/" class="nav-logo">
-      <img src="/images/shurget-logo.png" alt="Shurget" style="height: 68px; width: auto;">
+      <img src="/images/shurget-logo.png" alt="Shurget" style="height: 72px; width: auto;">
     </a>
     <div class="nav-links">
       <a href="/book">Book a Haul</a>
@@ -22,14 +22,15 @@
   <!-- Hero -->
   <header class="hero">
     <div class="hero-content">
-      <h1>Anything. Anytime. Anywhere.</h1>
-      <p class="hero-subtitle">Same-day pickup truck delivery for items that don't fit in your car.</p>
+      <h1>Need a Truck?</h1>
+      <p class="hero-subtitle">Same-day pickup truck delivery for anything that won't fit in your car.<br>
+      Sofas, furniture, appliances, Marketplace hauls — we make it easy.</p>
       <a href="/book" class="btn-primary hero-btn">Book a Haul Now →</a>
     </div>
   </header>
 
   <div class="main-content">
-    <%- typeof body !== 'undefined' ? body : '' %>
+    <%- body %>
   </div>
 
   <footer>
