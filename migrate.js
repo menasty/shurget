@@ -12,35 +12,64 @@ async function migrate() {
 
     console.log('✅ Orders table updated with stripe_session_id');
 
-    // Add geo, customer contact, pricing detail, UTM, and misc columns to orders
+    // Add ALL columns referenced anywhere in db/orders.js — safe to re-run (IF NOT EXISTS)
     await pool.query(`
       ALTER TABLE orders
+        -- core fields
+        ADD COLUMN IF NOT EXISTS price_total             NUMERIC(10,2),
+        ADD COLUMN IF NOT EXISTS status                  TEXT DEFAULT 'pending',
+        ADD COLUMN IF NOT EXISTS paid_at                 TIMESTAMPTZ,
+        ADD COLUMN IF NOT EXISTS confirmed_at            TIMESTAMPTZ,
+        ADD COLUMN IF NOT EXISTS created_at              TIMESTAMPTZ DEFAULT NOW(),
+        -- geo
         ADD COLUMN IF NOT EXISTS pickup_lat              DOUBLE PRECISION,
         ADD COLUMN IF NOT EXISTS pickup_lng              DOUBLE PRECISION,
         ADD COLUMN IF NOT EXISTS dropoff_lat             DOUBLE PRECISION,
         ADD COLUMN IF NOT EXISTS dropoff_lng             DOUBLE PRECISION,
         ADD COLUMN IF NOT EXISTS distance_miles          DOUBLE PRECISION,
+        -- customer contact
         ADD COLUMN IF NOT EXISTS customer_name           TEXT,
         ADD COLUMN IF NOT EXISTS customer_phone          TEXT,
         ADD COLUMN IF NOT EXISTS customer_email          TEXT,
+        -- pricing detail
         ADD COLUMN IF NOT EXISTS price_base              NUMERIC(10,2),
         ADD COLUMN IF NOT EXISTS price_fee               NUMERIC(10,2),
+        -- driver fields
         ADD COLUMN IF NOT EXISTS eta_minutes             INTEGER,
         ADD COLUMN IF NOT EXISTS driver_name             TEXT,
         ADD COLUMN IF NOT EXISTS driver_phone            TEXT,
         ADD COLUMN IF NOT EXISTS driver_id               INTEGER,
+        ADD COLUMN IF NOT EXISTS driver_status           TEXT,
+        ADD COLUMN IF NOT EXISTS driver_lat              DOUBLE PRECISION,
+        ADD COLUMN IF NOT EXISTS driver_lng              DOUBLE PRECISION,
+        ADD COLUMN IF NOT EXISTS driver_location_updated_at TIMESTAMPTZ,
+        -- claim hold (soft-claim race safety)
+        ADD COLUMN IF NOT EXISTS claim_hold_driver_id    INTEGER,
+        ADD COLUMN IF NOT EXISTS claim_hold_expires_at   TIMESTAMPTZ,
+        -- referral / partner
         ADD COLUMN IF NOT EXISTS referral_code_used      TEXT,
         ADD COLUMN IF NOT EXISTS referral_discount_cents INTEGER DEFAULT 0,
         ADD COLUMN IF NOT EXISTS partner_slug            TEXT,
+        -- SMS
         ADD COLUMN IF NOT EXISTS sms_consent             BOOLEAN DEFAULT FALSE,
+        ADD COLUMN IF NOT EXISTS sms_unsubscribed        BOOLEAN DEFAULT FALSE,
+        -- UTM attribution
         ADD COLUMN IF NOT EXISTS utm_source_first        TEXT,
         ADD COLUMN IF NOT EXISTS utm_medium_first        TEXT,
         ADD COLUMN IF NOT EXISTS utm_campaign_first      TEXT,
         ADD COLUMN IF NOT EXISTS utm_source_last         TEXT,
         ADD COLUMN IF NOT EXISTS utm_medium_last         TEXT,
-        ADD COLUMN IF NOT EXISTS utm_campaign_last       TEXT;
+        ADD COLUMN IF NOT EXISTS utm_campaign_last       TEXT,
+        -- payout tracking
+        ADD COLUMN IF NOT EXISTS stripe_transfer_id      TEXT,
+        ADD COLUMN IF NOT EXISTS payout_status           TEXT DEFAULT 'pending',
+        -- review email scheduling
+        ADD COLUMN IF NOT EXISTS scheduled_review_email_at TIMESTAMPTZ,
+        ADD COLUMN IF NOT EXISTS review_email_sent_at    TIMESTAMPTZ,
+        -- lifecycle email idempotency
+        ADD COLUMN IF NOT EXISTS status_emails_sent      JSONB DEFAULT '{}'::jsonb;
     `);
-    console.log('✅ Orders table updated with geo/contact/UTM columns');
+    console.log('✅ Orders table updated with all required columns');
 
     // Add driver onboarding columns if missing (safe to run repeatedly)
     await pool.query(`
