@@ -12,6 +12,36 @@ async function migrate() {
 
     console.log('✅ Orders table updated with stripe_session_id');
 
+    // Add geo, customer contact, pricing detail, UTM, and misc columns to orders
+    await pool.query(`
+      ALTER TABLE orders
+        ADD COLUMN IF NOT EXISTS pickup_lat              DOUBLE PRECISION,
+        ADD COLUMN IF NOT EXISTS pickup_lng              DOUBLE PRECISION,
+        ADD COLUMN IF NOT EXISTS dropoff_lat             DOUBLE PRECISION,
+        ADD COLUMN IF NOT EXISTS dropoff_lng             DOUBLE PRECISION,
+        ADD COLUMN IF NOT EXISTS distance_miles          DOUBLE PRECISION,
+        ADD COLUMN IF NOT EXISTS customer_name           TEXT,
+        ADD COLUMN IF NOT EXISTS customer_phone          TEXT,
+        ADD COLUMN IF NOT EXISTS customer_email          TEXT,
+        ADD COLUMN IF NOT EXISTS price_base              NUMERIC(10,2),
+        ADD COLUMN IF NOT EXISTS price_fee               NUMERIC(10,2),
+        ADD COLUMN IF NOT EXISTS eta_minutes             INTEGER,
+        ADD COLUMN IF NOT EXISTS driver_name             TEXT,
+        ADD COLUMN IF NOT EXISTS driver_phone            TEXT,
+        ADD COLUMN IF NOT EXISTS driver_id               INTEGER,
+        ADD COLUMN IF NOT EXISTS referral_code_used      TEXT,
+        ADD COLUMN IF NOT EXISTS referral_discount_cents INTEGER DEFAULT 0,
+        ADD COLUMN IF NOT EXISTS partner_slug            TEXT,
+        ADD COLUMN IF NOT EXISTS sms_consent             BOOLEAN DEFAULT FALSE,
+        ADD COLUMN IF NOT EXISTS utm_source_first        TEXT,
+        ADD COLUMN IF NOT EXISTS utm_medium_first        TEXT,
+        ADD COLUMN IF NOT EXISTS utm_campaign_first      TEXT,
+        ADD COLUMN IF NOT EXISTS utm_source_last         TEXT,
+        ADD COLUMN IF NOT EXISTS utm_medium_last         TEXT,
+        ADD COLUMN IF NOT EXISTS utm_campaign_last       TEXT;
+    `);
+    console.log('✅ Orders table updated with geo/contact/UTM columns');
+
     // Add driver onboarding columns if missing (safe to run repeatedly)
     await pool.query(`
       ALTER TABLE driver_applications
