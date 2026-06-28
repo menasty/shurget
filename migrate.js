@@ -56,8 +56,25 @@ async function migrate() {
 
     console.log('✅ Driver applications self-referral FK verified');
   } catch (err) {
+    // Never fail the deploy on a migration error — log and continue so the
+    // server can still start. Each step above is individually idempotent.
     console.error('Migration error:', err);
   }
 }
 
-migrate().catch(console.error);
+// IMPORTANT: the pg Pool keeps the event loop alive, so we must explicitly
+// close it. Without this, `node migrate.js` never exits and the chained
+// `npm run migrate && npm start` in render.yaml hangs forever — the server
+// never boots and Render's health check fails.
+migrate()
+  .catch((err) => {
+    console.error('Migration runner error:', err);
+  })
+  .finally(async () => {
+    try {
+      await pool.end();
+    } catch (_) {
+      // ignore pool teardown errors
+    }
+    process.exit(0);
+  });

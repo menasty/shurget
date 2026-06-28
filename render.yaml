@@ -8,3 +8,42 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # Database (Neon Postgres connection string)
+      - key: DATABASE_URL
+        sync: false
+      # Public base URL used to build Stripe success/cancel + email links
+      - key: APP_URL
+        sync: false
+      # Admin session cookie signing secret (random 32+ char string)
+      - key: COOKIE_SECRET
+        sync: false
+      # Admin panel credentials (required to log in at /admin/login)
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_PHONE
+        sync: false
+      # Stripe (customer checkout + webhook verification + Connect payouts)
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      # HMAC secret for signed driver-rating links
+      - key: RATING_TOKEN_SECRET
+        sync: false
+      # Postmark transactional email
+      - key: POSTMARK_SERVER_TOKEN
+        sync: false
+      - key: POSTMARK_FROM_EMAIL
+        sync: false
+      # Twilio SMS notifications
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE_FROM
+        sync: false
+      # OpenRouteService geocoding (optional; falls back to ZIP estimation)
+      - key: ORS_API_KEY
+        sync: false

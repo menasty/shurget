@@ -1,26 +1,28 @@
+// routes/confirmation.js — Post-checkout confirmation page
+// Owns: /confirmation and /confirmation/:orderId GET
+// Payment state is owned by routes/webhooks.js — this page only displays.
+
 const express = require('express');
 const router = express.Router();
-const { pool } = require('../db/index');
+const { getOrderById } = require('../db/orders');
 
-router.get('/', async (req, res) => {
-  const sessionId = req.query.session_id;
-  
-  try {
-    // Save the order as paid
-    if (sessionId) {
-      await pool.query(`
-        INSERT INTO orders (item_type, pickup_address, dropoff_address, helpers, status, stripe_session_id, created_at)
-        VALUES ($1, $2, $3, $4, 'paid', $5, NOW())
-      `, ['Unknown', 'Unknown', 'Unknown', 0, sessionId]); // We'll improve metadata later
+async function renderConfirmation(req, res) {
+  const orderId = req.params.orderId;
+  let order = null;
+  if (orderId) {
+    try {
+      order = await getOrderById(orderId);
+    } catch (err) {
+      console.error('[confirmation] failed to load order:', err.message);
     }
-  } catch (e) {
-    console.error('Failed to save order:', e);
   }
-
-  res.render('confirmation', { 
-    sessionId: sessionId || 'N/A',
-    title: 'Payment Successful - Shurget'
+  res.render('confirmation', {
+    order,
+    title: 'Booking Confirmed - Shurget',
   });
-});
+}
+
+router.get('/', renderConfirmation);
+router.get('/:orderId', renderConfirmation);
 
 module.exports = router;

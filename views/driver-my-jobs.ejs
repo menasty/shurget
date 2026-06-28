@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Jobs — Shurget Driver</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0F0F0F;color:#fff;font-family:'DM Sans',sans-serif;min-height:100vh}
+    .dh{background:#1A1A1A;border-bottom:1px solid rgba(255,255,255,.08);
+        padding:.875rem 1rem;display:flex;align-items:center;justify-content:space-between;
+        position:sticky;top:0;z-index:60}
+    .dh-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.12em;color:#fff;text-decoration:none}
+    .dh-name{font-size:.82rem;font-weight:600;color:#fff}
+    .wrap{max-width:640px;margin:0 auto;padding:1rem}
+    .tabs{display:flex;gap:.5rem;margin-bottom:1rem}
+    .tabs a{flex:1;text-align:center;padding:.7rem;border-radius:10px;text-decoration:none;
+            font-weight:600;font-size:.85rem;color:rgba(255,255,255,.6);background:#1A1A1A}
+    .tabs a.active{background:#E85D04;color:#fff}
+    h1{font-size:1.4rem;margin-bottom:1rem}
+    .card{background:#1A1A1A;border:1px solid rgba(255,255,255,.08);border-radius:12px;
+          padding:1rem;margin-bottom:.85rem}
+    .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem}
+    .item{font-weight:700;font-size:1.05rem;text-transform:capitalize}
+    .price{color:#22C55E;font-weight:700;font-size:1.05rem}
+    .addr{font-size:.82rem;color:rgba(255,255,255,.6);line-height:1.5}
+    .status{display:inline-block;font-size:.68rem;font-weight:700;text-transform:uppercase;
+            letter-spacing:.04em;padding:.2rem .55rem;border-radius:6px;background:#E85D04;color:#fff}
+    .empty{text-align:center;color:rgba(255,255,255,.45);padding:3rem 1rem}
+  </style>
+</head>
+<body>
+  <header class="dh">
+    <a href="/" class="dh-logo">SHURGET</a>
+    <span class="dh-name"><%= driver && driver.name ? driver.name : 'Driver' %></span>
+  </header>
+
+  <div class="wrap">
+    <div class="tabs">
+      <a href="/driver/jobs?email=<%= encodeURIComponent(driver ? driver.email : '') %>">Available</a>
+      <a class="active" href="/driver/my-jobs?email=<%= encodeURIComponent(driver ? driver.email : '') %>">My Jobs</a>
+    </div>
+
+    <h1>My Jobs</h1>
+
+    <% if (!jobs || jobs.length === 0) { %>
+      <div class="empty">
+        <p>You have no active jobs right now.</p>
+        <p style="margin-top:.5rem;">Check the Available tab to claim a haul.</p>
+      </div>
+    <% } else { %>
+      <% jobs.forEach(function(job){ %>
+        <div class="card">
+          <div class="row">
+            <span class="item"><%= (job.item_type || 'Delivery').replace(/-/g,' ') %></span>
+            <span class="price">$<%= Number(job.price_total || 0).toFixed(2) %></span>
+          </div>
+          <div class="row">
+            <span class="status"><%= (job.status || 'assigned').replace(/_/g,' ') %></span>
+            <span class="addr"><%= job.distance_miles ? job.distance_miles + ' mi' : '' %></span>
+          </div>
+          <div class="addr"><strong>Pickup:</strong> <%= job.pickup_address || '—' %></div>
+          <div class="addr"><strong>Dropoff:</strong> <%= job.dropoff_address || '—' %></div>
+          <% if (job.customer_name) { %>
+            <div class="addr"><strong>Customer:</strong> <%= job.customer_name %><%= job.customer_phone ? ' · ' + job.customer_phone : '' %></div>
+          <% } %>
+        </div>
+      <% }); %>
+    <% } %>
+  </div>
+</body>
+</html>

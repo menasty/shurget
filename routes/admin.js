@@ -1,12 +1,60 @@
 const express = require('express');
 const router = express.Router();
 const { pool } = require('../db/index');
+const {
+  SESSION_COOKIE,
+  createSession,
+  destroySession,
+  unsign,
+  signSession,
+  validateCredentials,
+  requireAdmin,
+} = require('../middleware/session');
+const {
+  assignDriverToOrder,
+  markDelivered,
+  cancelOrder,
+} = require('../db/orders');
 
 const DEFAULT_ADMIN_EMAIL = 'admin@shurget.com';
 
 function getAdminEmail(req) {
-  return req.query.admin || req.adminEmail || DEFAULT_ADMIN_EMAIL;
+  return req.adminEmail || DEFAULT_ADMIN_EMAIL;
 }
+
+// ─── Auth ───────────────────────────────────────────────────────────────────
+
+/** GET /admin/login — render login form */
+router.get('/login', (req, res) => {
+  res.render('admin-login', { error: null });
+});
+
+/** POST /admin/login — validate credentials, set signed session cookie */
+router.post('/login', (req, res) => {
+  const { username, password } = req.body || {};
+  if (!validateCredentials(username, password)) {
+    return res.status(401).render('admin-login', { error: 'Invalid username or password.' });
+  }
+  const sessionId = createSession(username);
+  const signed = signSession(sessionId);
+  res.setHeader('Set-Cookie',
+    `${SESSION_COOKIE}=${signed}; HttpOnly; SameSite=Lax; Max-Age=28800; Path=/`);
+  res.redirect('/admin');
+});
+
+/** GET|POST /admin/logout — clear session */
+function doLogout(req, res) {
+  const sessionId = unsign(req.cookies?.[SESSION_COOKIE]);
+  if (sessionId) destroySession(sessionId);
+  res.setHeader('Set-Cookie',
+    `${SESSION_COOKIE}=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/`);
+  res.redirect('/admin/login');
+}
+router.get('/logout', doLogout);
+router.post('/logout', doLogout);
+
+// Everything below requires an authenticated admin.
+router.use(requireAdmin);
 
 function getSafeBookingFilters(query) {
   const allowedStatus = new Set([
@@ -258,6 +306,128 @@ router.get('/metrics', async (req, res) => {
 // Ratings
 router.get('/ratings', (req, res) => {
   res.render('admin-ratings', { adminEmail: getAdminEmail(req) });
+});
+
+// ─── Dispatch actions ─────────────────────────────────────────────────────────
+
+async function lookupDriver(driverId) {
+  const { rows } = await pool.query(
+    'SELECT id, name, phone FROM driver_applications WHERE id = $1',
+    [driverId]
+  );
+  return rows[0] || null;
+}
+
+/** POST /admin/dispatch/:id/assign — assign a driver to a paid order */
+router.post('/dispatch/:id/assign', async (req, res) => {
+  const orderId = parseInt(req.params.id, 10);
+  const driverId = parseInt(req.body.driverId, 10);
+  if (!orderId || !driverId) {
+    return res.redirect('/admin/dispatch?error=Invalid+order+or+driver');
+  }
+  try {
+    const driver = await lookupDriver(driverId);
+    if (!driver) return res.redirect('/admin/dispatch?error=Driver+not+found');
+    await assignDriverToOrder(orderId, driver.id, driver.name, driver.phone);
+    res.redirect('/admin/dispatch?assigned=1');
+  } catch (e) {
+    console.error('[admin] assign failed:', e.message);
+    res.redirect('/admin/dispatch?error=Assign+failed');
+  }
+});
+
+/** POST /admin/dispatch/:id/deliver — mark an order delivered */
+router.post('/dispatch/:id/deliver', async (req, res) => {
+  const orderId = parseInt(req.params.id, 10);
+  try {
+    if (orderId) await markDelivered(orderId);
+    res.redirect('/admin/dispatch?delivered=1');
+  } catch (e) {
+    console.error('[admin] deliver failed:', e.message);
+    res.redirect('/admin/dispatch?error=Deliver+failed');
+  }
+});
+
+/** POST /admin/dispatch/:id/cancel — cancel an order */
+router.post('/dispatch/:id/cancel', async (req, res) => {
+  const orderId = parseInt(req.params.id, 10);
+  try {
+    if (orderId) await cancelOrder(orderId);
+    res.redirect('/admin/dispatch?cancelled=1');
+  } catch (e) {
+    console.error('[admin] cancel failed:', e.message);
+    res.redirect('/admin/dispatch?error=Cancel+failed');
+  }
+});
+
+// ─── Bookings actions ─────────────────────────────────────────────────────────
+
+/** POST /admin/bookings/:id/cancel — cancel an order from the bookings table */
+router.post('/bookings/:id/cancel', async (req, res) => {
+  const orderId = parseInt(req.params.id, 10);
+  try {
+    if (orderId) await cancelOrder(orderId);
+    res.redirect('/admin/bookings?flash=Order+cancelled');
+  } catch (e) {
+    console.error('[admin] booking cancel failed:', e.message);
+    res.redirect('/admin/bookings?flash=Cancel+failed');
+  }
+});
+
+/** POST /admin/bookings/:id/reassign — reassign a driver from the bookings table */
+router.post('/bookings/:id/reassign', async (req, res) => {
+  const orderId = parseInt(req.params.id, 10);
+  const driverId = parseInt(req.body.driverId, 10);
+  if (!orderId || !driverId) {
+    return res.redirect('/admin/bookings?flash=Invalid+order+or+driver');
+  }
+  try {
+    const driver = await lookupDriver(driverId);
+    if (!driver) return res.redirect('/admin/bookings?flash=Driver+not+found');
+    await assignDriverToOrder(orderId, driver.id, driver.name, driver.phone);
+    res.redirect('/admin/bookings?flash=Driver+reassigned');
+  } catch (e) {
+    console.error('[admin] reassign failed:', e.message);
+    res.redirect('/admin/bookings?flash=Reassign+failed');
+  }
+});
+
+// ─── Driver actions ───────────────────────────────────────────────────────────
+
+/** POST /admin/drivers/:id/activate — move a driver into the active matching pool */
+router.post('/drivers/:id/activate', async (req, res) => {
+  const driverId = parseInt(req.params.id, 10);
+  try {
+    if (driverId) {
+      await pool.query(
+        "UPDATE driver_applications SET status = 'active', reviewed_at = NOW() WHERE id = $1",
+        [driverId]
+      );
+    }
+    res.redirect('/admin/drivers');
+  } catch (e) {
+    console.error('[admin] activate failed:', e.message);
+    res.redirect('/admin/drivers');
+  }
+});
+
+/** POST /admin/drivers/:id/background-check — update background check status */
+router.post('/drivers/:id/background-check', async (req, res) => {
+  const driverId = parseInt(req.params.id, 10);
+  const allowed = new Set(['pending', 'cleared', 'failed']);
+  const status = allowed.has(req.body.status) ? req.body.status : 'pending';
+  try {
+    if (driverId) {
+      await pool.query(
+        'UPDATE driver_applications SET background_check_status = $2 WHERE id = $1',
+        [driverId, status]
+      );
+    }
+    res.redirect('/admin/drivers');
+  } catch (e) {
+    console.error('[admin] background-check failed:', e.message);
+    res.redirect('/admin/drivers');
+  }
 });
 
 module.exports = router;

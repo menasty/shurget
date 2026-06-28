@@ -33,6 +33,7 @@ const {
   getSession,
   unsign,
   signSession,
+  requireAdmin,
 } = require('../middleware/session');
 
 // ─── Session helper ───────────────────────────────────────────────────────────
@@ -101,7 +102,7 @@ router.post('/apply', async (req, res) => {
   }
 
   const cleanEmail = (contact_email || '').trim().toLowerCase();
-  if (!/^[^\n\r@\t ]+@[^\n\r@\t ]+\/[^\n\r@\t ]+$/.test(cleanEmail)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
     return res.status(400).json({ error: 'Enter a valid email address.' });
   }
 
@@ -202,7 +203,7 @@ router.post('/:slug/login', async (req, res) => {
   const partner = await getPartnerBySlug(slug);
 
   if (!partner) return res.status(404).render('404');
-  if (!email || !/^[^\n\r@\t ]+@[^\n\r@\t ]+\/[^\n\r@\t ]+$/.test(email)) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.render('partner-login', { partner, error: 'Enter a valid email address.' });
   }
 
@@ -251,15 +252,12 @@ router.post('/:slug/logout', (req, res) => {
 // ─── Admin: approve/reject applications ──────────────────────────────────────
 
 /** POST /api/partners/:id/approve — admin approves application → creates partner + sends setup email */
-router.post('/:id/approve', async (req, res) => {
-  if (!req.session || !req.session.adminEmail) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+router.post('/:id/approve', requireAdmin, async (req, res) => {
   const appId = parseInt(req.params.id, 10);
   if (isNaN(appId)) return res.status(400).json({ error: 'Invalid ID' });
 
   try {
-    const app = await updateApplicationStatus(appId, 'approved', req.session.adminEmail);
+    const app = await updateApplicationStatus(appId, 'approved', req.adminEmail);
     if (!app) return res.status(404).json({ error: 'Application not found' });
 
     // Create the partner record
@@ -282,15 +280,12 @@ router.post('/:id/approve', async (req, res) => {
 });
 
 /** POST /api/partners/:id/reject — admin rejects application */
-router.post('/:id/reject', async (req, res) => {
-  if (!req.session || !req.session.adminEmail) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+router.post('/:id/reject', requireAdmin, async (req, res) => {
   const appId = parseInt(req.params.id, 10);
   if (isNaN(appId)) return res.status(400).json({ error: 'Invalid ID' });
 
   try {
-    const app = await updateApplicationStatus(appId, 'rejected', req.session.adminEmail);
+    const app = await updateApplicationStatus(appId, 'rejected', req.adminEmail);
     return res.json({ success: true, application: app });
   } catch (err) {
     console.error('[partners/reject]', err);

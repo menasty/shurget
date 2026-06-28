@@ -1,67 +1,65 @@
+// routes/booking.js — Customer booking page + checkout session creation
+// Owns: /book GET (form), /book POST (create order + Stripe Checkout)
+// Does NOT own: webhook payment confirmation (routes/webhooks.js)
+
 const express = require('express');
 const router = express.Router();
-const { pool } = require('../db/index');
-const Stripe = require('stripe');
+const { createOrder, setStripeSession } = require('../db/orders');
+const { createCheckoutSession } = require('../services/stripe');
 
-function getStripeClient() {
-  const rawKey = process.env.STRIPE_SECRET_KEY;
-  const stripeKey = typeof rawKey === 'string' ? rawKey.trim().replace(/^['\"]|['\"]$/g, '') : '';
-
-  if (!stripeKey || (!stripeKey.startsWith('sk_test_') && !stripeKey.startsWith('sk_live_'))) {
-    throw new Error('Invalid STRIPE_SECRET_KEY configuration');
-  }
-
-  return new Stripe(stripeKey);
-}
-
-router.get('/', (req, res) => {
+/** GET /book — render the booking form */
+router.get('/', (_req, res) => {
   res.render('booking');
 });
 
+/** POST /book — create a pending order and redirect to Stripe Checkout */
 router.post('/', async (req, res) => {
   try {
-    const { itemType, pickupAddress, dropoffAddress, helpers = '0' } = req.body;
-    
-    const helperCount = parseInt(helpers) || 0;
-    const basePrice = 89;
-    const helperPrice = helperCount * 25;
-    const totalAmount = basePrice + helperPrice;
+    const {
+      itemType,
+      pickupAddress,
+      dropoffAddress,
+      helpers = '0',
+      customerName,
+      customerEmail,
+      customerPhone,
+    } = req.body;
 
-    const stripeClient = getStripeClient();
-
-    const session = await stripeClient.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [{
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: `${itemType} Delivery`,
-            description: `${pickupAddress} → ${dropoffAddress}`,
-          },
-          unit_amount: totalAmount * 100,
-        },
-        quantity: 1,
-      }],
-      mode: 'payment',
-      success_url: `https://shurgetapp.com/confirmation?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://shurgetapp.com/book`,
-      metadata: {
-        itemType,
-        pickupAddress,
-        dropoffAddress,
-        helpers: helperCount.toString()
-      }
-    });
-
-    res.redirect(session.url);
-  } catch (err) {
-    if (err && err.message === 'Invalid STRIPE_SECRET_KEY configuration') {
-      console.error('Stripe configuration error: STRIPE_SECRET_KEY is missing or malformed');
-      return res.status(503).send('Payments are temporarily unavailable. Please try again later.');
+    if (!itemType || !pickupAddress || !dropoffAddress) {
+      return res.status(400).send('Please fill in the item type and both addresses.');
     }
 
-    console.error('Stripe error:', err);
-    res.status(500).send('Payment session failed. Please try again.');
+    const helperCount = parseInt(helpers, 10) || 0;
+
+    // Create the order in pending_payment so the Stripe webhook can flip it to paid.
+    const order = await createOrder({
+      itemType,
+      pickupAddress,
+      dropoffAddress,
+      helpers: helperCount,
+      customerName: customerName || null,
+      customerEmail: customerEmail || null,
+      customerPhone: customerPhone || null,
+      status: 'pending_payment',
+    });
+
+    const session = await createCheckoutSession({
+      orderId: order.id,
+      amount: order.price_total,
+      itemType: order.item_type,
+      customerEmail: order.customer_email,
+    });
+
+    await setStripeSession(order.id, session.id);
+
+    return res.redirect(303, session.url);
+  } catch (err) {
+    if (err && /STRIPE_SECRET_KEY/.test(err.message || '')) {
+      console.error('[booking] Stripe not configured:', err.message);
+      return res.status(503).send('Payments are temporarily unavailable. Please try again later.');
+    }
+    console.error('[booking] Failed to create checkout session:', err);
+    return res.status(500).send('Something went wrong creating your booking. Please try again.');
   }
 });
 
