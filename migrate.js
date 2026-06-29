@@ -71,6 +71,100 @@ async function migrate() {
     `);
     console.log('✅ Orders table updated with all required columns');
 
+    // Create driver_ratings table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS driver_ratings (
+        id          SERIAL PRIMARY KEY,
+        order_id    INTEGER NOT NULL UNIQUE,
+        driver_id   INTEGER,
+        rating      INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+        comment     TEXT,
+        source      TEXT DEFAULT 'email',
+        token_used  TEXT,
+        created_at  TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    console.log('✅ driver_ratings table ready');
+
+    // Create driver_rating_disputes table if it doesn't exist
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS driver_rating_disputes (
+        id          SERIAL PRIMARY KEY,
+        order_id    INTEGER NOT NULL UNIQUE,
+        driver_id   INTEGER,
+        rating      INTEGER,
+        comment     TEXT,
+        reason      TEXT NOT NULL,
+        status      TEXT DEFAULT 'open',
+        admin_notes TEXT,
+        resolved_at TIMESTAMPTZ,
+        created_at  TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    console.log('✅ driver_rating_disputes table ready');
+
+    // Create driver_waitlist table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS driver_waitlist (
+        id           SERIAL PRIMARY KEY,
+        email        TEXT NOT NULL,
+        pickup_zip   TEXT,
+        dropoff_zip  TEXT,
+        item_type    TEXT,
+        created_at   TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    console.log('✅ driver_waitlist table ready');
+
+    // Create referral_codes and referral_redemptions tables
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS referral_codes (
+        id          SERIAL PRIMARY KEY,
+        code        TEXT NOT NULL UNIQUE,
+        owner_email TEXT NOT NULL,
+        max_uses    INTEGER,
+        use_count   INTEGER DEFAULT 0,
+        created_at  TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS referral_redemptions (
+        id             SERIAL PRIMARY KEY,
+        code_id        INTEGER NOT NULL REFERENCES referral_codes(id),
+        referee_email  TEXT NOT NULL,
+        order_id       INTEGER,
+        credit_amount  NUMERIC(10,2),
+        created_at     TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    console.log('✅ referral_codes and referral_redemptions tables ready');
+
+    // Create partner_applications and partners tables
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS partner_applications (
+        id           SERIAL PRIMARY KEY,
+        name         TEXT,
+        email        TEXT,
+        phone        TEXT,
+        company      TEXT,
+        website      TEXT,
+        city         TEXT,
+        use_case     TEXT,
+        status       TEXT DEFAULT 'pending',
+        created_at   TIMESTAMPTZ DEFAULT NOW()
+      );
+      CREATE TABLE IF NOT EXISTS partners (
+        id                 SERIAL PRIMARY KEY,
+        slug               TEXT NOT NULL UNIQUE,
+        name               TEXT NOT NULL,
+        email              TEXT,
+        phone              TEXT,
+        stripe_account_id  TEXT,
+        commission_rate    NUMERIC(5,4) DEFAULT 0.10,
+        active             BOOLEAN DEFAULT TRUE,
+        created_at         TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+    console.log('✅ partner_applications and partners tables ready');
+
     // Add driver onboarding columns if missing (safe to run repeatedly)
     await pool.query(`
       ALTER TABLE driver_applications
