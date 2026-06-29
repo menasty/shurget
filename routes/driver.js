@@ -102,6 +102,13 @@ router.post('/login', async (req, res) => {
 
   const sessionId = createDriverSession(driver.id, driver.email);
   setDriverCookie(res, sessionId);
+  // Set a separate signed email cookie so disputes/payouts modules can resolve the driver
+  res.cookie('dr_email', Buffer.from(driver.email).toString('base64'), {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure:   process.env.NODE_ENV === 'production',
+    maxAge:   SESSION_TTL_MS,
+  });
   res.redirect('/driver/jobs');
 });
 
@@ -110,6 +117,7 @@ router.post('/logout', (req, res) => {
   const sess = getDriverSession(req.cookies?.[DRIVER_COOKIE]);
   if (sess) DRIVER_SESSIONS.delete(sess.id);
   res.clearCookie(DRIVER_COOKIE);
+  res.clearCookie('dr_email');
   res.redirect('/driver/login');
 });
 

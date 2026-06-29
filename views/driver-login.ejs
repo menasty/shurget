@@ -8,60 +8,67 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f5f5f5;
+      background: #111111;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .card {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      background: #1c1c1c;
+      border-radius: 14px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
       padding: 40px 36px;
       width: 100%;
       max-width: 400px;
+      border: 1px solid #2a2a2a;
     }
-    .logo {
-      font-size: 24px;
-      font-weight: 800;
-      color: #1a1a1a;
-      margin-bottom: 6px;
+    .logo-wrap {
+      text-align: center;
+      margin-bottom: 20px;
     }
-    .logo span { color: #f59e0b; }
+    .logo-wrap img {
+      height: 64px;
+      width: auto;
+      object-fit: contain;
+    }
     .subtitle {
       font-size: 14px;
-      color: #666;
+      color: #888;
       margin-bottom: 28px;
+      text-align: center;
     }
     label {
       display: block;
       font-size: 13px;
       font-weight: 600;
-      color: #333;
+      color: #ccc;
       margin-bottom: 6px;
     }
     input {
       width: 100%;
       padding: 11px 14px;
-      border: 1.5px solid #ddd;
+      border: 1.5px solid #333;
       border-radius: 8px;
       font-size: 15px;
       margin-bottom: 18px;
       outline: none;
+      background: #111;
+      color: #fff;
       transition: border-color 0.15s;
     }
-    input:focus { border-color: #f59e0b; }
+    input:focus { border-color: #ea580c; }
+    input::placeholder { color: #555; }
     .hint {
       font-size: 12px;
-      color: #999;
+      color: #666;
       margin-top: -14px;
       margin-bottom: 18px;
     }
     button {
       width: 100%;
       padding: 13px;
-      background: #f59e0b;
+      background: #ea580c;
       color: #fff;
       font-size: 16px;
       font-weight: 700;
@@ -70,11 +77,11 @@
       cursor: pointer;
       transition: background 0.15s;
     }
-    button:hover { background: #d97706; }
+    button:hover { background: #d14a00; }
     .error {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #dc2626;
+      background: rgba(220,38,38,0.12);
+      border: 1px solid rgba(220,38,38,0.4);
+      color: #f87171;
       border-radius: 8px;
       padding: 10px 14px;
       font-size: 14px;
@@ -84,14 +91,16 @@
       text-align: center;
       margin-top: 20px;
       font-size: 13px;
-      color: #999;
+      color: #666;
     }
-    .apply-link a { color: #f59e0b; text-decoration: none; font-weight: 600; }
+    .apply-link a { color: #ea580c; text-decoration: none; font-weight: 600; }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="logo">Shur<span>get</span></div>
+    <div class="logo-wrap">
+      <img src="/images/shurget-logo-decal.jpg" alt="Shurget" />
+    </div>
     <div class="subtitle">Driver Portal — Sign in to view jobs</div>
 
     <% if (locals.error) { %>

@@ -1,14 +1,13 @@
-// routes/payouts.js — Driver Stripe Connect Express onboarding and earnings view
-// GET  /driver/payouts                  — Connect bank page (show status + onboard button)
-// POST /api/driver/payouts/connect      — Create/refresh Connect account + return onboarding URL
-// GET  /driver/earnings                 — Earnings history page
-// GET  /api/driver/payouts/status       — JSON account status check
-// Does NOT own: order creation, Stripe Checkout, webhook verification.
+// routes/payouts.js — Driver Stripe Connect onboarding and earnings (session-based auth)
+// GET  /driver/payouts                — Connect bank page
+// POST /api/driver/payouts/connect    — Create/refresh Connect account
+// GET  /driver/earnings               — Earnings history
+// GET  /api/driver/payouts/status     — JSON account status
 
-const express = require('express');
-const router = express.Router();
-const { getDriverByEmail } = require('../db/drivers');
-const { saveStripeAccountId } = require('../db/drivers');
+const express  = require('express');
+const crypto   = require('crypto');
+const router   = express.Router();
+const { getDriverByEmail, saveStripeAccountId } = require('../db/drivers');
 const { getPayoutsByDriver, getDriverEarningsSummary } = require('../db/orders');
 const {
   createConnectAccount,
@@ -16,91 +15,84 @@ const {
   getAccountStatus,
 } = require('../services/stripe-connect');
 
-// ── Auth middleware (email-param based, same pattern as driver.js) ──
+// ── Session cookie helpers (same COOKIE_SECRET as driver.js) ─────────────────
+const DRIVER_COOKIE = 'dr_session';
+const COOKIE_SECRET = process.env.COOKIE_SECRET || crypto.randomBytes(32).toString('hex');
+
+function unsignId(cookie) {
+  if (!cookie || typeof cookie !== 'string') return null;
+  const dot = cookie.lastIndexOf('.');
+  if (dot === -1) return null;
+  const id  = cookie.slice(0, dot);
+  const sig = cookie.slice(dot + 1);
+  const hmac = crypto.createHmac('sha256', COOKIE_SECRET);
+  hmac.update(id);
+  if (hmac.digest('base64url') !== sig) return null;
+  return id;
+}
+
 async function requireDriver(req, res, next) {
-  const email = req.query.email || req.body.email;
-  if (!email) return res.status(401).json({ error: 'Driver email is required' });
-  const driver = await getDriverByEmail(email);
-  if (!driver) {
-    return res.status(401).json({ error: 'Driver not found or not approved.' });
-  }
+  const cookie = req.cookies?.[DRIVER_COOKIE];
+  if (!unsignId(cookie)) return res.redirect('/driver/login');
+  const emailCookie = req.cookies?.['dr_email'];
+  if (!emailCookie) return res.redirect('/driver/login');
+  const email = Buffer.from(emailCookie, 'base64').toString('utf8');
+  const driver = await getDriverByEmail(email).catch(() => null);
+  if (!driver) return res.redirect('/driver/login');
   req.driver = driver;
   next();
 }
 
-// ── Helper: build absolute base URL ──
+// ── Helper: build absolute base URL ──────────────────────────────────────────
 function baseUrl(req) {
-  // Honor proxy headers set by Render / 's proxy layer.
-  const host =
-    req.headers['x-original-host'] ||
-    req.headers['x-forwarded-host'] ||
-    req.headers.host;
+  const host  = req.headers['x-original-host'] || req.headers['x-forwarded-host'] || req.headers.host;
   const proto = req.headers['x-forwarded-proto'] || req.protocol || 'https';
   return `${proto}://${host}`;
 }
 
-// GET /driver/payouts?email=...
-// Renders the payout connection page with current account status.
-router.get('/driver/payouts', async (req, res) => {
-  const email = req.query.email;
-  const driver = email ? await getDriverByEmail(email) : null;
-  if (!driver) {
-    return res.redirect('/driver/jobs');
-  }
-  const status = await getAccountStatus(driver.stripe_account_id);
-  res.render('driver-payouts', { driver, payoutStatus: status, email });
+// GET /driver/payouts — payout connection page
+router.get('/driver/payouts', requireDriver, async (req, res) => {
+  const status = await getAccountStatus(req.driver.stripe_account_id).catch(() => 'not_connected');
+  res.render('driver-payouts', { driver: req.driver, payoutStatus: status });
 });
 
-// GET /driver/earnings?email=...
-// Earnings history + summary for a driver.
-router.get('/driver/earnings', async (req, res) => {
-  const email = req.query.email;
-  const driver = email ? await getDriverByEmail(email) : null;
-  if (!driver) {
-    return res.redirect('/driver/jobs');
-  }
+// GET /driver/earnings — earnings history
+router.get('/driver/earnings', requireDriver, async (req, res) => {
   const [payouts, summary] = await Promise.all([
-    getPayoutsByDriver(driver.id),
-    getDriverEarningsSummary(driver.id),
+    getPayoutsByDriver(req.driver.id).catch(() => []),
+    getDriverEarningsSummary(req.driver.id).catch(() => ({})),
   ]);
-  res.render('driver-earnings', { driver, payouts, summary, email });
+  res.render('driver-earnings', { driver: req.driver, payouts, summary });
 });
 
-// POST /api/driver/payouts/connect?email=...
-// Creates or refreshes the Connect Express account and returns an onboarding URL.
+// POST /api/driver/payouts/connect — create/refresh Stripe Connect account
 router.post('/api/driver/payouts/connect', requireDriver, async (req, res) => {
-  const driver = req.driver;
   try {
-    let stripeAccountId = driver.stripe_account_id;
-
-    // Create account if this driver doesn't have one yet.
+    let stripeAccountId = req.driver.stripe_account_id;
     if (!stripeAccountId) {
-      const account = await createConnectAccount(driver);
+      const account = await createConnectAccount(req.driver);
       stripeAccountId = account.id;
-      await saveStripeAccountId(driver.id, stripeAccountId);
+      await saveStripeAccountId(req.driver.id, stripeAccountId);
     }
-
-    const base = baseUrl(req);
+    const base = process.env.APP_URL || baseUrl(req);
     const link = await createAccountLink(stripeAccountId, {
-      refreshUrl: `${base}/driver/payouts?email=${encodeURIComponent(driver.email)}&refresh=1`,
-      returnUrl:  `${base}/driver/payouts?email=${encodeURIComponent(driver.email)}&connected=1`,
+      refreshUrl: `${base}/driver/payouts`,
+      returnUrl:  `${base}/driver/payouts?connected=1`,
     });
-
     res.json({ url: link.url });
   } catch (err) {
-    console.error('[payouts] createAccountLink error:', err);
+    console.error('[payouts] createAccountLink error:', err.message);
     res.status(500).json({ error: 'Failed to start payout setup. Please try again.' });
   }
 });
 
-// GET /api/driver/payouts/status?email=...
-// Returns JSON { status: 'not_connected' | 'pending' | 'ready' }
+// GET /api/driver/payouts/status — JSON status check
 router.get('/api/driver/payouts/status', requireDriver, async (req, res) => {
   try {
     const status = await getAccountStatus(req.driver.stripe_account_id);
     res.json({ status });
   } catch (err) {
-    console.error('[payouts] status check error:', err);
+    console.error('[payouts] status check error:', err.message);
     res.status(500).json({ error: 'Failed to check payout status' });
   }
 });
