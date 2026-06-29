@@ -14,7 +14,14 @@ const {
   assignDriverToOrder,
   markDelivered,
   cancelOrder,
+  getOrderById,
 } = require('../db/orders');
+const {
+  sendDriverAssignedEmail,
+  sendDriverNewJobAlert,
+  sendDeliveredEmail,
+  sendCancelledEmail,
+} = require('../services/email');
 
 const DEFAULT_ADMIN_EMAIL = 'admin@shurget.com';
 
@@ -329,6 +336,24 @@ router.post('/dispatch/:id/assign', async (req, res) => {
     const driver = await lookupDriver(driverId);
     if (!driver) return res.redirect('/admin/dispatch?error=Driver+not+found');
     await assignDriverToOrder(orderId, driver.id, driver.name, driver.phone);
+    // Lifecycle emails — non-blocking, never crash dispatch on email failure
+    getOrderById(orderId).then(order => {
+      if (!order) return;
+      if (order.customer_email) sendDriverAssignedEmail(order).catch(e => console.error('[email] sendDriverAssignedEmail:', e.message));
+      if (driver.email) {
+        const appUrl = process.env.APP_URL || 'https://shurgetapp.com';
+        sendDriverNewJobAlert({
+          driverEmail:    driver.email,
+          driverName:     driver.name,
+          orderId:        order.id,
+          itemType:       order.item_type,
+          pickupAddress:  order.pickup_address,
+          dropoffAddress: order.dropoff_address,
+          priceTotal:     order.price_total,
+          claimUrl:       `${appUrl}/driver/jobs/${order.id}`,
+        }).catch(e => console.error('[email] sendDriverNewJobAlert:', e.message));
+      }
+    }).catch(e => console.error('[email] getOrderById (assign):', e.message));
     res.redirect('/admin/dispatch?assigned=1');
   } catch (e) {
     console.error('[admin] assign failed:', e.message);
@@ -341,6 +366,15 @@ router.post('/dispatch/:id/deliver', async (req, res) => {
   const orderId = parseInt(req.params.id, 10);
   try {
     if (orderId) await markDelivered(orderId);
+    // Send delivered email — non-blocking
+    if (orderId) {
+      getOrderById(orderId).then(order => {
+        if (!order || !order.customer_email) return;
+        const appUrl = process.env.APP_URL || 'https://shurgetapp.com';
+        const ratingLink = `${appUrl}/rate/${order.id}`;
+        sendDeliveredEmail(order, ratingLink).catch(e => console.error('[email] sendDeliveredEmail:', e.message));
+      }).catch(e => console.error('[email] getOrderById (deliver):', e.message));
+    }
     res.redirect('/admin/dispatch?delivered=1');
   } catch (e) {
     console.error('[admin] deliver failed:', e.message);
@@ -352,7 +386,13 @@ router.post('/dispatch/:id/deliver', async (req, res) => {
 router.post('/dispatch/:id/cancel', async (req, res) => {
   const orderId = parseInt(req.params.id, 10);
   try {
-    if (orderId) await cancelOrder(orderId);
+    if (orderId) {
+      const order = await getOrderById(orderId);
+      await cancelOrder(orderId);
+      if (order && order.customer_email) {
+        sendCancelledEmail(order).catch(e => console.error('[email] sendCancelledEmail:', e.message));
+      }
+    }
     res.redirect('/admin/dispatch?cancelled=1');
   } catch (e) {
     console.error('[admin] cancel failed:', e.message);
@@ -366,7 +406,13 @@ router.post('/dispatch/:id/cancel', async (req, res) => {
 router.post('/bookings/:id/cancel', async (req, res) => {
   const orderId = parseInt(req.params.id, 10);
   try {
-    if (orderId) await cancelOrder(orderId);
+    if (orderId) {
+      const order = await getOrderById(orderId);
+      await cancelOrder(orderId);
+      if (order && order.customer_email) {
+        sendCancelledEmail(order).catch(e => console.error('[email] sendCancelledEmail (bookings):', e.message));
+      }
+    }
     res.redirect('/admin/bookings?flash=Order+cancelled');
   } catch (e) {
     console.error('[admin] booking cancel failed:', e.message);
