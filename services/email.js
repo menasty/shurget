@@ -1206,7 +1206,7 @@ async function sendDriverNewJobAlert({ driverEmail, driverName, orderId, itemTyp
       </div>
       <div>
         <div style="color:#6b7280;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Your Earnings</div>
-        <div style="font-size:18px;font-weight:bold;color:#16a34a;">$${Number(priceTotal * 0.85).toFixed(2)} (85%)</div>
+        <div style="font-size:18px;font-weight:bold;color:#16a34a;">$${Number(priceTotal * 0.82).toFixed(2)} (82%)</div>
       </div>
     </div>
 
@@ -1234,7 +1234,7 @@ async function sendDriverNewJobAlert({ driverEmail, driverName, orderId, itemTyp
       To: driverEmail,
       Subject: `🚚 New Shurget Job Available — Claim it before someone else does`,
       HtmlBody: html,
-      TextBody: `Hi${firstName ? ` ${firstName}` : ''},\n\nA new delivery job is available on Shurget.\n\nItem: ${capitalize(itemType)}\nPickup: ${pickupAddress}\nDropoff: ${dropoffAddress}\nYour Earnings: $${Number(priceTotal * 0.85).toFixed(2)}\n\nClaim it now: ${claimUrl}`,
+      TextBody: `Hi${firstName ? ` ${firstName}` : ''},\n\nA new delivery job is available on Shurget.\n\nItem: ${capitalize(itemType)}\nPickup: ${pickupAddress}\nDropoff: ${dropoffAddress}\nYour Earnings: $${Number(priceTotal * 0.82).toFixed(2)}\n\nClaim it now: ${claimUrl}`,
       MessageStream: 'outbound',
     }),
   });
