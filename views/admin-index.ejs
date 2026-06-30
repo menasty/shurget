@@ -9,167 +9,400 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/theme.css">
   <style>
-    body { background: var(--bg); }
+    /* ── Admin Dashboard — Shurget Brand System ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #0a0a0a; color: #f8f7f5; font-family: 'DM Sans', sans-serif; min-height: 100vh; }
 
-    .dash-page {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 80px 1.5rem 4rem;
-    }
-
-    /* ── Header ── */
-    .dash-header { margin-bottom: 2rem; }
-    .dash-header .page-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.5rem;
-      letter-spacing: 0.05em;
-      color: var(--charcoal);
-      margin-bottom: 0.25rem;
-    }
-    .dash-header .page-sub {
-      color: var(--gray-mid);
-      font-size: 0.95rem;
-    }
-
-    /* ── Admin section cards ── */
-    .admin-sections { display: flex; flex-direction: column; gap: 1rem; }
-
-    .admin-card {
-      background: var(--white);
-      border: 1.5px solid var(--gray-light);
-      border-radius: 12px;
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      text-decoration: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .admin-card:hover {
-      border-color: var(--orange);
-      box-shadow: 0 4px 20px rgba(232,93,4,0.12);
-    }
-    .admin-card-icon {
-      font-size: 2rem;
-      flex-shrink: 0;
-    }
-    .admin-card-text .admin-card-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.4rem;
-      letter-spacing: 0.05em;
-      color: var(--charcoal);
-      margin-bottom: 0.2rem;
-    }
-    .admin-card-text .admin-card-desc {
-      font-size: 0.85rem;
-      color: var(--gray-mid);
-    }
-    .admin-card-arrow {
-      margin-left: auto;
-      font-size: 1.25rem;
-      color: var(--orange);
-    }
-
-    /* ── Nav ── */
-    .dash-nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
+    /* ── Top nav ── */
+    .admin-topnav {
+      position: sticky;
+      top: 0;
       z-index: 100;
-      padding: 0 clamp(1.5rem, 4vw, 3rem);
-      background: rgba(26,26,26,0.9);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      height: 60px;
+      background: rgba(10,10,10,.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      height: 58px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+      gap: 1rem;
     }
-    .nav-logo {
+    .admin-topnav-logo {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.75rem;
-      letter-spacing: 0.12em;
-      color: var(--white);
+      font-size: 1.5rem;
+      letter-spacing: .12em;
+      color: #fff;
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
     }
-    .nav-right { display: flex; align-items: center; gap: 1rem; }
-    .nav-btn {
-      padding: 0.45rem 1rem;
+    .admin-topnav-logo span { color: #ea580c; }
+    .admin-topnav-badge {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      background: rgba(234,88,12,.15);
+      color: #ea580c;
+      border: 1px solid rgba(234,88,12,.3);
       border-radius: 4px;
-      font-size: 0.8rem;
+      padding: .15rem .5rem;
+    }
+    .admin-topnav-right { display: flex; align-items: center; gap: .65rem; }
+    .tn-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .78rem;
       font-weight: 600;
       text-decoration: none;
-      cursor: pointer;
+      padding: .4rem .9rem;
+      border-radius: 6px;
       border: none;
-      font-family: 'DM Sans', sans-serif;
-      transition: background 0.2s;
+      cursor: pointer;
+      transition: background .2s;
     }
-    .nav-btn-primary { background: var(--orange); color: var(--white); }
-    .nav-btn-primary:hover { background: var(--orange-light); }
-    .nav-btn-secondary { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
-    .nav-btn-secondary:hover { background: rgba(255,255,255,0.18); }
+    .tn-btn-ghost { background: rgba(255,255,255,.07); color: rgba(255,255,255,.65); }
+    .tn-btn-ghost:hover { background: rgba(255,255,255,.13); color: #fff; }
+    .tn-btn-primary { background: #b84000; color: #fff; }
+    .tn-btn-primary:hover { background: #9e3800; }
 
-    /* Admin sidebar nav */
-    .admin-nav { display: flex; gap: 0.25rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .admin-nav-link { padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.82rem; font-weight: 600; text-decoration: none; border: 1.5px solid transparent; transition: all 0.15s; color: var(--gray-mid); background: var(--white); }
-    .admin-nav-link:hover { border-color: var(--orange); color: var(--orange); }
-    .admin-nav-link.active { background: var(--charcoal); color: var(--white); border-color: var(--charcoal); }
+    /* ── Sidebar + content layout ── */
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: calc(100vh - 58px);
+    }
+    @media (max-width: 768px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-sidebar { display: flex; overflow-x: auto; border-right: none; border-bottom: 1px solid rgba(255,255,255,.07); padding: .75rem; gap: .4rem; }
+      .sidebar-section-label { display: none; }
+    }
+
+    /* ── Sidebar ── */
+    .admin-sidebar {
+      background: #0d0d0d;
+      border-right: 1px solid rgba(255,255,255,.07);
+      padding: 1.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+    .sidebar-section-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .66rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: rgba(255,255,255,.22);
+      padding: .75rem .75rem .3rem;
+      margin-top: .5rem;
+    }
+    .sidebar-section-label:first-child { margin-top: 0; }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      padding: .55rem .75rem;
+      border-radius: 7px;
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .84rem;
+      font-weight: 500;
+      color: rgba(255,255,255,.5);
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+    .sidebar-link:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.85); }
+    .sidebar-link.active {
+      background: rgba(184,64,0,.18);
+      color: #f8f7f5;
+      border-left: 3px solid #ea580c;
+      padding-left: calc(.75rem - 3px);
+    }
+    .sidebar-icon { font-size: 1rem; flex-shrink: 0; }
+
+    /* ── Main content ── */
+    .admin-main {
+      padding: clamp(1.75rem, 4vw, 3rem) clamp(1.25rem, 4vw, 3rem);
+      max-width: 900px;
+    }
+
+    /* ── Page header ── */
+    .admin-page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 2.25rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .admin-page-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: #ea580c;
+      margin-bottom: .35rem;
+    }
+    .admin-page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: .05em;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: .3rem;
+    }
+    .admin-page-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem;
+      color: rgba(255,255,255,.38);
+    }
+
+    /* ── Section nav pills ── */
+    .admin-section-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-bottom: 2rem;
+    }
+    .admin-nav-pill {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      padding: .45rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.45);
+      transition: all .15s;
+    }
+    .admin-nav-pill:hover { border-color: #ea580c; color: #ea580c; }
+    .admin-nav-pill.active { background: #fff; color: #0a0a0a; border-color: #fff; font-weight: 700; }
+
+    /* ── Module cards ── */
+    .admin-modules { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .admin-module {
+      background: #111;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-decoration: none;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      transition: border-color .2s, transform .15s, box-shadow .2s;
+    }
+    .admin-module:hover {
+      border-color: #ea580c;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(234,88,12,.12);
+    }
+    .admin-module-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(234,88,12,.12);
+      border: 1px solid rgba(234,88,12,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.25rem;
+    }
+    .admin-module-body { flex: 1; min-width: 0; }
+    .admin-module-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: .06em;
+      color: #fff;
+      margin-bottom: .2rem;
+    }
+    .admin-module-desc {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .8rem;
+      color: rgba(255,255,255,.38);
+      line-height: 1.5;
+    }
+    .admin-module-arrow {
+      color: #ea580c;
+      font-size: 1.1rem;
+      margin-top: .1rem;
+      flex-shrink: 0;
+      transition: transform .15s;
+    }
+    .admin-module:hover .admin-module-arrow { transform: translateX(3px); }
+
+    /* ── Quick stats row ── */
+    .admin-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: .75rem; margin-bottom: 2rem; }
+    .admin-stat {
+      background: #111;
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+    }
+    .admin-stat-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(255,255,255,.3);
+      margin-bottom: .35rem;
+    }
+    .admin-stat-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: .04em;
+      color: #fff;
+      line-height: 1;
+    }
+    .admin-stat-value.orange { color: #ea580c; }
+    .admin-stat-delta {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .72rem;
+      color: rgba(255,255,255,.28);
+      margin-top: .2rem;
+    }
   </style>
 </head>
 <body>
-  <nav class="dash-nav">
-    <a href="/" class="nav-logo">
-      <img src="/images/shurget-logo.png" alt="Shurget" height="48" style="vertical-align: middle;">
+  <!-- ── Top Nav ── -->
+  <nav class="admin-topnav" role="navigation" aria-label="Admin navigation">
+    <a href="/admin" class="admin-topnav-logo">
+      <img src="/images/shurget-logo-nav.png" alt="Shurget" height="32" style="vertical-align:middle;">
+      <span class="admin-topnav-badge">Admin</span>
     </a>
-    <div class="nav-right">
-      <a href="/dashboard" class="nav-btn nav-btn-secondary">Dashboard</a>
-      <a href="/book" class="nav-btn nav-btn-primary">New Booking</a>
-      <a href="/admin/logout" class="nav-btn nav-btn-secondary">Logout</a>
+    <div class="admin-topnav-right">
+      <a href="/book" class="tn-btn tn-btn-primary">+ New Booking</a>
+      <a href="/admin/logout" class="tn-btn tn-btn-ghost">Logout</a>
     </div>
   </nav>
 
-  <div class="dash-page">
-    <div class="dash-header">
-      <h1 class="page-title">Admin</h1>
-      <p class="page-sub">Manage drivers, ratings, and platform settings.</p>
-    </div>
-
-    <div class="admin-nav">
-      <a class="admin-nav-link active" href="/admin">Overview</a>
-      <a class="admin-nav-link" href="/admin/bookings">Bookings</a>
-      <a class="admin-nav-link" href="/admin/dispatch">Dispatch</a>
-      <a class="admin-nav-link" href="/admin/drivers">Drivers</a>
-      <a class="admin-nav-link" href="/admin/metrics">Metrics</a>
-      <a class="admin-nav-link" href="/admin/ratings">Ratings</a>
-    </div>
-
-    <div class="admin-sections">
-      <a class="admin-card" href="/admin/dispatch">
-        <div class="admin-card-icon">🚛</div>
-        <div class="admin-card-text">
-          <div class="admin-card-title">Dispatch</div>
-          <div class="admin-card-desc">Assign drivers, track active deliveries, review completed orders</div>
-        </div>
-        <div class="admin-card-arrow">→</div>
+  <div class="admin-layout">
+    <!-- ── Sidebar ── -->
+    <aside class="admin-sidebar" role="navigation" aria-label="Admin sections">
+      <div class="sidebar-section-label">Operations</div>
+      <a href="/admin/dispatch" class="sidebar-link">
+        <span class="sidebar-icon" aria-hidden="true">🚛</span> Dispatch
+      </a>
+      <a href="/admin/bookings" class="sidebar-link">
+        <span class="sidebar-icon" aria-hidden="true">📋</span> Bookings
+      </a>
+      <a href="/admin/drivers" class="sidebar-link">
+        <span class="sidebar-icon" aria-hidden="true">🧑‍✈️</span> Drivers
       </a>
 
-      <a class="admin-card" href="/admin/drivers">
-        <div class="admin-card-icon">🚚</div>
-        <div class="admin-card-text">
-          <div class="admin-card-title">Drivers</div>
-          <div class="admin-card-desc">Review and activate driver applications</div>
-        </div>
-        <div class="admin-card-arrow">→</div>
+      <div class="sidebar-section-label">Analytics</div>
+      <a href="/admin/metrics" class="sidebar-link">
+        <span class="sidebar-icon" aria-hidden="true">📊</span> Metrics
+      </a>
+      <a href="/admin/ratings" class="sidebar-link">
+        <span class="sidebar-icon" aria-hidden="true">⭐</span> Ratings
+      </a>
+      <a href="/admin/attribution" class="sidebar-link">
+        <span class="sidebar-icon" aria-hidden="true">🔗</span> Attribution
       </a>
 
-      <a class="admin-card" href="/admin/ratings">
-        <div class="admin-card-icon">⭐</div>
-        <div class="admin-card-text">
-          <div class="admin-card-title">Ratings</div>
-          <div class="admin-card-desc">View driver performance and customer feedback</div>
-        </div>
-        <div class="admin-card-arrow">→</div>
+      <div class="sidebar-section-label">Platform</div>
+      <a href="/admin/partners" class="sidebar-link">
+        <span class="sidebar-icon" aria-hidden="true">🤝</span> Partners
       </a>
-    </div>
+      <a href="/admin/disputes" class="sidebar-link">
+        <span class="sidebar-icon" aria-hidden="true">⚖️</span> Disputes
+      </a>
+    </aside>
+
+    <!-- ── Main ── -->
+    <main class="admin-main" id="main-content">
+      <div class="admin-page-header">
+        <div>
+          <div class="admin-page-eyebrow">Dashboard</div>
+          <h1 class="admin-page-title">Admin Overview</h1>
+          <p class="admin-page-sub">Manage operations, drivers, and platform settings.</p>
+        </div>
+      </div>
+
+      <!-- Stub stats — replace with server-side data when available -->
+      <div class="admin-stats">
+        <div class="admin-stat">
+          <div class="admin-stat-label">Active Jobs</div>
+          <div class="admin-stat-value orange">—</div>
+          <div class="admin-stat-delta">Live now</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-label">Pending Apps</div>
+          <div class="admin-stat-value">—</div>
+          <div class="admin-stat-delta">Awaiting review</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-label">Drivers Online</div>
+          <div class="admin-stat-value">—</div>
+          <div class="admin-stat-delta">Active today</div>
+        </div>
+        <div class="admin-stat">
+          <div class="admin-stat-label">Open Disputes</div>
+          <div class="admin-stat-value">—</div>
+          <div class="admin-stat-delta">Needs attention</div>
+        </div>
+      </div>
+
+      <!-- Module cards -->
+      <div class="admin-modules">
+        <a class="admin-module" href="/admin/dispatch">
+          <div class="admin-module-icon" aria-hidden="true">🚛</div>
+          <div class="admin-module-body">
+            <div class="admin-module-title">Dispatch</div>
+            <div class="admin-module-desc">Assign drivers, track active deliveries, review completed orders</div>
+          </div>
+          <div class="admin-module-arrow" aria-hidden="true">→</div>
+        </a>
+        <a class="admin-module" href="/admin/bookings">
+          <div class="admin-module-icon" aria-hidden="true">📋</div>
+          <div class="admin-module-body">
+            <div class="admin-module-title">Bookings</div>
+            <div class="admin-module-desc">View all customer orders, statuses, and booking details</div>
+          </div>
+          <div class="admin-module-arrow" aria-hidden="true">→</div>
+        </a>
+        <a class="admin-module" href="/admin/drivers">
+          <div class="admin-module-icon" aria-hidden="true">🧑‍✈️</div>
+          <div class="admin-module-body">
+            <div class="admin-module-title">Drivers</div>
+            <div class="admin-module-desc">Review and activate driver applications, manage accounts</div>
+          </div>
+          <div class="admin-module-arrow" aria-hidden="true">→</div>
+        </a>
+        <a class="admin-module" href="/admin/metrics">
+          <div class="admin-module-icon" aria-hidden="true">📊</div>
+          <div class="admin-module-body">
+            <div class="admin-module-title">Metrics</div>
+            <div class="admin-module-desc">Revenue, completion rates, driver utilization, growth KPIs</div>
+          </div>
+          <div class="admin-module-arrow" aria-hidden="true">→</div>
+        </a>
+        <a class="admin-module" href="/admin/ratings">
+          <div class="admin-module-icon" aria-hidden="true">⭐</div>
+          <div class="admin-module-body">
+            <div class="admin-module-title">Ratings</div>
+            <div class="admin-module-desc">Driver performance scores and customer feedback</div>
+          </div>
+          <div class="admin-module-arrow" aria-hidden="true">→</div>
+        </a>
+        <a class="admin-module" href="/admin/disputes">
+          <div class="admin-module-icon" aria-hidden="true">⚖️</div>
+          <div class="admin-module-body">
+            <div class="admin-module-title">Disputes</div>
+            <div class="admin-module-desc">Damage claims, refund requests, and escalations</div>
+          </div>
+          <div class="admin-module-arrow" aria-hidden="true">→</div>
+        </a>
+      </div>
+    </main>
   </div>
 </body>
 </html>
