@@ -16,7 +16,7 @@ const { addCommission, getPartnerBySlug, deductCommission } = require('../db/par
 const { payoutDriver, payoutDriverReferralBounty, payoutPartnerCommission } = require('./stripe-connect');
 const { sendDriverReferralBountyEmail, sendDeliveredSms } = require('./email');
 
-const PLATFORM_FEE_RATE = 0.18;
+const PLATFORM_FEE_RATE = 0.20;
 
 /**
  * Trigger driver payout for a delivered order. Fire-and-forget — order completion
