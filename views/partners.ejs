@@ -3,630 +3,1175 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Partners — Shurget Last-Mile Delivery for Retailers</title>
-  <meta name="description" content="Shurget is the last-mile delivery layer for retailers selling oversized items. Same-day pickup truck delivery, transparent pricing, white-labeled tracking.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <title>For Business — Shurget Same-Day Delivery for Retailers</title>
+  <meta name="description" content="Shurget is the same-day last-mile delivery layer for retailers selling oversized items. Flat-rate pricing, live tracking, and revenue share on every haul. No warehouses. No 2-week waits.">
+  <link rel="canonical" href="https://shurget.com/partners" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Shurget" />
+  <meta property="og:url" content="https://shurget.com/partners" />
+  <meta property="og:title" content="For Business — Shurget Same-Day Delivery for Retailers" />
+  <meta property="og:description" content="Same-day pickup truck delivery for furniture and appliance retailers. Flat-rate from $49. Revenue share on every delivery. No warehouses." />
+  <meta property="og:image" content="https://shurget.com/images/shurget-og.jpg" />
+
+  <!-- Twitter/X Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@shurget" />
+  <meta name="twitter:title" content="For Business — Shurget Same-Day Delivery for Retailers" />
+  <meta name="twitter:description" content="Same-day pickup truck delivery for furniture and appliance retailers. Flat-rate from $49. Revenue share on every delivery." />
+  <meta name="twitter:image" content="https://shurget.com/images/shurget-og.jpg" />
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/theme.css">
   <%- include('partials/ga4') %>
-  <style>
-    /* ─── Partners page overrides ─── */
-    .partners-hero {
-      background: var(--charcoal);
-      padding: 8rem clamp(1.5rem, 6vw, 5rem) 5rem;
-    }
-    .partners-hero-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .partners-hero h1 {
-      font-size: clamp(2.75rem, 6vw, 5rem);
-      color: var(--white);
-      line-height: 1.05;
-      margin-bottom: 1.25rem;
-      max-width: 720px;
-    }
-    .partners-hero h1 span { color: var(--orange-light); }
-    .partners-hero-sub {
-      font-size: 1.1rem;
-      color: rgba(255,255,255,0.7);
-      max-width: 560px;
-      line-height: 1.7;
-      margin-bottom: 2rem;
-    }
-    .partners-hero-ctas {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .partners-hero-ctas a.btn-cta { margin-top: 0; }
-
-    /* ─── Section layout ─── */
-    .partners-section {
-      padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem);
-    }
-    .partners-section--dark {
-      background: var(--charcoal);
-      color: var(--white);
-    }
-    .partners-section--dark .section-label { color: var(--orange-light); }
-    .partners-section--dark .section-title { color: var(--white); }
-    .partners-section--alt { background: var(--off-white); }
-    .partners-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    /* ─── Problem section ─── */
-    .problem-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2.5rem;
-    }
-    .problem-card {
-      background: var(--slate);
-      border-radius: 10px;
-      padding: 2rem 1.75rem;
-      border: 1px solid rgba(255,255,255,0.07);
-    }
-    .problem-card-icon { font-size: 2rem; margin-bottom: 1rem; }
-    .problem-card-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.35rem;
-      color: var(--white);
-      letter-spacing: 0.05em;
-      margin-bottom: 0.6rem;
-    }
-    .problem-card-desc { font-size: 0.9rem; color: rgba(255,255,255,0.55); line-height: 1.6; }
-
-    /* ─── How Shurget solves it ─── */
-    .solution-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 2rem;
-      margin-top: 2.5rem;
-    }
-    .solution-item {
-      display: flex;
-      gap: 1.25rem;
-      align-items: flex-start;
-    }
-    .solution-icon {
-      background: var(--orange);
-      color: var(--white);
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      flex-shrink: 0;
-    }
-    .solution-title {
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--charcoal);
-      margin-bottom: 0.4rem;
-    }
-    .solution-desc { font-size: 0.9rem; color: var(--gray-mid); line-height: 1.6; }
-
-    /* ─── Integration options ─── */
-    .integration-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2.5rem;
-    }
-    .integration-card {
-      background: var(--white);
-      border: 1.5px solid rgba(0,0,0,0.1);
-      border-radius: 12px;
-      padding: 2rem 1.75rem;
-    }
-    .integration-card--available { border-color: var(--orange); }
-    .integration-status {
-      display: inline-block;
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      padding: 0.3rem 0.75rem;
-      border-radius: 99px;
-      margin-bottom: 1rem;
-    }
-    .integration-status--live { background: #dcfce7; color: #15803d; }
-    .integration-status--roadmap { background: #fef3c7; color: #b45309; }
-    .integration-card-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.5rem;
-      color: var(--charcoal);
-      letter-spacing: 0.05em;
-      margin-bottom: 0.6rem;
-    }
-    .integration-card-desc { font-size: 0.9rem; color: var(--gray-mid); line-height: 1.65; }
-
-    /* ─── Pricing section ─── */
-    .partner-pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-      margin-top: 2.5rem;
-    }
-    .partner-pricing-note {
-      text-align: center;
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: var(--gray-mid);
-    }
-    .partner-pricing-note strong { color: var(--charcoal); }
-
-    /* ─── Trust signals ─── */
-    .trust-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2.5rem;
-    }
-    .trust-item {
-      text-align: center;
-      padding: 1.75rem 1.25rem;
-      background: var(--slate);
-      border-radius: 10px;
-    }
-    .trust-num {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 3rem;
-      color: var(--orange-light);
-      line-height: 1;
-      margin-bottom: 0.5rem;
-    }
-    .trust-label { font-size: 0.85rem; color: rgba(255,255,255,0.6); line-height: 1.4; }
-
-    /* ─── Lead form ─── */
-    .partners-form-wrap {
-      max-width: 720px;
-      margin: 0 auto;
-    }
-    .partners-form-card {
-      background: var(--white);
-      border: 1.5px solid rgba(0,0,0,0.1);
-      border-radius: 12px;
-      padding: 2.5rem;
-    }
-    .form-grid-partners {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.25rem; }
-    .form-group.full { grid-column: 1 / -1; }
-    label { font-size: 0.8rem; font-weight: 600; color: var(--charcoal); text-transform: uppercase; letter-spacing: 0.06em; }
-    input, select, textarea {
-      padding: 0.7rem 0.9rem;
-      border: 1.5px solid rgba(0,0,0,0.12);
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      color: var(--charcoal);
-      outline: none;
-      transition: border-color 0.15s;
-      background: #fafafa;
-    }
-    input:focus, select:focus, textarea:focus { border-color: var(--orange); background: #fff; }
-    textarea { resize: vertical; min-height: 80px; }
-    .btn-submit {
-      background: var(--orange);
-      color: var(--white);
-      border: none;
-      padding: 0.9rem 2rem;
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.15s;
-      margin-top: 0.5rem;
-    }
-    .btn-submit:hover { background: #c25a00; }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-    .form-error { color: #dc2626; font-size: 0.85rem; margin-bottom: 1rem; display: none; }
-    .form-success {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      color: #15803d;
-      padding: 1rem 1.25rem;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      margin-bottom: 1.5rem;
-      display: none;
-    }
-    .form-section-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.5rem;
-      letter-spacing: 0.05em;
-      color: var(--charcoal);
-      margin-bottom: 1.5rem;
-    }
-
-    /* ─── Responsive ─── */
-    @media (max-width: 768px) {
-      .partner-pricing-grid { grid-template-columns: 1fr; }
-      .form-grid-partners { grid-template-columns: 1fr; }
-      .integration-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 480px) {
-      .partners-hero-ctas { flex-direction: column; align-items: flex-start; }
-    }
-  </style>
 </head>
 <body>
-  <%- include('partials/nav') %>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<%- include('partials/nav') %>
 
-  <!-- ─── Hero ─── -->
-  <section class="partners-hero">
-    <div class="partners-hero-inner">
-      <span class="section-label">For Retailers</span>
-      <h1>Same-day delivery for <span>oversized items</span>,<br>built for retailers.</h1>
-      <p class="partners-hero-sub">Shurget is the last-mile delivery layer your customers actually want — on-demand pickup trucks, transparent upfront pricing, and white-labeled tracking links. No warehouses. No 2-week lead times. Same day.</p>
-      <div class="partners-hero-ctas">
-        <a href="/partners/apply" class="btn-cta">Become a Partner</a>
-        <a href="/partners/embed" class="btn-cta btn-cta--light">See the Widget Demo</a>
+<main id="main-content">
+<%- include('partials/nav') %>
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   PARTNERS PAGE — Shurget Brand System
+   Colors: --dark #0a0a0a / --charcoal #111 / --orange #b84000
+           --orange-accent #ea580c / --off-white #f8f7f5 / --white #fff
+   Fonts:  Bebas Neue (headings/labels) · DM Sans (body)
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Shared layout ─────────────────────────────────────────── */
+.p-section {
+  padding: clamp(4rem, 8vw, 6.5rem) clamp(1.5rem, 6vw, 5rem);
+}
+.p-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.p-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: .9rem;
+  letter-spacing: .18em;
+  color: #ea580c;
+  text-transform: uppercase;
+  margin-bottom: 1.1rem;
+}
+.p-eyebrow::before {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #ea580c;
+  flex-shrink: 0;
+}
+.p-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  letter-spacing: .03em;
+  line-height: 1.05;
+  color: #0a0a0a;
+  margin-bottom: 1.1rem;
+}
+.p-heading--white { color: #fff; }
+.p-heading em { color: #ea580c; font-style: normal; }
+.p-subtext {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: #555;
+  max-width: 580px;
+}
+.p-subtext--white { color: rgba(255,255,255,.65); }
+
+/* ── Hero ──────────────────────────────────────────────────── */
+.p-hero {
+  position: relative;
+  background: #0a0a0a;
+  overflow: hidden;
+  padding: 9rem clamp(1.5rem, 6vw, 5rem) 6rem;
+  /* Left orange bar */
+  border-left: 6px solid #ea580c;
+}
+.p-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 90% 50%, rgba(234,88,12,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(234,88,12,.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.p-hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: 4rem;
+  align-items: center;
+}
+.p-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: .85rem;
+  letter-spacing: .2em;
+  color: #ea580c;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+.p-hero-tag::before {
+  content: '';
+  width: 20px; height: 2px;
+  background: #ea580c;
+}
+.p-hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 6.5vw, 5.2rem);
+  color: #fff;
+  line-height: 1.02;
+  letter-spacing: .02em;
+  margin-bottom: 1.5rem;
+}
+.p-hero h1 em { color: #ea580c; font-style: normal; }
+.p-hero-sub {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,.65);
+  line-height: 1.75;
+  max-width: 540px;
+  margin-bottom: 2.25rem;
+}
+.p-hero-ctas {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.btn-primary-p {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: #b84000;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: .95rem;
+  padding: .85rem 1.75rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background .2s, transform .15s;
+  border: 2px solid transparent;
+}
+.btn-primary-p:hover { background: #9e3800; transform: translateY(-2px); }
+.btn-ghost-p {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: transparent;
+  color: rgba(255,255,255,.85);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: .95rem;
+  padding: .85rem 1.75rem;
+  border-radius: 6px;
+  text-decoration: none;
+  border: 2px solid rgba(255,255,255,.2);
+  transition: border-color .2s, color .2s;
+}
+.btn-ghost-p:hover { border-color: #ea580c; color: #ea580c; }
+
+/* ── Hero stat card ────────────────────────────────────────── */
+.p-hero-card {
+  background: #111;
+  border: 1px solid rgba(255,255,255,.08);
+  border-top: 3px solid #ea580c;
+  border-radius: 12px;
+  padding: 2rem 1.75rem;
+}
+.p-hero-card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: .12em;
+  color: rgba(255,255,255,.4);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.p-stat-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.p-stat {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.p-stat:last-child { border-bottom: none; padding-bottom: 0; }
+.p-stat-icon {
+  width: 40px; height: 40px;
+  background: rgba(234,88,12,.15);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+}
+.p-stat-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: #ea580c;
+  line-height: 1;
+}
+.p-stat-lbl {
+  font-size: .8rem;
+  color: rgba(255,255,255,.5);
+  line-height: 1.4;
+  margin-top: .15rem;
+}
+
+/* ── Trust bar ─────────────────────────────────────────────── */
+.p-trust-bar {
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,.06);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  padding: 1.25rem clamp(1.5rem,6vw,5rem);
+}
+.p-trust-bar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  flex-wrap: wrap;
+}
+.p-trust-pill {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: .85rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+}
+.p-trust-pill svg { color: #ea580c; flex-shrink: 0; }
+.p-trust-divider {
+  width: 1px; height: 20px;
+  background: rgba(255,255,255,.1);
+}
+
+/* ── Problem section ───────────────────────────────────────── */
+.p-problem { background: #0a0a0a; }
+.p-problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2.75rem;
+}
+.p-problem-card {
+  background: #111;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 10px;
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+}
+.p-problem-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: rgba(234,88,12,.35);
+}
+.p-problem-icon {
+  width: 44px; height: 44px;
+  background: rgba(234,88,12,.12);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-bottom: 1.1rem;
+}
+.p-problem-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  color: #fff;
+  letter-spacing: .05em;
+  margin-bottom: .5rem;
+}
+.p-problem-desc {
+  font-size: .88rem;
+  color: rgba(255,255,255,.5);
+  line-height: 1.65;
+}
+
+/* ── Revenue share callout ─────────────────────────────────── */
+.p-revenue-callout {
+  background: linear-gradient(135deg, #b84000 0%, #7c2d12 100%);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+}
+.p-revenue-callout-text {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+  color: #fff;
+  letter-spacing: .04em;
+  line-height: 1.2;
+}
+.p-revenue-callout-sub {
+  font-size: .9rem;
+  color: rgba(255,255,255,.7);
+  margin-top: .5rem;
+  max-width: 520px;
+  line-height: 1.6;
+}
+.btn-callout {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: #fff;
+  color: #b84000;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: .9rem;
+  padding: .85rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform .15s;
+}
+.btn-callout:hover { transform: translateY(-2px); }
+
+/* ── How it works ──────────────────────────────────────────── */
+.p-how { background: #f8f7f5; }
+.p-solution-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.75rem;
+}
+.p-solution-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.07);
+  border-radius: 10px;
+  padding: 1.75rem;
+  transition: box-shadow .2s, transform .2s;
+}
+.p-solution-card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,.08);
+  transform: translateY(-3px);
+}
+.p-solution-icon-wrap {
+  width: 48px; height: 48px;
+  background: #b84000;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.1rem;
+}
+.p-solution-icon-wrap svg { color: #fff; }
+.p-solution-title {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0a0a0a;
+  margin-bottom: .5rem;
+}
+.p-solution-desc {
+  font-size: .88rem;
+  color: #666;
+  line-height: 1.65;
+}
+
+/* ── Integration cards ─────────────────────────────────────── */
+.p-integration { background: #fff; }
+.p-integration-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.75rem;
+}
+.p-int-card {
+  border: 1.5px solid rgba(0,0,0,.1);
+  border-radius: 12px;
+  padding: 2rem 1.75rem;
+  position: relative;
+  transition: box-shadow .2s;
+}
+.p-int-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.08); }
+.p-int-card--active {
+  border-color: #b84000;
+  box-shadow: 0 0 0 1px rgba(184,64,0,.15);
+}
+.p-int-badge {
+  display: inline-block;
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  padding: .25rem .75rem;
+  border-radius: 99px;
+  margin-bottom: 1rem;
+}
+.p-int-badge--live { background: #dcfce7; color: #15803d; }
+.p-int-badge--soon { background: #fef3c7; color: #b45309; }
+.p-int-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  color: #0a0a0a;
+  letter-spacing: .05em;
+  margin-bottom: .6rem;
+}
+.p-int-desc {
+  font-size: .88rem;
+  color: #666;
+  line-height: 1.65;
+  margin-bottom: 1rem;
+}
+.p-int-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+}
+.p-int-list li {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-size: .85rem;
+  color: #555;
+}
+.p-int-list li::before {
+  content: '';
+  width: 16px; height: 16px;
+  background: rgba(184,64,0,.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23b84000' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.p-int-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  margin-top: 1.25rem;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #b84000;
+  text-decoration: none;
+  transition: gap .15s;
+}
+.p-int-link:hover { gap: .6rem; }
+
+/* ── Pricing ───────────────────────────────────────────────── */
+.p-pricing { background: #0a0a0a; }
+.p-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-top: 2.75rem;
+}
+.p-price-card {
+  background: #111;
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 12px;
+  padding: 2rem 1.75rem;
+  position: relative;
+  transition: transform .2s;
+}
+.p-price-card:hover { transform: translateY(-4px); }
+.p-price-card--featured {
+  border-color: #ea580c;
+  box-shadow: 0 0 0 1px rgba(234,88,12,.2);
+}
+.p-price-badge {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #b84000;
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: .25rem .85rem;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.p-price-tier {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: .9rem;
+  letter-spacing: .15em;
+  color: rgba(255,255,255,.4);
+  text-transform: uppercase;
+  margin-bottom: .75rem;
+}
+.p-price-amount {
+  display: flex;
+  align-items: baseline;
+  gap: .25rem;
+  margin-bottom: 1.5rem;
+}
+.p-price-from { font-size: .8rem; color: rgba(255,255,255,.4); }
+.p-price-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  color: #ea580c;
+  line-height: 1;
+  letter-spacing: -.01em;
+}
+.p-price-list {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+}
+.p-price-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  font-size: .85rem;
+  color: rgba(255,255,255,.6);
+  line-height: 1.4;
+}
+.p-price-check {
+  color: #ea580c;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: .05rem;
+}
+.p-pricing-note {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: .875rem;
+  color: rgba(255,255,255,.4);
+}
+.p-pricing-note strong { color: rgba(255,255,255,.7); }
+
+/* ── Trust signals ─────────────────────────────────────────── */
+.p-trust { background: #111; }
+.p-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2.75rem;
+}
+.p-trust-item {
+  text-align: center;
+  padding: 2rem 1.25rem;
+  background: #0a0a0a;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.p-trust-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 40px; height: 2px;
+  background: #ea580c;
+}
+.p-trust-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: #ea580c;
+  line-height: 1;
+  letter-spacing: .03em;
+  margin-bottom: .5rem;
+}
+.p-trust-lbl {
+  font-size: .8rem;
+  color: rgba(255,255,255,.5);
+  line-height: 1.45;
+}
+
+/* ── Form section ──────────────────────────────────────────── */
+.p-form-section { background: #f8f7f5; }
+.p-form-wrap {
+  max-width: 740px;
+  margin: 0 auto;
+}
+.p-form-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.09);
+  border-top: 4px solid #b84000;
+  border-radius: 12px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,.06);
+}
+.p-form-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: .07em;
+  color: #0a0a0a;
+  margin-bottom: 1.5rem;
+}
+.p-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.p-field { display: flex; flex-direction: column; gap: .35rem; }
+.p-field.full { grid-column: 1 / -1; }
+.p-field label {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #333;
+}
+.p-field input,
+.p-field select,
+.p-field textarea {
+  padding: .75rem 1rem;
+  border: 1.5px solid rgba(0,0,0,.12);
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .95rem;
+  color: #111;
+  background: #fafafa;
+  outline: none;
+  transition: border-color .15s, background .15s;
+}
+.p-field input:focus,
+.p-field select:focus,
+.p-field textarea:focus {
+  border-color: #b84000;
+  background: #fff;
+}
+.p-field textarea { min-height: 80px; resize: vertical; }
+.p-form-submit {
+  width: 100%;
+  background: #b84000;
+  color: #fff;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: .5rem;
+  transition: background .15s, transform .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+}
+.p-form-submit:hover { background: #9e3800; transform: translateY(-1px); }
+.p-form-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.p-form-fine {
+  text-align: center;
+  margin-top: .85rem;
+  font-size: .78rem;
+  color: #999;
+}
+.p-form-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: .85rem 1rem;
+  border-radius: 8px;
+  font-size: .88rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+.p-form-success {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  padding: .85rem 1rem;
+  border-radius: 8px;
+  font-size: .9rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+
+/* ── Final CTA ─────────────────────────────────────────────── */
+.p-cta-strip {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a0a04 100%);
+  padding: 5rem clamp(1.5rem, 6vw, 5rem);
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,.05);
+}
+.p-cta-strip .p-heading { color: #fff; margin-bottom: .75rem; }
+.p-cta-strip p { color: rgba(255,255,255,.55); font-size: 1rem; margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto; }
+.p-cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .p-hero-inner { grid-template-columns: 1fr; }
+  .p-hero-card { display: none; }
+  .p-pricing-grid { grid-template-columns: 1fr; }
+  .p-revenue-callout { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .p-form-grid { grid-template-columns: 1fr; }
+  .p-hero-ctas { flex-direction: column; align-items: flex-start; }
+  .p-trust-divider { display: none; }
+}
+</style>
+
+<!-- ── HERO ──────────────────────────────────────────────────── -->
+<section class="p-hero">
+  <div class="p-hero-inner">
+    <div>
+      <div class="p-hero-tag">For Business</div>
+      <h1>Your customers want to buy.<br><em>Help them get it home.</em></h1>
+      <p class="p-hero-sub">Shurget is the same-day last-mile layer for retailers selling oversized items — flat-rate pickup truck delivery, live tracking, and a revenue share on every haul. No warehouses. No 2-week waits.</p>
+      <div class="p-hero-ctas">
+        <a href="#pilot-form" class="btn-primary-p">
+          Request a Pilot
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+        <a href="/partners/embed" class="btn-ghost-p">See the Widget Demo</a>
       </div>
     </div>
-  </section>
-
-  <!-- ─── Problem ─── -->
-  <section class="partners-section partners-section--dark" id="problem">
-    <div class="partners-inner">
-      <span class="section-label">The Problem</span>
-      <h2 class="section-title">Large-item logistics is broken for retailers.</h2>
-      <p style="color:rgba(255,255,255,0.6);max-width:600px;font-size:1rem;line-height:1.7;">Your customers add a sofa or a commercial appliance to their cart — then abandon it. Not because they don't want it, but because delivery options are bad: expensive white-glove quotes, multi-week waits, or flat-out "not available."</p>
-      <div class="problem-cards">
-        <div class="problem-card">
-          <div class="problem-card-icon">🛒</div>
-          <div class="problem-card-title">Cart Abandonment on Large Items</div>
-          <p class="problem-card-desc">Oversized items see 2–3× higher abandonment rates when delivery options are unclear or unavailable. Revenue evaporates at checkout.</p>
-        </div>
-        <div class="problem-card">
-          <div class="problem-card-icon">🏚️</div>
-          <div class="problem-card-title">No Carrier Built for This</div>
-          <p class="problem-card-desc">UPS and FedEx won't take a sectional sofa. White-glove freight is expensive and slow. You're left stitching together one-off arrangements that don't scale.</p>
-        </div>
-        <div class="problem-card">
-          <div class="problem-card-icon">📅</div>
-          <div class="problem-card-title">Delivery Windows That Kill Conversion</div>
-          <p class="problem-card-desc">"7–14 business days" is a conversion killer. Same-day availability is a proven purchasing trigger — especially for local and DTC retailers.</p>
-        </div>
-        <div class="problem-card">
-          <div class="problem-card-icon">🤷</div>
-          <div class="problem-card-title">Zero Visibility After Handoff</div>
-          <p class="problem-card-desc">Once it leaves your warehouse, your customer is in the dark. Support tickets spike. Refund requests follow. Your reputation takes the hit.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── Solution ─── -->
-  <section class="partners-section" id="how-it-works">
-    <div class="partners-inner">
-      <span class="section-label">How Shurget Solves It</span>
-      <h2 class="section-title">On-demand. Transparent. Trackable.</h2>
-      <p style="color:var(--gray-mid);max-width:580px;font-size:1rem;line-height:1.7;margin-bottom:0;">We put an on-demand driver network between your warehouse and your customer's front door — with upfront pricing and a live tracking link every time.</p>
-      <div class="solution-grid">
-        <div class="solution-item">
-          <div class="solution-icon">🚛</div>
+    <div class="p-hero-card" aria-hidden="true">
+      <div class="p-hero-card-title">Why retailers partner with Shurget</div>
+      <div class="p-stat-row">
+        <div class="p-stat">
+          <div class="p-stat-icon"><span aria-hidden="true">🛒</span></div>
           <div>
-            <div class="solution-title">On-Demand Driver Network</div>
-            <p class="solution-desc">Active vetted drivers in Austin, available same-day. No scheduling lead time. No minimum commitment. Dispatch via the Shurget dashboard in under 2 minutes.</p>
+            <div class="p-stat-val">83%</div>
+            <div class="p-stat-lbl">Furniture cart abandonment rate — highest of any retail category</div>
           </div>
         </div>
-        <div class="solution-item">
-          <div class="solution-icon">💰</div>
+        <div class="p-stat">
+          <div class="p-stat-icon"><span aria-hidden="true">⚡</span></div>
           <div>
-            <div class="solution-title">Transparent Upfront Pricing</div>
-            <p class="solution-desc">Customers see the exact price before they book. No hidden fees, no quotes that expire. Base rate + distance. Small/Medium/Large tiers match your SKU sizes.</p>
+            <div class="p-stat-val">60 sec</div>
+            <div class="p-stat-lbl">From booking to driver confirmation — no wait, no quote forms</div>
           </div>
         </div>
-        <div class="solution-item">
-          <div class="solution-icon">📍</div>
+        <div class="p-stat">
+          <div class="p-stat-icon"><span aria-hidden="true">💵</span></div>
           <div>
-            <div class="solution-title">White-Labeled Tracking Links</div>
-            <p class="solution-desc">Every order gets a live tracking page at <code style="background:#f5f3ee;padding:0.1em 0.4em;border-radius:4px;font-size:0.85em;">/track/:id</code> — real-time driver location, stage timeline, ETA. No custom dev required. Your brand stays front and center.</p>
-          </div>
-        </div>
-        <div class="solution-item">
-          <div class="solution-icon">💳</div>
-          <div>
-            <div class="solution-title">Stripe-Backed Payments</div>
-            <p class="solution-desc">Payment is collected at booking via Stripe Checkout. No invoice chasing. No net-30 headaches. Clear reconciliation every transaction.</p>
-          </div>
-        </div>
-        <div class="solution-item">
-          <div class="solution-icon">⭐</div>
-          <div>
-            <div class="solution-title">Two-Way Driver Ratings</div>
-            <p class="solution-desc">Every delivery is rated. Low-rated drivers come off the network. Your customers consistently get a professional, accountable service experience.</p>
-          </div>
-        </div>
-        <div class="solution-item">
-          <div class="solution-icon">📬</div>
-          <div>
-            <div class="solution-title">Automated Customer Notifications</div>
-            <p class="solution-desc">SMS and email confirmations fire automatically — at booking, driver assignment, and en-route. Your support team stops fielding "where is my order?" tickets.</p>
+            <div class="p-stat-val">Revenue Share</div>
+            <div class="p-stat-lbl">You earn on every delivery booked through your store — no other platform does this</div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ─── Integration Options ─── -->
-  <section class="partners-section partners-section--alt" id="integration">
-    <div class="partners-inner">
-      <span class="section-label">Integration Options</span>
-      <h2 class="section-title">Start shipping this week. Scale from there.</h2>
-      <p style="color:var(--gray-mid);max-width:580px;font-size:1rem;line-height:1.7;margin-bottom:0;">No engineering sprint required to get started. Our v1 integration is a manual dashboard handoff — submit orders, assign drivers, ship. The API layer is on the roadmap for partners with volume.</p>
-      <div class="integration-grid">
-        <div class="integration-card integration-card--available">
-          <span class="integration-status integration-status--live">Available Now</span>
-          <div class="integration-card-title">Dashboard Handoff</div>
-          <p class="integration-card-desc">Submit delivery orders manually through the Shurget dispatch dashboard. Assign drivers, monitor status, and track deliveries live. No API keys. No engineering. Operational in one day.</p>
-          <ul style="margin-top:1rem;padding-left:1.1rem;font-size:0.88rem;color:var(--gray-mid);line-height:1.9;">
-            <li>Web-based order entry</li>
-            <li>Driver assignment + real-time tracking</li>
-            <li>SMS/email notifications to your customers</li>
-            <li>Delivery confirmation + status history</li>
-          </ul>
-        </div>
-        <div class="integration-card">
-          <span class="integration-status integration-status--roadmap">On Roadmap</span>
-          <div class="integration-card-title">REST API</div>
-          <p class="integration-card-desc">Full programmatic control. POST an order from your checkout, get back a tracking URL, and receive webhook events on status changes. Integrate directly into your OMS or storefront.</p>
-          <ul style="margin-top:1rem;padding-left:1.1rem;font-size:0.88rem;color:var(--gray-mid);line-height:1.9;">
-            <li>Order creation endpoint</li>
-            <li>Webhook events (booked, assigned, delivered)</li>
-            <li>Tracking URL returned at order creation</li>
-            <li>Sandbox environment for testing</li>
-          </ul>
-        </div>
-        <div class="integration-card integration-card--available">
-          <span class="integration-status integration-status--live">Available Now</span>
-          <div class="integration-card-title">Checkout Widget</div>
-          <p class="integration-card-desc">Drop a one-line JavaScript snippet on your product pages. Customers see live Shurget pricing in a modal — no redirect, no new account. Converts at the moment of intent.</p>
-          <ul style="margin-top:1rem;padding-left:1.1rem;font-size:0.88rem;color:var(--gray-mid);line-height:1.9;">
-            <li>Embed on Shopify, WooCommerce, or custom</li>
-            <li>Live pricing by ZIP code</li>
-            <li>One-click delivery booking at checkout</li>
-            <li>Partner attribution tracked per order</li>
-          </ul>
-          <a href="/partners/embed" style="display:inline-block;margin-top:1.25rem;font-size:0.88rem;font-weight:600;color:var(--orange);text-decoration:none;">See it live →</a>
-          <a href="/partners/integration-kit" style="display:block;margin-top:0.6rem;font-size:0.85rem;font-weight:500;color:rgba(0,0,0,0.5);text-decoration:none;">View the Integration Kit →</a>
-        </div>
+<!-- ── TRUST BAR ─────────────────────────────────────────────── -->
+<div class="p-trust-bar">
+  <div class="p-trust-bar-inner">
+    <div class="p-trust-pill">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      Same-Day Delivery
+    </div>
+    <div class="p-trust-divider" aria-hidden="true"></div>
+    <div class="p-trust-pill">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      Flat-Rate Pricing from $49
+    </div>
+    <div class="p-trust-divider" aria-hidden="true"></div>
+    <div class="p-trust-pill">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      Revenue Share Per Delivery
+    </div>
+    <div class="p-trust-divider" aria-hidden="true"></div>
+    <div class="p-trust-pill">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      Vetted Local Drivers
+    </div>
+    <div class="p-trust-divider" aria-hidden="true"></div>
+    <div class="p-trust-pill">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      Live Tracking Every Order
+    </div>
+  </div>
+</div>
+
+<!-- ── PROBLEM ───────────────────────────────────────────────── -->
+<section class="p-section p-problem">
+  <div class="p-inner">
+    <div class="p-eyebrow">The Problem</div>
+    <h2 class="p-heading p-heading--white">Large-item delivery is<br><em>breaking your conversions.</em></h2>
+    <p class="p-subtext p-subtext--white">Customers add a sofa or appliance to their cart — then abandon it. Not because they don't want it. Because delivery is expensive, slow, or unclear. Every abandoned cart is revenue left on your floor.</p>
+
+    <div class="p-problem-grid">
+      <div class="p-problem-card">
+        <div class="p-problem-icon"><span aria-hidden="true">🛒</span></div>
+        <div class="p-problem-title">Cart Abandonment</div>
+        <p class="p-problem-desc">83–90% of furniture and appliance carts are abandoned — the highest rate of any retail category. Unclear delivery options are the #1 cause.</p>
+      </div>
+      <div class="p-problem-card">
+        <div class="p-problem-icon"><span aria-hidden="true">🚫</span></div>
+        <div class="p-problem-title">No Carrier Fits</div>
+        <p class="p-problem-desc">UPS and FedEx won't take a sectional sofa. White-glove freight is expensive and weeks out. You're stitching together one-off arrangements that don't scale.</p>
+      </div>
+      <div class="p-problem-card">
+        <div class="p-problem-icon"><span aria-hidden="true">📅</span></div>
+        <div class="p-problem-title">7–14 Day Windows Kill Intent</div>
+        <p class="p-problem-desc">Same-day availability is a proven conversion trigger. "Ships in two weeks" gives customers time to reconsider, find a cheaper option, or buy elsewhere.</p>
+      </div>
+      <div class="p-problem-card">
+        <div class="p-problem-icon"><span aria-hidden="true">📭</span></div>
+        <div class="p-problem-title">Zero Visibility After Handoff</div>
+        <p class="p-problem-desc">Once it leaves your floor, your customer is in the dark. Support tickets spike. Your reputation takes the hit. You bear the cost of a carrier's failure.</p>
       </div>
     </div>
-  </section>
 
-  <!-- ─── Pricing ─── -->
-  <section class="partners-section" id="pricing">
-    <div class="partners-inner">
-      <span class="section-label">Pricing Model</span>
-      <h2 class="section-title">Same tiered structure. Volume discounts available.</h2>
-      <p style="color:var(--gray-mid);max-width:580px;font-size:1rem;line-height:1.7;margin-bottom:0;">Pricing is based on item size and distance. No subscription. No per-seat fees. Pilot partners with 20+ deliveries/month qualify for volume pricing — ask about it in your pilot request.</p>
-      <div class="partner-pricing-grid">
-        <div class="pricing-card">
-          <div class="pricing-card-header">
-            <div class="pricing-tier-label">Small Items</div>
-            <div class="pricing-price-wrap">
-              <span class="pricing-from">from</span>
-              <span class="pricing-price">$49</span>
-            </div>
-          </div>
-          <ul class="pricing-features">
-            <li><span class="pricing-check">✓</span> Single boxes, chairs, small appliances</li>
-            <li><span class="pricing-check">✓</span> Up to ~5 miles included</li>
-            <li><span class="pricing-check">✓</span> $2.50/mile after</li>
-            <li><span class="pricing-check">✓</span> 1-hour pickup window</li>
-          </ul>
-        </div>
-        <div class="pricing-card pricing-card--featured">
-          <div class="pricing-badge">Most Common</div>
-          <div class="pricing-card-header">
-            <div class="pricing-tier-label">Medium Items</div>
-            <div class="pricing-price-wrap">
-              <span class="pricing-from">from</span>
-              <span class="pricing-price">$89</span>
-            </div>
-          </div>
-          <ul class="pricing-features">
-            <li><span class="pricing-check">✓</span> Sofas, dressers, desks, mirrors</li>
-            <li><span class="pricing-check">✓</span> Up to ~5 miles included</li>
-            <li><span class="pricing-check">✓</span> $3.50/mile after</li>
-            <li><span class="pricing-check">✓</span> 1-hour pickup window</li>
-          </ul>
-        </div>
-        <div class="pricing-card">
-          <div class="pricing-card-header">
-            <div class="pricing-tier-label">Large Items</div>
-            <div class="pricing-price-wrap">
-              <span class="pricing-from">from</span>
-              <span class="pricing-price">$129</span>
-            </div>
-          </div>
-          <ul class="pricing-features">
-            <li><span class="pricing-check">✓</span> Appliances, sectionals, large freight</li>
-            <li><span class="pricing-check">✓</span> Up to ~5 miles included</li>
-            <li><span class="pricing-check">✓</span> $4.50/mile after</li>
-            <li><span class="pricing-check">✓</span> 2-hour pickup window</li>
-          </ul>
-        </div>
+    <!-- Revenue share callout -->
+    <div class="p-revenue-callout">
+      <div>
+        <div class="p-revenue-callout-text">No other delivery platform shares revenue with the retailer.</div>
+        <p class="p-revenue-callout-sub">GoShare treats retailers as referral channels. Dolly uses in-store signage. Shurget pays you a share of every delivery transaction your customers book — turning your logistics into an income stream.</p>
       </div>
-      <p class="partner-pricing-note">
-        <strong>Volume discounts negotiable</strong> for partners with consistent monthly orders.
-        All prices are end-customer prices — partner rates discussed during pilot.
-      </p>
-    </div>
-  </section>
-
-  <!-- ─── Trust Signals ─── -->
-  <section class="partners-section partners-section--dark" id="trust">
-    <div class="partners-inner">
-      <span class="section-label">Why It Works</span>
-      <h2 class="section-title">Built to be trusted, by both sides of the delivery.</h2>
-      <div class="trust-grid">
-        <div class="trust-item">
-          <div class="trust-num">Live</div>
-          <div class="trust-label">Driver network active in Austin, TX — not simulated</div>
-        </div>
-        <div class="trust-item">
-          <div class="trust-num">2-Way</div>
-          <div class="trust-label">Driver + customer ratings after every delivery</div>
-        </div>
-        <div class="trust-item">
-          <div class="trust-num">Stripe</div>
-          <div class="trust-label">Payments processed via Stripe Checkout — no invoice risk</div>
-        </div>
-        <div class="trust-item">
-          <div class="trust-num">Real-Time</div>
-          <div class="trust-label">Live driver location tracking — customers know exactly where their order is</div>
-        </div>
-        <div class="trust-item">
-          <div class="trust-num">Vetted</div>
-          <div class="trust-label">Drivers screened: ID, insurance, registration on file</div>
-        </div>
-        <div class="trust-item">
-          <div class="trust-num">Same-Day</div>
-          <div class="trust-label">Typical dispatch-to-pickup under 60 minutes in coverage area</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── See it in action ─── -->
-  <section class="partners-section partners-section--alt" id="see-it">
-    <div class="partners-inner" style="text-align:center;">
-      <span class="section-label">See It In Action</span>
-      <h2 class="section-title">One script tag. That's the whole integration.</h2>
-      <p style="color:var(--gray-mid);max-width:540px;margin:0 auto 2.5rem;font-size:1rem;line-height:1.7;">
-        Watch the widget work on a live product page demo — then use the snippet generator to get your exact embed code. Paste it next to your "Add to Cart" button. Done.
-      </p>
-      <a href="/partners/embed" class="btn-cta" style="display:inline-flex;align-items:center;gap:8px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        View Widget Demo
+      <a href="#pilot-form" class="btn-callout">
+        Learn More
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ─── Pilot Request Form ─── -->
-  <section class="partners-section" id="pilot-form">
-    <div class="partners-inner">
-      <div style="text-align:center;margin-bottom:2.5rem;">
-        <span class="section-label">Request a Pilot</span>
-        <h2 class="section-title">Let's run a few deliveries together.</h2>
-        <p style="color:var(--gray-mid);max-width:520px;margin:0 auto;font-size:1rem;line-height:1.7;">Tell us about your operation. We'll follow up within 1 business day to scope a pilot — typically 5–10 deliveries to prove the model for your use case.</p>
-      </div>
-      <div class="partners-form-wrap">
-        <div class="partners-form-card">
-          <div id="form-error" class="form-error"></div>
-          <div id="form-success" class="form-success"></div>
-          <form id="partner-form">
-            <div class="form-section-title">Your Company</div>
-            <div class="form-grid-partners">
-              <div class="form-group">
-                <label for="company_name">Company Name *</label>
-                <input type="text" id="company_name" name="company_name" placeholder="Acme Furniture Co." required>
-              </div>
-              <div class="form-group">
-                <label for="name">Your Name *</label>
-                <input type="text" id="name" name="name" placeholder="Jane Smith" required>
-              </div>
-              <div class="form-group">
-                <label for="email">Work Email *</label>
-                <input type="email" id="email" name="email" placeholder="jane@acmefurniture.com" required>
-              </div>
-              <div class="form-group">
-                <label for="phone">Phone</label>
-                <input type="tel" id="phone" name="phone" placeholder="(512) 555-0100">
-              </div>
-              <div class="form-group">
-                <label for="monthly_volume">Monthly Oversized-Item Volume *</label>
-                <select id="monthly_volume" name="monthly_volume" required>
-                  <option value="" disabled selected>Select a range</option>
-                  <option value="1-10">1–10 deliveries/month</option>
-                  <option value="11-50">11–50 deliveries/month</option>
-                  <option value="51-200">51–200 deliveries/month</option>
-                  <option value="200+">200+ deliveries/month</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="zip_codes_served">ZIP Codes You Serve *</label>
-                <input type="text" id="zip_codes_served" name="zip_codes_served" placeholder="78701, 78704, 78705" required>
-              </div>
-              <div class="form-group full">
-                <label for="item_description">What Items Do You Ship Most?</label>
-                <textarea id="item_description" name="item_description" placeholder="e.g. sofas, dining sets, commercial refrigerators, gym equipment — whatever you need hauled"></textarea>
-              </div>
-            </div>
-            <button type="submit" class="btn-submit" id="submit-btn">Request Pilot →</button>
-            <p style="text-align:center;margin-top:1rem;font-size:0.8rem;color:var(--gray-mid);">No commitment. We'll scope a 5–10 delivery pilot and follow up within 1 business day.</p>
-          </form>
+<!-- ── HOW IT WORKS ──────────────────────────────────────────── -->
+<section class="p-section p-how">
+  <div class="p-inner">
+    <div class="p-eyebrow">How Shurget Solves It</div>
+    <h2 class="p-heading">On-demand. Transparent. <em>Trackable.</em></h2>
+    <p class="p-subtext">We put an on-demand driver network between your floor and your customer's front door — with upfront pricing and a live tracking link on every delivery.</p>
+
+    <div class="p-solution-grid">
+      <div class="p-solution-card">
+        <div class="p-solution-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
         </div>
+        <div class="p-solution-title">On-Demand Driver Network</div>
+        <p class="p-solution-desc">Vetted local drivers with pickup trucks, available same-day. No scheduling lead time. No minimum commitment. Dispatch in under 2 minutes from your dashboard.</p>
+      </div>
+      <div class="p-solution-card">
+        <div class="p-solution-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="p-solution-title">Flat-Rate Upfront Pricing</div>
+        <p class="p-solution-desc">Customers see the exact price before they commit. No hidden fees. No quotes that expire. Small / Medium / Large tiers match your SKU sizes cleanly.</p>
+      </div>
+      <div class="p-solution-card">
+        <div class="p-solution-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="p-solution-title">Live Tracking Links</div>
+        <p class="p-solution-desc">Every order gets a real-time tracking page — driver location, stage timeline, and ETA. No custom development. Your customers stop calling your support line.</p>
+      </div>
+      <div class="p-solution-card">
+        <div class="p-solution-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <div class="p-solution-title">Stripe-Backed Payments</div>
+        <p class="p-solution-desc">Collected at booking via Stripe Checkout. No invoice chasing. No net-30 headaches. Clear reconciliation on every transaction, every time.</p>
+      </div>
+      <div class="p-solution-card">
+        <div class="p-solution-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="p-solution-title">Two-Way Driver Ratings</div>
+        <p class="p-solution-desc">Every delivery is rated by both sides. Low-rated drivers come off the network. Your customers consistently get a professional, accountable experience.</p>
+      </div>
+      <div class="p-solution-card">
+        <div class="p-solution-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.7h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 10.4a16 16 0 0 0 5.68 5.68l1.06-1.06a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.34 17"/></svg>
+        </div>
+        <div class="p-solution-title">Automated Notifications</div>
+        <p class="p-solution-desc">SMS and email confirmations fire automatically — at booking, assignment, and en-route. Your support queue shrinks. Your customers feel taken care of.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <%- include('partials/footer') %>
+<!-- ── INTEGRATION ────────────────────────────────────────────── -->
+<section class="p-section p-integration">
+  <div class="p-inner">
+    <div class="p-eyebrow">Integration Options</div>
+    <h2 class="p-heading">Start shipping this week.<br><em>Scale from there.</em></h2>
+    <p class="p-subtext">No engineering sprint required. Our v1 integration is a manual dashboard handoff — submit orders, assign drivers, ship. The full API and widget layers are ready when you need volume.</p>
 
-  <script>
-    const form = document.getElementById('partner-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const formError = document.getElementById('form-error');
-    const formSuccess = document.getElementById('form-success');
+    <div class="p-integration-grid">
+      <div class="p-int-card p-int-card--active">
+        <span class="p-int-badge p-int-badge--live">Available Now</span>
+        <div class="p-int-title">Dashboard Handoff</div>
+        <p class="p-int-desc">Submit delivery orders through the Shurget dispatch dashboard. Assign drivers, monitor status, and track deliveries live. No API keys. No engineering. Operational in one day.</p>
+        <ul class="p-int-list">
+          <li>Web-based order entry</li>
+          <li>Driver assignment + real-time tracking</li>
+          <li>SMS/email notifications to customers</li>
+          <li>Delivery confirmation + full status history</li>
+        </ul>
+      </div>
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      formError.style.display = 'none';
-      formSuccess.style.display = 'none';
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending...';
+      <div class="p-int-card p-int-card--active">
+        <span class="p-int-badge p-int-badge--live">Available Now</span>
+        <div class="p-int-title">Checkout Widget</div>
+        <p class="p-int-desc">Drop one JavaScript snippet on your product pages. Customers see live Shurget pricing in a modal — no redirect, no new account. Converts at the moment of intent.</p>
+        <ul class="p-int-list">
+          <li>Works on Shopify, WooCommerce, or custom</li>
+          <li>Live pricing by ZIP code</li>
+          <li>One-click delivery booking at checkout</li>
+          <li>Partner attribution tracked per order</li>
+        </ul>
+        <a href="/partners/embed" class="p-int-link">
+          See it live
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
 
-      const data = {
-        company_name:      document.getElementById('company_name').value.trim(),
-        name:              document.getElementById('name').value.trim(),
-        email:             document.getElementById('email').value.trim(),
-        phone:             document.getElementById('phone').value.trim(),
-        monthly_volume:    document.getElementById('monthly_volume').value,
-        zip_codes_served:  document.getElementById('zip_codes_served').value.trim(),
-        item_description:  document.getElementById('item_description').value.trim(),
-        lead_type:         'partner',
-      };
+      <div class="p-int-card">
+        <span class="p-int-badge p-int-badge--soon">On Roadmap</span>
+        <div class="p-int-title">REST API</div>
+        <p class="p-int-desc">Full programmatic control. POST an order from your checkout, get back a tracking URL, and receive webhook events on every status change. Integrate directly into your OMS.</p>
+        <ul class="p-int-list">
+          <li>Order creation endpoint</li>
+          <li>Webhook events (booked, assigned, delivered)</li>
+          <li>Tracking URL returned at order creation</li>
+          <li>Sandbox environment for testing</li>
+        </ul>
+        <a href="/partners/integration-kit" class="p-int-link" style="color:#888;">
+          View Integration Kit
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
-      try {
-        const res = await fetch('/api/partners/lead', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-        });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error || 'Something went wrong.');
-        formSuccess.textContent = json.message;
-        formSuccess.style.display = 'block';
-        form.reset();
-        // Scroll to success message
-        formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      } catch (err) {
-        formError.textContent = err.message;
-        formError.style.display = 'block';
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Request Pilot →';
-      }
-    });
-  </script>
-  <!--  Analytics --><script>(function(){var slug="shurget-5";if(!slug)return;var vid=localStorage.getItem('_vid');if(!vid){vid='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return (c==='x'?r:(r&0x3|0x8)).toString(16);});localStorage.setItem('_vid',vid);}new Image().src='https://.com/api/beacon/pixel?s='+encodeURIComponent(slug)+'&v='+encodeURIComponent(vid);})();</script>
+<!-- ── PRICING ───────────────────────────────────────────────── -->
+<section class="p-section p-pricing">
+  <div class="p-inner">
+    <div class="p-eyebrow">Pricing Model</div>
+    <h2 class="p-heading p-heading--white">Simple tiers.<br><em>Volume discounts available.</em></h2>
+    <p class="p-subtext p-subtext--white">Pricing is based on item size and distance. No subscription. No per-seat fees. Partners with 20+ deliveries/month qualify for volume pricing — ask about it in your pilot request.</p>
+
+    <div class="p-pricing-grid">
+      <div class="p-price-card">
+        <div class="p-price-tier">Small Items</div>
+        <div class="p-price-amount">
+          <span class="p-price-from">from</span>
+          <span class="p-price-num">$49</span>
+        </div>
+        <ul class="p-price-list">
+          <li><span class="p-price-check">✓</span> Single boxes, chairs, small appliances</li>
+          <li><span class="p-price-check">✓</span> Up to ~5 miles included</li>
+          <li><span class="p-price-check">✓</span> $2.50/mile after</li>
+          <li><span class="p-price-check">✓</span> 1-hour pickup window</li>
+        </ul>
+      </div>
+      <div class="p-price-card p-price-card--featured">
+        <div class="p-price-badge">Most Common</div>
+        <div class="p-price-tier">Medium Items</div>
+        <div class="p-price-amount">
+          <span class="p-price-from">from</span>
+          <span class="p-price-num">$89</span>
+        </div>
+        <ul class="p-price-list">
+          <li><span class="p-price-check">✓</span> Sofas, dressers, desks, mirrors</li>
+          <li><span class="p-price-check">✓</span> Up to ~5 miles included</li>
+          <li><span class="p-price-check">✓</span> $3.50/mile after</li>
+          <li><span class="p-price-check">✓</span> 1-hour pickup window</li>
+        </ul>
+      </div>
+      <div class="p-price-card">
+        <div class="p-price-tier">Large Items</div>
+        <div class="p-price-amount">
+          <span class="p-price-from">from</span>
+          <span class="p-price-num">$129</span>
+        </div>
+        <ul class="p-price-list">
+          <li><span class="p-price-check">✓</span> Appliances, sectionals, large freight</li>
+          <li><span class="p-price-check">✓</span> Up to ~5 miles included</li>
+          <li><span class="p-price-check">✓</span> $4.50/mile after</li>
+          <li><span class="p-price-check">✓</span> 2-hour pickup window</li>
+        </ul>
+      </div>
+    </div>
+    <p class="p-pricing-note"><strong>Volume discounts negotiable</strong> for partners with consistent monthly orders. All prices are end-customer prices — partner rates discussed during pilot.</p>
+  </div>
+</section>
+
+<!-- ── TRUST SIGNALS ─────────────────────────────────────────── -->
+<section class="p-section p-trust">
+  <div class="p-inner">
+    <div class="p-eyebrow">Why It Works</div>
+    <h2 class="p-heading p-heading--white">Built to be trusted —<br><em>by both sides of the delivery.</em></h2>
+    <div class="p-trust-grid">
+      <div class="p-trust-item">
+        <div class="p-trust-val">Live</div>
+        <div class="p-trust-lbl">Driver network active — not simulated, not a waitlist</div>
+      </div>
+      <div class="p-trust-item">
+        <div class="p-trust-val">2-Way</div>
+        <div class="p-trust-lbl">Driver + customer ratings after every single delivery</div>
+      </div>
+      <div class="p-trust-item">
+        <div class="p-trust-val">Stripe</div>
+        <div class="p-trust-lbl">Payments via Stripe Checkout — no invoice risk, clean reconciliation</div>
+      </div>
+      <div class="p-trust-item">
+        <div class="p-trust-val">Real-Time</div>
+        <div class="p-trust-lbl">Live driver location tracking on every order</div>
+      </div>
+      <div class="p-trust-item">
+        <div class="p-trust-val">Vetted</div>
+        <div class="p-trust-lbl">Drivers screened: ID, insurance, registration on file before first job</div>
+      </div>
+      <div class="p-trust-item">
+        <div class="p-trust-val">Same-Day</div>
+        <div class="p-trust-lbl">Dispatch-to-pickup under 60 minutes in coverage area</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PILOT FORM ────────────────────────────────────────────── -->
+<section class="p-section p-form-section" id="pilot-form">
+  <div class="p-inner">
+    <div style="text-align:center;margin-bottom:2.5rem;">
+      <div class="p-eyebrow" style="justify-content:center;">Request a Pilot</div>
+      <h2 class="p-heading" style="margin-bottom:.75rem;">Let's run a few<br><em>deliveries together.</em></h2>
+      <p class="p-subtext" style="margin:0 auto;text-align:center;">Tell us about your operation. We scope a 5–10 delivery pilot to prove the model for your use case — and follow up within 1 business day.</p>
+    </div>
+    <div class="p-form-wrap">
+      <div class="p-form-card">
+        <div id="p-form-error" class="p-form-error"></div>
+        <div id="p-form-success" class="p-form-success"></div>
+        <form id="partner-form" novalidate>
+          <div class="p-form-heading">Your Company</div>
+          <div class="p-form-grid">
+            <div class="p-field">
+              <label for="company_name">Company Name *</label>
+              <input type="text" id="company_name" name="company_name" placeholder="Acme Furniture Co." required>
+            </div>
+            <div class="p-field">
+              <label for="name">Your Name *</label>
+              <input type="text" id="name" name="name" placeholder="Jane Smith" required>
+            </div>
+            <div class="p-field">
+              <label for="email">Work Email *</label>
+              <input type="email" id="email" name="email" placeholder="jane@acmefurniture.com" required>
+            </div>
+            <div class="p-field">
+              <label for="phone">Phone</label>
+              <input type="tel" id="phone" name="phone" placeholder="(512) 555-0100">
+            </div>
+            <div class="p-field">
+              <label for="monthly_volume">Monthly Delivery Volume *</label>
+              <select id="monthly_volume" name="monthly_volume" required>
+                <option value="" disabled selected>Select a range</option>
+                <option value="1-10">1–10 deliveries/month</option>
+                <option value="11-50">11–50 deliveries/month</option>
+                <option value="51-200">51–200 deliveries/month</option>
+                <option value="200+">200+ deliveries/month</option>
+              </select>
+            </div>
+            <div class="p-field">
+              <label for="zip_codes_served">ZIP Codes You Serve *</label>
+              <input type="text" id="zip_codes_served" name="zip_codes_served" placeholder="78701, 78704, 78705" required>
+            </div>
+            <div class="p-field full">
+              <label for="item_description">What Items Do You Ship Most?</label>
+              <textarea id="item_description" name="item_description" placeholder="e.g. sofas, dining sets, commercial refrigerators, gym equipment — anything that needs a truck"></textarea>
+            </div>
+          </div>
+          <button type="submit" class="p-form-submit" id="submit-btn">
+            Request Pilot
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+          <p class="p-form-fine">No commitment. We'll scope a 5–10 delivery pilot and follow up within 1 business day.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA STRIP ───────────────────────────────────────── -->
+<section class="p-cta-strip">
+  <h2 class="p-heading">Ready to close more sales?</h2>
+  <p>Stop losing customers at the finish line. Shurget puts same-day delivery on your floor — and puts revenue back in your pocket.</p>
+  <div class="p-cta-actions">
+    <a href="#pilot-form" class="btn-primary-p">Request a Pilot</a>
+    <a href="/partners/embed" class="btn-ghost-p">View Widget Demo</a>
+  </div>
+</section>
+
+<script>
+(function () {
+  const form       = document.getElementById('partner-form');
+  const submitBtn  = document.getElementById('submit-btn');
+  const formError  = document.getElementById('p-form-error');
+  const formSuccess= document.getElementById('p-form-success');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formError.style.display = 'none';
+    formSuccess.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Sending…';
+
+    const data = {
+      company_name:     document.getElementById('company_name').value.trim(),
+      name:             document.getElementById('name').value.trim(),
+      email:            document.getElementById('email').value.trim(),
+      phone:            document.getElementById('phone').value.trim(),
+      monthly_volume:   document.getElementById('monthly_volume').value,
+      zip_codes_served: document.getElementById('zip_codes_served').value.trim(),
+      item_description: document.getElementById('item_description').value.trim(),
+      lead_type:        'partner',
+    };
+
+    try {
+      const res  = await fetch('/api/partners/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Something went wrong.');
+      formSuccess.textContent = json.message;
+      formSuccess.style.display = 'block';
+      form.reset();
+      formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err) {
+      formError.textContent = err.message;
+      formError.style.display = 'block';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Request Pilot <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+    }
+  });
+})();
+</script>
+
+</main>
+
+<%- include('partials/footer') %>
 </body>
 </html>
