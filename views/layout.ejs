@@ -4,14 +4,132 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title || 'Shurget — On-Demand Pickup Truck Delivery' %></title>
+
+  <!-- Canonical -->
+  <link rel="canonical" href="<%= canonical || 'https://shurget.com/' %>" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Shurget" />
+  <meta property="og:url" content="<%= ogUrl || 'https://shurget.com/' %>" />
+  <meta property="og:title" content="<%= ogTitle || 'Shurget — On-Demand Pickup Truck Delivery' %>" />
+  <meta property="og:description" content="<%= ogDesc || 'Same-day pickup truck delivery for furniture, appliances & oversized items. Flat-rate pricing from $49+. Book in 60 seconds.' %>" />
+  <meta property="og:image" content="<%= ogImage || 'https://shurget.com/images/shurget-og.jpg' %>" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@shurget" />
+  <meta name="twitter:title" content="<%= ogTitle || 'Shurget — On-Demand Pickup Truck Delivery' %>" />
+  <meta name="twitter:description" content="<%= ogDesc || 'Same-day pickup truck delivery for furniture, appliances & oversized items. Flat-rate pricing from $49+. Book in 60 seconds.' %>" />
+  <meta name="twitter:image" content="<%= ogImage || 'https://shurget.com/images/shurget-og.jpg' %>" />
+
+  <!-- Preconnect for fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="/css/theme.css">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://shurget.com/#business",
+      "name": "Shurget",
+      "alternateName": "Shurget Pickup Truck Delivery",
+      "description": "On-demand same-day pickup truck delivery marketplace for furniture, appliances, and oversized items. Book in 60 seconds with flat-rate pricing and vetted local drivers.",
+      "url": "https://shurget.com",
+      "logo": "https://shurget.com/images/shurget-logo-nav.png",
+      "telephone": "+17205860589",
+      "priceRange": "$$",
+      "currenciesAccepted": "USD",
+      "paymentAccepted": "Credit Card",
+      "address": { "@type": "PostalAddress", "addressCountry": "US" },
+      "areaServed": [{ "@type": "Country", "name": "United States" }],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "07:00",
+        "closes": "22:00"
+      },
+      "sameAs": [
+        "https://www.instagram.com/shurget",
+        "https://www.facebook.com/shurget",
+        "https://www.linkedin.com/company/shurget",
+        "https://twitter.com/shurget"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does Shurget work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Enter your pickup and drop-off addresses, select your item type, and get an instant flat-rate quote. Checkout takes 30 seconds via Stripe — your card is only charged once your driver confirms the job. A vetted local driver arrives at the scheduled time, loads your item, and delivers it the same day."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does Shurget cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Shurget offers flat-rate pricing starting at $49+. You receive an instant quote when you enter your addresses and item type. No hidden fees, no per-minute billing, no surprises."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How fast is Shurget delivery?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Shurget is a same-day delivery service. Once you book, a local vetted driver is dispatched and can typically arrive within a few hours depending on your location and time of day."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What items can Shurget deliver?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Shurget delivers furniture, appliances, oversized items, marketplace finds from Facebook Marketplace or Craigslist, building materials, mattresses, and any large item that fits in a pickup truck bed."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are Shurget drivers background-checked?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. All Shurget drivers are vetted local drivers screened before joining the platform. Shurget handles driver vetting, booking, logistics, and payment processing."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "HowTo",
+      "name": "How to Book Same-Day Pickup Truck Delivery with Shurget",
+      "description": "Book on-demand same-day pickup truck delivery in under 60 seconds.",
+      "step": [
+        { "@type": "HowToStep", "position": 1, "name": "Enter Addresses", "text": "Enter your pickup address and drop-off address." },
+        { "@type": "HowToStep", "position": 2, "name": "Get Instant Quote", "text": "Select item type and receive a flat-rate quote instantly." },
+        { "@type": "HowToStep", "position": 3, "name": "Checkout in 30 Seconds", "text": "Pay via Stripe. Card charged only when driver confirms." },
+        { "@type": "HowToStep", "position": 4, "name": "Driver Delivers", "text": "A vetted local driver arrives, loads your item, delivers same day." }
+      ]
+    }
+  ]
+}
+  </script>
 </head>
 <body>
 
 <%- include('partials/nav') %>
 
-<div class="main-content">
+<div class="main-content" id="main-content">
   <%- typeof body !== 'undefined' ? body : (typeof content !== 'undefined' ? content : '') %>
 </div>
 
