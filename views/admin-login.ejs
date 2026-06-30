@@ -9,107 +9,182 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/theme.css">
   <style>
-    body { background: var(--bg); }
-
-    .login-page {
-      min-height: 100vh;
+    /* ── Admin Login — Shurget Brand System ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      background: #0a0a0a;
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
       padding: 2rem 1.5rem;
+      position: relative;
+      overflow: hidden;
     }
 
-    .login-card {
-      background: var(--white);
-      border: 1.5px solid var(--gray-light);
-      border-radius: 16px;
-      padding: 3rem 2.5rem;
+    /* Radial glow backdrop */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(234,88,12,.13) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .login-wrap {
+      position: relative;
+      z-index: 1;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
     }
 
-    .login-logo {
+    /* Logo / brand mark above card */
+    .login-brand {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .login-brand-logo {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.5rem;
-      letter-spacing: 0.12em;
-      color: var(--charcoal);
-      text-align: center;
-      margin-bottom: 0.25rem;
+      font-size: 2.4rem;
+      letter-spacing: .14em;
+      color: #fff;
+      line-height: 1;
     }
-
-    .login-tagline {
-      text-align: center;
-      color: var(--gray-mid);
-      font-size: 0.9rem;
-      margin-bottom: 2.5rem;
-    }
-
-    .form-group { margin-bottom: 1.25rem; }
-
-    .form-label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--charcoal);
-      margin-bottom: 0.4rem;
-      letter-spacing: 0.02em;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1.5px solid var(--gray-light);
-      border-radius: 8px;
-      font-size: 0.95rem;
+    .login-brand-logo span { color: #ea580c; }
+    .login-brand-sub {
       font-family: 'DM Sans', sans-serif;
-      box-sizing: border-box;
-      transition: border-color 0.2s;
-      outline: none;
+      font-size: .78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: rgba(255,255,255,.35);
+      margin-top: .35rem;
     }
 
-    .form-input:focus { border-color: var(--orange); }
+    /* Card */
+    .login-card {
+      background: #111;
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 16px;
+      padding: 2.5rem 2.25rem;
+      box-shadow: 0 24px 60px rgba(0,0,0,.6);
+    }
+    .login-card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: .08em;
+      color: #fff;
+      margin-bottom: .25rem;
+    }
+    .login-card-sub {
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      color: rgba(255,255,255,.38);
+      margin-bottom: 2rem;
+    }
 
+    /* Error state */
     .login-error {
-      background: #fff0f0;
-      border: 1.5px solid #f5c6c6;
+      background: rgba(220,38,38,.1);
+      border: 1px solid rgba(220,38,38,.35);
       border-radius: 8px;
-      padding: 0.75rem 1rem;
-      color: #c0392b;
-      font-size: 0.875rem;
+      padding: .75rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      color: #fca5a5;
       margin-bottom: 1.25rem;
     }
 
-    .login-btn {
+    /* Form */
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(255,255,255,.5);
+      margin-bottom: .4rem;
+    }
+    .form-input {
       width: 100%;
-      padding: 0.85rem;
-      background: var(--orange);
-      color: var(--white);
-      border: none;
+      padding: .8rem 1rem;
+      background: #0a0a0a;
+      border: 1.5px solid rgba(255,255,255,.12);
       border-radius: 8px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
+      font-size: .95rem;
+      color: #fff;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-input::placeholder { color: rgba(255,255,255,.25); }
+    .form-input:focus {
+      border-color: #ea580c;
+      box-shadow: 0 0 0 3px rgba(234,88,12,.12);
     }
 
-    .login-btn:hover { background: var(--orange-light); }
+    /* Submit button */
+    .login-btn {
+      width: 100%;
+      padding: .9rem;
+      background: #b84000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: .1em;
+      cursor: pointer;
+      transition: background .2s, transform .15s;
+      margin-top: .5rem;
+    }
+    .login-btn:hover { background: #9e3800; transform: translateY(-1px); }
+    .login-btn:focus-visible { outline: 2px solid #ea580c; outline-offset: 2px; }
 
+    /* Back link */
     .login-footer {
       text-align: center;
       margin-top: 1.5rem;
-      font-size: 0.8rem;
-      color: var(--gray-mid);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .78rem;
+      color: rgba(255,255,255,.3);
     }
+    .login-footer a {
+      color: rgba(255,255,255,.45);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .login-footer a:hover { color: #ea580c; }
 
-    .login-footer a { color: var(--orange); text-decoration: none; font-weight: 500; }
+    /* Orange bottom accent line on card */
+    .login-card::after {
+      content: '';
+      display: block;
+      height: 3px;
+      background: linear-gradient(90deg, #b84000, #ea580c);
+      border-radius: 0 0 16px 16px;
+      margin: 2rem -2.25rem -2.5rem;
+    }
   </style>
 </head>
 <body>
-  <div class="login-page">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="login-brand-logo">SHUR<span>GET</span></div>
+      <div class="login-brand-sub">Admin Portal</div>
+    </div>
+
     <div class="login-card">
-      <div class="login-logo">Shurget</div>
-      <p class="login-tagline">Admin portal</p>
+      <div class="login-card-title">Sign In</div>
+      <p class="login-card-sub">Restricted access — authorized personnel only.</p>
 
       <% if (error) { %>
         <div class="login-error"><%= error %></div>
@@ -118,20 +193,18 @@
       <form method="POST" action="/admin/login">
         <div class="form-group">
           <label class="form-label" for="username">Username</label>
-          <input class="form-input" type="text" id="username" name="username" autocomplete="username" required autofocus>
+          <input class="form-input" type="text" id="username" name="username" autocomplete="username" required autofocus placeholder="admin">
         </div>
-
         <div class="form-group">
           <label class="form-label" for="password">Password</label>
-          <input class="form-input" type="password" id="password" name="password" autocomplete="current-password" required>
+          <input class="form-input" type="password" id="password" name="password" autocomplete="current-password" required placeholder="••••••••">
         </div>
-
-        <button type="submit" class="login-btn">Sign in</button>
+        <button type="submit" class="login-btn">Access Admin →</button>
       </form>
+    </div>
 
-      <div class="login-footer">
-        <a href="/">← Back to Shurget</a>
-      </div>
+    <div class="login-footer">
+      <a href="/">← Back to Shurget</a>
     </div>
   </div>
 </body>
