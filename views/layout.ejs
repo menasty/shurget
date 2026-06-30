@@ -3,42 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title || 'Shurget - Pickup Truck Delivery' %></title>
+  <title><%= title || 'Shurget — On-Demand Pickup Truck Delivery' %></title>
   <link rel="stylesheet" href="/css/theme.css">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
-  <nav>
-    <a href="/" class="nav-logo">
-      <img src="/images/shurget-logo.png" alt="Shurget" style="height: 72px; width: auto;">
-    </a>
-    <div class="nav-links">
-      <a href="/book">Book a Haul</a>
-      <a href="/drive">Become a Driver</a>
-      <a href="/partners">For Businesses</a>
-    </div>
-  </nav>
 
-  <!-- Hero -->
-  <header class="hero">
-    <div class="hero-content">
-      <h1>Need a Truck?</h1>
-      <p class="hero-subtitle">Same-day pickup truck delivery for anything that won't fit in your car.</p>
-      <a href="/book" class="btn-primary hero-btn">Book a Haul Now →</a>
-    </div>
-  </header>
+<%- include('partials/nav') %>
 
-  <div class="main-content">
-    <%- typeof body !== 'undefined' ? body : (typeof content !== 'undefined' ? content : '') %>
-  </div>
+<div class="main-content">
+  <%- typeof body !== 'undefined' ? body : (typeof content !== 'undefined' ? content : '') %>
+</div>
 
-  <footer>
-    <p>&copy; 2026 Shurget. All Rights Reserved.</p>
-    <p>
-      <a href="/terms">Terms</a> • 
-      <a href="/privacy">Privacy</a> • 
-      <a href="/contact">Contact</a>
-    </p>
-  </footer>
+<%- include('partials/footer') %>
+
 </body>
 </html>

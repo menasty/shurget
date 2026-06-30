@@ -1,13 +1,29 @@
-<nav class="nav">
-  <div class="nav-inner">
-    <a href="/" class="nav-logo">
-      <img src="/images/shurget-logo.png" alt="Shurget" style="height: 52px; width: auto;">
-    </a>
-    <div class="nav-right">
-      <a href="/help" class="nav-link">Help</a>
-      <a href="/partners" class="nav-link">Partners</a>
-      <a href="/contact" class="nav-link">Contact</a>
-      <a href="/book" class="nav-cta">Book Now</a>
-    </div>
+<nav class="site-nav" id="site-nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/shurget-logo.png" alt="Shurget" />
+  </a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">&#9776;</button>
+  <div class="nav-links" id="nav-links">
+    <a href="/book" class="nav-link">Book a Haul</a>
+    <a href="/drive" class="nav-link">Drive</a>
+    <a href="/partners" class="nav-link">For Business</a>
+    <a href="/help" class="nav-link">Help</a>
+    <a href="/book" class="nav-cta">Get Started →</a>
   </div>
 </nav>
+<script>
+  (function() {
+    const toggle = document.getElementById('nav-toggle');
+    const links  = document.getElementById('nav-links');
+    const nav    = document.getElementById('site-nav');
+    if (toggle && links) {
+      toggle.addEventListener('click', () => {
+        links.classList.toggle('open');
+        toggle.innerHTML = links.classList.contains('open') ? '&times;' : '&#9776;';
+      });
+    }
+    window.addEventListener('scroll', () => {
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+  })();
+</script>

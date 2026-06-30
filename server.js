@@ -128,7 +128,7 @@ app.get('/notify', (_req, res) => res.render('notify'));
 
 // Home
 app.get('/', (req, res) => {
-  res.render('layout', { title: 'Shurget - Pickup Truck Delivery' });
+  res.render('index', { title: 'Shurget — On-Demand Pickup Truck Delivery' });
 });
 
 app.get('/health', (req, res) => res.json({ status: 'healthy' }));

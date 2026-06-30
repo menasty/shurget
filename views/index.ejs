@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shurget — On-Demand Pickup Truck Delivery</title>
+  <meta name="description" content="Same-day pickup truck delivery for furniture, appliances, and oversized items. Book in 60 seconds. Delivered today by a vetted local driver.">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<%- include('partials/nav') %>
+<!-- ══════════════════════════════════════════════════════════
+     SHURGET HOMEPAGE — views/index.ejs
+     Sections:
+       1. Hero
+       2. Trust bar
+       3. Problem / stats (the "last mile" pain)
+       4. How it works
+       5. Driver section
+       6. Business / partner section
+       7. Final CTA
+     ══════════════════════════════════════════════════════════ -->
+
+<!-- ── 1. HERO ─────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">On-Demand · Same Day · Your City</div>
+    <h1 class="hero-headline">The Truck<br>Comes to You.</h1>
+    <p class="hero-sub">Furniture, appliances, marketplace finds — booked in 60 seconds, delivered today by a vetted local driver in a pickup truck.</p>
+    <div class="hero-actions">
+      <a href="/book" class="btn-hero-primary">Book a Haul Now →</a>
+      <a href="#how-it-works" class="btn-hero-ghost">See How It Works</a>
+    </div>
+    <div class="hero-proof">
+      <span>✓ No subscription</span>
+      <span>✓ Instant quote</span>
+      <span>✓ Real-time tracking</span>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>↓</span>
+  </div>
+</section>
+
+<!-- ── 2. TRUST BAR ───────────────────────────────────────────── -->
+<section class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-item">
+      <div class="trust-num">60s</div>
+      <div class="trust-label">Average booking time</div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-num">Same Day</div>
+      <div class="trust-label">Delivery available</div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-num">$49+</div>
+      <div class="trust-label">Flat-rate pricing</div>
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <div class="trust-num">100%</div>
+      <div class="trust-label">Vetted local drivers</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 3. THE PROBLEM / STATS ─────────────────────────────────── -->
+<section class="problem-section" id="problem">
+  <div class="section-inner">
+    <div class="section-label">The Last Mile Problem</div>
+    <h2 class="section-headline">You Found the Perfect Piece.<br>Now What?</h2>
+    <p class="section-sub">Millions of purchases stall at the finish line every day — not because the item is wrong, but because getting it home is too hard, too expensive, or too slow.</p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🛋️</div>
+        <div class="stat-value">1 in 3</div>
+        <div class="stat-desc">furniture purchases are abandoned or delayed because the buyer has no way to transport it home.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💸</div>
+        <div class="stat-value">$200–$500</div>
+        <div class="stat-desc">is what traditional moving companies charge for a single large-item delivery — often with a 2-week wait.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value">62%</div>
+        <div class="stat-desc">of marketplace buyers say "no delivery option" is their #1 reason for not completing a purchase.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-value">Today</div>
+        <div class="stat-desc">Shurget delivers in hours, not days — at a fraction of the cost of traditional delivery services.</div>
+      </div>
+    </div>
+
+    <div class="problem-callout">
+      <div class="callout-text">
+        <h3>The gap between "I want it" and "I have it" costs buyers money, time, and frustration.</h3>
+        <p>Shurget closes that gap. A vetted local driver with a pickup truck shows up, loads your item, and delivers it — today.</p>
+      </div>
+      <a href="/book" class="btn-primary">Book Your Haul →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── 4. HOW IT WORKS ────────────────────────────────────────── -->
+<section class="how-section" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-label">Simple by Design</div>
+    <h2 class="section-headline">Three Steps.<br>Done.</h2>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">01</div>
+        <div class="step-icon">📍</div>
+        <h3>Tell Us What & Where</h3>
+        <p>Enter your pickup and drop-off addresses, select your item type, and get an instant flat-rate quote. No surprises.</p>
+      </div>
+      <div class="step-connector">→</div>
+      <div class="step-card">
+        <div class="step-number">02</div>
+        <div class="step-icon">💳</div>
+        <h3>Pay Securely</h3>
+        <p>Checkout takes 30 seconds via Stripe. Your card is only charged once your driver confirms the job.</p>
+      </div>
+      <div class="step-connector">→</div>
+      <div class="step-card">
+        <div class="step-number">03</div>
+        <div class="step-icon">🚛</div>
+        <h3>Your Driver Arrives</h3>
+        <p>A local vetted driver with a pickup truck arrives at the scheduled time, loads your item, and delivers it to your door.</p>
+      </div>
+    </div>
+
+    <div class="items-section">
+      <div class="section-label" style="margin-bottom:1.5rem;">We haul anything that fits in a truck bed</div>
+      <div class="items-grid">
+        <div class="item-chip">🛋️ Furniture</div>
+        <div class="item-chip">🛏️ Mattresses</div>
+        <div class="item-chip">🧺 Appliances</div>
+        <div class="item-chip">🏗️ Building Materials</div>
+        <div class="item-chip">🌿 Landscaping</div>
+        <div class="item-chip">📦 Moving Boxes</div>
+        <div class="item-chip">🛒 Marketplace Pickups</div>
+        <div class="item-chip">🛍️ Retail Runs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 5. DRIVER SECTION ──────────────────────────────────────── -->
+<section class="driver-section" id="drivers">
+  <div class="driver-inner">
+    <div class="driver-text">
+      <div class="section-label light">For Drivers</div>
+      <h2 class="section-headline light">Your Truck<br>Is an Asset.<br>Start Using It.</h2>
+      <p class="driver-sub">If you own a pickup truck, you're sitting on an income source you haven't tapped yet. Shurget connects you with customers who need exactly what you have — today, on your schedule.</p>
+
+      <div class="driver-perks">
+        <div class="perk">
+          <div class="perk-icon">💰</div>
+          <div class="perk-text">
+            <strong>$50–$150 per job</strong>
+            <span>Keep the lion's share of every fare. No rental fees, no vehicle costs — just your truck and your time.</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-icon">🗓️</div>
+          <div class="perk-text">
+            <strong>You set the schedule</strong>
+            <span>Pick up jobs when it works for you. Accept a haul on a Saturday morning or squeeze one in after work. No shifts, no boss.</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-icon">👆</div>
+          <div class="perk-text">
+            <strong>You choose every job</strong>
+            <span>Review the pickup location, drop-off, item type, and payout before accepting. Never take a job you don't want.</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-icon">⚡</div>
+          <div class="perk-text">
+            <strong>Same-day payouts</strong>
+            <span>Earnings transfer directly to your bank via Stripe. No waiting weeks for a check.</span>
+          </div>
+        </div>
+      </div>
+
+      <a href="/drive" class="btn-driver">Apply to Drive — It's Free →</a>
+    </div>
+
+    <div class="driver-earnings-card">
+      <div class="earnings-label">Driver Earnings Estimate</div>
+      <div class="earnings-scenario">
+        <div class="scenario-name">Weekend Warrior</div>
+        <div class="scenario-desc">4 jobs on Saturday + Sunday</div>
+        <div class="scenario-amount">$280 – $480</div>
+        <div class="scenario-note">per weekend</div>
+      </div>
+      <div class="earnings-divider"></div>
+      <div class="earnings-scenario">
+        <div class="scenario-name">Part-Time Driver</div>
+        <div class="scenario-desc">10–12 jobs per week</div>
+        <div class="scenario-amount">$700 – $1,200</div>
+        <div class="scenario-note">per week</div>
+      </div>
+      <div class="earnings-divider"></div>
+      <div class="earnings-scenario">
+        <div class="scenario-name">Full-Time Hauler</div>
+        <div class="scenario-desc">20–25 jobs per week</div>
+        <div class="scenario-amount">$1,400 – $2,800</div>
+        <div class="scenario-note">per week</div>
+      </div>
+      <div class="earnings-disclaimer">Estimates based on average job payouts. Actual earnings vary by market and availability.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 6. BUSINESS / PARTNER SECTION ─────────────────────────── -->
+<section class="business-section" id="business">
+  <div class="section-inner">
+    <div class="section-label">For Small Businesses</div>
+    <h2 class="section-headline">Stop Losing Sales<br>at the Finish Line.</h2>
+    <p class="section-sub">If your customers can't get their purchase home, they don't buy. It's that simple. Shurget gives your business an on-demand delivery option without hiring a driver, buying a truck, or building any infrastructure.</p>
+
+    <div class="business-grid">
+      <div class="business-card">
+        <div class="business-icon">📉</div>
+        <h3>The Sales You're Losing</h3>
+        <p>Furniture stores, appliance dealers, hardware stores, and home goods retailers lose 20–40% of potential sales because customers walk away when delivery is too expensive, too slow, or simply unavailable.</p>
+      </div>
+      <div class="business-card">
+        <div class="business-icon">🤝</div>
+        <h3>The Shurget Partnership</h3>
+        <p>Join our pilot program and offer same-day on-demand truck delivery to your customers at the point of sale. We handle the driver, the booking, the logistics, and the payment — you just close more deals.</p>
+      </div>
+      <div class="business-card highlight-card">
+        <div class="business-icon">💵</div>
+        <h3>Pilot Program Incentives</h3>
+        <p>Early business partners retain an exceptionally large share of the delivery transaction value. As a founding partner, your business earns meaningful revenue on every haul booked through your storefront — turning delivery from a cost center into a revenue stream.</p>
+        <a href="/partners" class="btn-business">Learn About Partnership →</a>
+      </div>
+    </div>
+
+    <div class="business-logos-label">Ideal for businesses like these</div>
+    <div class="business-types">
+      <div class="biz-type">🛋️ Furniture Stores</div>
+      <div class="biz-type">🧺 Appliance Dealers</div>
+      <div class="biz-type">🏗️ Hardware & Lumber</div>
+      <div class="biz-type">🌿 Garden Centers</div>
+      <div class="biz-type">🖼️ Antique Shops</div>
+      <div class="biz-type">🏠 Estate Sales</div>
+      <div class="biz-type">📦 Moving Suppliers</div>
+      <div class="biz-type">🎨 Home Décor</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 7. FINAL CTA ───────────────────────────────────────────── -->
+<section class="final-cta">
+  <div class="cta-inner">
+    <h2 class="cta-headline">Ready to Move?</h2>
+    <p class="cta-sub">Book in 60 seconds. A driver is standing by.</p>
+    <div class="cta-actions">
+      <a href="/book" class="btn-hero-primary">Book a Haul Now →</a>
+      <a href="/drive" class="btn-hero-ghost">Become a Driver</a>
+      <a href="/partners" class="btn-hero-ghost">Partner With Us</a>
+    </div>
+  </div>
+</section>
+
+<style>
+/* ── HOME PAGE STYLES ── */
+
+/* Hero */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(234,88,12,.18) 0%, transparent 50%),
+    linear-gradient(rgba(0,0,0,.72), rgba(0,0,0,.72)),
+    url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1800&q=80') center/cover no-repeat;
+  z-index: 0;
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 860px;
+  padding: 2rem 1.5rem;
+  color: #fff;
+}
+.hero-eyebrow {
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #ea580c;
+  margin-bottom: 1.25rem;
+}
+.hero-headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4rem, 10vw, 8rem);
+  line-height: .95;
+  letter-spacing: .03em;
+  margin-bottom: 1.5rem;
+  color: #fff;
+}
+.hero-sub {
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  color: rgba(255,255,255,.8);
+  max-width: 640px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.65;
+}
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.btn-hero-primary {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  background: #ea580c;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .2s, transform .2s;
+}
+.btn-hero-primary:hover { background: #d14a00; transform: translateY(-2px); }
+.btn-hero-ghost {
+  display: inline-block;
+  padding: 1rem 2.5rem;
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.85);
+  border: 1.5px solid rgba(255,255,255,.2);
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .2s;
+}
+.btn-hero-ghost:hover { background: rgba(255,255,255,.15); }
+.hero-proof {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-size: .82rem;
+  color: rgba(255,255,255,.5);
+}
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,.3);
+  font-size: 1.5rem;
+  animation: bounce 2s infinite;
+  z-index: 1;
+}
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+/* Trust bar */
+.trust-bar {
+  background: #1a1a1a;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.trust-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+.trust-item {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  padding: .75rem 1rem;
+}
+.trust-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: .04em;
+  color: #ea580c;
+  line-height: 1;
+  margin-bottom: .25rem;
+}
+.trust-label {
+  font-size: .72rem;
+  color: rgba(255,255,255,.45);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-weight: 600;
+}
+.trust-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255,255,255,.1);
+}
+
+/* Shared section styles */
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem;
+}
+.section-label {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #ea580c;
+  margin-bottom: .875rem;
+}
+.section-label.light { color: rgba(234,88,12,.8); }
+.section-headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  letter-spacing: .03em;
+  line-height: 1.0;
+  margin-bottom: 1.25rem;
+  color: #111;
+}
+.section-headline.light { color: #fff; }
+.section-sub {
+  font-size: 1.05rem;
+  color: #555;
+  max-width: 680px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+}
+
+/* Problem / stats */
+.problem-section { background: #f8f7f5; }
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 3.5rem;
+}
+.stat-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 2rem 1.5rem;
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 2px 16px rgba(0,0,0,.04);
+  transition: transform .2s, box-shadow .2s;
+}
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,.08); }
+.stat-icon { font-size: 2rem; margin-bottom: .875rem; }
+.stat-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.6rem;
+  color: #ea580c;
+  letter-spacing: .03em;
+  line-height: 1;
+  margin-bottom: .625rem;
+}
+.stat-desc { font-size: .875rem; color: #666; line-height: 1.6; }
+.problem-callout {
+  background: #111;
+  border-radius: 16px;
+  padding: 2.5rem 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+.callout-text h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.9rem;
+  color: #fff;
+  letter-spacing: .03em;
+  margin-bottom: .625rem;
+  line-height: 1.1;
+}
+.callout-text p { font-size: .95rem; color: rgba(255,255,255,.6); line-height: 1.65; max-width: 520px; }
+.btn-primary {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: #ea580c;
+  color: #fff;
+  border-radius: 10px;
+  font-size: .95rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .2s;
+}
+.btn-primary:hover { background: #d14a00; }
+
+/* How it works */
+.how-section { background: #fff; }
+.steps-grid {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 4rem;
+  flex-wrap: wrap;
+}
+.step-card {
+  flex: 1;
+  min-width: 220px;
+  background: #f8f7f5;
+  border-radius: 14px;
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+.step-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  color: rgba(234,88,12,.15);
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  line-height: 1;
+}
+.step-icon { font-size: 2rem; margin-bottom: .875rem; }
+.step-card h3 { font-size: 1.05rem; font-weight: 700; color: #111; margin-bottom: .5rem; }
+.step-card p { font-size: .875rem; color: #666; line-height: 1.65; }
+.step-connector { font-size: 1.5rem; color: #ea580c; flex-shrink: 0; font-weight: 700; }
+.items-section { text-align: center; }
+.items-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem;
+  justify-content: center;
+}
+.item-chip {
+  padding: .5rem 1rem;
+  background: #f0eeeb;
+  border-radius: 99px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #444;
+  border: 1px solid rgba(0,0,0,.06);
+}
+
+/* Driver section */
+.driver-section {
+  background: #111;
+  overflow: hidden;
+}
+.driver-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 4rem;
+  align-items: center;
+}
+.driver-sub {
+  font-size: 1rem;
+  color: rgba(255,255,255,.6);
+  line-height: 1.7;
+  max-width: 520px;
+  margin-bottom: 2.5rem;
+}
+.driver-perks { display: flex; flex-direction: column; gap: 1.375rem; margin-bottom: 2.5rem; }
+.perk { display: flex; gap: 1rem; align-items: flex-start; }
+.perk-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: .1rem; }
+.perk-text { display: flex; flex-direction: column; gap: .2rem; }
+.perk-text strong { font-size: .95rem; font-weight: 700; color: #fff; }
+.perk-text span { font-size: .85rem; color: rgba(255,255,255,.5); line-height: 1.55; }
+.btn-driver {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: #ea580c;
+  color: #fff;
+  border-radius: 10px;
+  font-size: .95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .2s;
+}
+.btn-driver:hover { background: #d14a00; }
+/* Earnings card */
+.driver-earnings-card {
+  background: #1a1a1a;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 2rem 1.75rem;
+}
+.earnings-label {
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #ea580c;
+  margin-bottom: 1.5rem;
+}
+.earnings-scenario { padding: 1rem 0; }
+.scenario-name { font-weight: 700; font-size: .9rem; color: #fff; margin-bottom: .2rem; }
+.scenario-desc { font-size: .78rem; color: rgba(255,255,255,.4); margin-bottom: .5rem; }
+.scenario-amount {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: .04em;
+  color: #22C55E;
+  line-height: 1;
+  margin-bottom: .1rem;
+}
+.scenario-note { font-size: .72rem; color: rgba(255,255,255,.35); }
+.earnings-divider { height: 1px; background: rgba(255,255,255,.07); margin: .25rem 0; }
+.earnings-disclaimer { font-size: .7rem; color: rgba(255,255,255,.25); margin-top: 1.25rem; line-height: 1.5; }
+
+/* Business section */
+.business-section { background: #f8f7f5; }
+.business-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 3rem;
+}
+.business-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 2px 12px rgba(0,0,0,.04);
+}
+.business-card.highlight-card {
+  background: #111;
+  border-color: rgba(234,88,12,.3);
+}
+.business-icon { font-size: 2rem; margin-bottom: 1rem; }
+.business-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .75rem; color: #111; }
+.business-card.highlight-card h3 { color: #fff; }
+.business-card p { font-size: .875rem; color: #666; line-height: 1.7; margin-bottom: 1.25rem; }
+.business-card.highlight-card p { color: rgba(255,255,255,.6); }
+.btn-business {
+  display: inline-block;
+  padding: .75rem 1.5rem;
+  background: #ea580c;
+  color: #fff;
+  border-radius: 8px;
+  font-size: .875rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .2s;
+}
+.btn-business:hover { background: #d14a00; }
+.business-logos-label {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: #aaa;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+.business-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .625rem;
+  justify-content: center;
+}
+.biz-type {
+  padding: .5rem 1rem;
+  background: #fff;
+  border-radius: 99px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #444;
+  border: 1px solid rgba(0,0,0,.08);
+}
+
+/* Final CTA */
+.final-cta {
+  background: linear-gradient(135deg, #ea580c 0%, #7c2d12 100%);
+  text-align: center;
+}
+.cta-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem;
+}
+.cta-headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  letter-spacing: .04em;
+  color: #fff;
+  margin-bottom: .75rem;
+}
+.cta-sub {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,.75);
+  margin-bottom: 2.5rem;
+}
+.cta-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.cta-actions .btn-hero-primary {
+  background: #fff;
+  color: #ea580c;
+}
+.cta-actions .btn-hero-primary:hover { background: #f5f5f5; }
+.cta-actions .btn-hero-ghost {
+  border-color: rgba(255,255,255,.35);
+  color: rgba(255,255,255,.85);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .driver-inner { grid-template-columns: 1fr; }
+  .driver-earnings-card { display: none; }
+  .step-connector { display: none; }
+  .steps-grid { flex-direction: column; }
+  .trust-divider { display: none; }
+  .trust-inner { gap: .5rem; }
+  .problem-callout { flex-direction: column; gap: 1.5rem; }
+}
+</style>
+
+<%- include('partials/footer') %>
+</body>
+</html>
