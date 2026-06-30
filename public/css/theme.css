@@ -226,13 +226,14 @@ body { padding-top: 72px; }
   height: 40px;
   width: auto;
   display: block;
-  /* mix-blend-mode makes white pixels show on dark nav, removes apparent white bg */
-  mix-blend-mode: screen;
-  filter: brightness(1.1);
 }
 
 @media (max-width: 768px) {
-  .nav-logo-img { height: 32px; }
+  .nav-logo-img {
+  height: 40px;
+  width: auto;
+  display: block;
+}
 }
 
 /* ── Footer decal icon ──────────────────────────────── */
