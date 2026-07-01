@@ -57,6 +57,7 @@ app.use('/admin', require('./routes/admin'));
 
 // Driver onboarding
 app.use('/drive', require('./routes/drive'));
+app.use('/drive/agreement', require('./routes/drive-agreement'));
 
 // Driver self-service pages MUST be mounted before routes/driver.js.
 // routes/driver.js applies a global requireDriver middleware to everything
