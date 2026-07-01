@@ -280,6 +280,26 @@ async function updateBackgroundCheckStatus(driverId, status) {
   return rows[0] || null;
 }
 
+
+/**
+ * Record an electronic signature for the driver agreement.
+ * Idempotent: will not overwrite an existing signature.
+ */
+async function recordAgreementSignature(driverId, signatureName, ipAddress) {
+  const { rows } = await db.query(
+    `UPDATE driver_applications
+       SET agreement_signed_at  = NOW(),
+           agreement_signature  = $2,
+           agreement_ip         = $3,
+           agreement_version    = '1.0'
+     WHERE id = $1
+       AND agreement_signed_at IS NULL
+     RETURNING *`,
+    [driverId, signatureName, ipAddress]
+  );
+  return rows[0] || null;
+}
+
 module.exports = {
   createDriverApplication,
   getDriverApplicationByEmail,
@@ -295,4 +315,5 @@ module.exports = {
   countDeliveredOrdersForDriver,
   recordReferralBounty,
   updateBackgroundCheckStatus,
+  recordAgreementSignature,
 };
