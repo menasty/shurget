@@ -171,4 +171,38 @@ router.post('/jobs/:id/decline', requireDriver, async (req, res) => {
   }
 });
 
+
+// POST /driver/jobs/:id/complete — driver marks delivery done (authenticated)
+router.post('/jobs/:id/complete', requireDriver, async (req, res) => {
+  try {
+    const { completeOrder, getMyJobs } = require('../db/orders');
+    // Verify this order belongs to this driver before completing
+    const jobs = await getMyJobs(req.driver.id);
+    const job = jobs.find(j => String(j.id) === String(req.params.id));
+    if (!job) {
+      return res.status(403).json({ error: 'Job not found or not assigned to you' });
+    }
+    if (job.status === 'delivered') {
+      return res.json({ success: true, alreadyDelivered: true });
+    }
+    const order = await completeOrder(req.params.id);
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    // Fire delivered email (non-blocking)
+    try {
+      const { sendDeliveredEmail } = require('../services/email');
+      const { markStatusEmailSent } = require('../db/orders');
+      const ratingLink = `${process.env.APP_URL || 'https://shurget.com'}/rate/${order.id}`;
+      markStatusEmailSent(order.id, 'delivered').then(first => {
+        if (first) sendDeliveredEmail(order, ratingLink).catch(() => {});
+      }).catch(() => {});
+    } catch (_) {}
+    res.json({ success: true, order: { id: order.id, status: order.status } });
+  } catch (err) {
+    console.error('[driver] completeJob:', err.message);
+    res.status(500).json({ error: 'Failed to complete job' });
+  }
+});
+
 module.exports = router;
