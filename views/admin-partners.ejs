@@ -4,175 +4,256 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Partner Management — Shurget Admin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'DM Sans', sans-serif; background: #f5f4f0; color: #1a1a1a; font-size: 14px; }
-    .admin-wrap { display: flex; min-height: 100vh; }
-    .admin-sidebar { width: 220px; background: #1a1a1a; color: #fff; padding: 1.5rem 0; flex-shrink: 0; }
-    .sidebar-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.08em; color: #E86A00; padding: 0 1.5rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem; }
-    .sidebar-nav { list-style: none; }
-    .sidebar-nav li a { display: block; padding: 0.65rem 1.5rem; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.88rem; transition: color 0.15s; }
-    .sidebar-nav li a:hover, .sidebar-nav li a.active { color: #fff; background: rgba(255,255,255,0.07); }
-    .sidebar-nav li a span { display: inline-block; background: #E86A00; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 99px; margin-left: 6px; vertical-align: middle; }
-    .admin-main { flex: 1; padding: 2rem 2.5rem; overflow-y: auto; }
-    .admin-page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
-    .admin-page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.04em; }
-    .section { background: #fff; border-radius: 10px; padding: 1.75rem; margin-bottom: 2rem; border: 1.5px solid rgba(0,0,0,0.07); }
-    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem; letter-spacing: 0.05em; margin-bottom: 1.25rem; color: #1a1a1a; }
-    table { width: 100%; border-collapse: collapse; }
-    th { text-align: left; padding: 0.6rem 0.75rem; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: #888; font-weight: 600; border-bottom: 1px solid rgba(0,0,0,0.08); }
-    td { padding: 0.75rem 0.75rem; font-size: 0.88rem; border-bottom: 1px solid rgba(0,0,0,0.04); vertical-align: top; }
-    tr:last-child td { border-bottom: none; }
-    .status-badge { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 99px; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-    .status-pending { background: #fef3c7; color: #b45309; }
-    .status-approved { background: #dcfce7; color: #15803d; }
-    .status-rejected { background: #fee2e2; color: #991b1b; }
-    .status-active { background: #dcfce7; color: #15803d; }
-    .actions { display: flex; gap: 0.5rem; }
-    .btn-sm { padding: 0.4rem 0.85rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.15s; }
-    .btn-sm:hover { opacity: 0.85; }
-    .btn-approve { background: #15803d; color: #fff; }
-    .btn-reject { background: #dc2626; color: #fff; }
-    .btn-view { background: #1a1a1a; color: #fff; }
-    .empty-state { padding: 2.5rem; text-align: center; color: #888; }
-    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-    .stat-box { background: #f7f7f5; border-radius: 8px; padding: 1rem 1.25rem; }
-    .stat-box-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: #888; font-weight: 600; margin-bottom: 0.35rem; }
-    .stat-box-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem; color: #1a1a1a; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #0a0a0a; color: #f8f7f5; font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    .admin-topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,.92); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      height: 58px; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 clamp(1.25rem,4vw,2.5rem);
+    }
+    .admin-topnav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: .12em; color: #fff; text-decoration: none; display: flex; align-items: center; gap: .5rem; }
+    .admin-topnav-logo span { color: #ea580c; }
+    .admin-topnav-badge { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; background: rgba(234,88,12,.15); color: #ea580c; border: 1px solid rgba(234,88,12,.3); border-radius: 4px; padding: .15rem .5rem; }
+    .tn-btn { font-size: .78rem; font-weight: 600; text-decoration: none; padding: .4rem .9rem; border-radius: 6px; border: none; cursor: pointer; transition: background .2s; font-family: 'DM Sans', sans-serif; }
+    .tn-btn-ghost { background: rgba(255,255,255,.07); color: rgba(255,255,255,.65); }
+    .tn-btn-ghost:hover { background: rgba(255,255,255,.13); color: #fff; }
+    .tn-btn-primary { background: #b84000; color: #fff; }
+    .tn-btn-primary:hover { background: #9e3800; }
+
+    .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 58px); }
+    @media (max-width: 768px) { .admin-layout { grid-template-columns: 1fr; } .admin-sidebar { display: flex; overflow-x: auto; padding: .75rem; gap: .4rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,.07); } .sidebar-section-label { display: none; } }
+    .admin-sidebar { background: #111; border-right: 1px solid rgba(255,255,255,.07); padding: 1.25rem .75rem; display: flex; flex-direction: column; gap: .15rem; }
+    .sidebar-section-label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.3); padding: .9rem .6rem .35rem; }
+    .sidebar-link { display: flex; align-items: center; gap: .6rem; padding: .52rem .7rem; border-radius: 7px; text-decoration: none; color: rgba(255,255,255,.55); font-size: .82rem; font-weight: 500; transition: all .18s; white-space: nowrap; }
+    .sidebar-link:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.85); }
+    .sidebar-link.active { background: rgba(184,64,0,.18); color: #ea580c; font-weight: 600; }
+    .sidebar-icon { font-size: 1rem; flex-shrink: 0; }
+    .sidebar-count { margin-left: auto; background: #ea580c; color: #fff; font-size: .65rem; font-weight: 700; padding: .1rem .4rem; border-radius: 99px; }
+    .admin-main { padding: clamp(1.5rem,4vw,2.5rem); overflow-x: hidden; }
+
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.75rem; }
+    .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .06em; color: #fff; margin: 0 0 .25rem; }
+    .page-subtitle { font-size: .88rem; color: rgba(255,255,255,.45); margin: 0; }
+
+    .card { background: #111; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.75rem; }
+    .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: .05em; color: #fff; margin: 0 0 1rem; }
+
+    .data-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    .data-table th { background: #111; color: rgba(255,255,255,.45); font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; padding: .65rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,.07); }
+    .data-table td { padding: .75rem 1rem; border-bottom: 1px solid rgba(255,255,255,.04); color: #f8f7f5; vertical-align: middle; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,.03); }
+    .table-wrap { background: #111; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; overflow: hidden; margin-bottom: 1.75rem; }
+    .table-wrap-header { padding: 1.25rem 1.5rem .5rem; }
+
+    .badge { display: inline-flex; align-items: center; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; padding: .25rem .6rem; border-radius: 5px; }
+    .badge-green  { background: rgba(22,163,74,.15);  color: #4ade80; border: 1px solid rgba(22,163,74,.25); }
+    .badge-orange { background: rgba(234,88,12,.15);  color: #ea580c; border: 1px solid rgba(234,88,12,.25); }
+    .badge-red    { background: rgba(239,68,68,.15);  color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+    .badge-gray   { background: rgba(255,255,255,.07); color: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.1); }
+    .badge-blue   { background: rgba(59,130,246,.15); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
+
+    .btn { display: inline-flex; align-items: center; gap: .4rem; font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 600; padding: .5rem 1rem; border-radius: 7px; border: none; cursor: pointer; text-decoration: none; transition: all .2s; }
+    .btn-primary { background: #b84000; color: #fff; }
+    .btn-primary:hover { background: #9e3800; }
+    .btn-ghost { background: rgba(255,255,255,.06); color: rgba(255,255,255,.65); border: 1px solid rgba(255,255,255,.1); }
+    .btn-ghost:hover { background: rgba(255,255,255,.1); color: #fff; }
+    .btn-danger { background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+    .btn-danger:hover { background: rgba(239,68,68,.25); }
+    .btn-sm { padding: .35rem .75rem; font-size: .78rem; }
+
+    .form-input { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); border-radius: 8px; color: #f8f7f5; font-family: 'DM Sans', sans-serif; font-size: .9rem; padding: .55rem .85rem; outline: none; transition: border-color .2s; }
+    .form-input:focus { border-color: #b84000; }
+    .form-select { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); border-radius: 8px; color: #f8f7f5; font-family: 'DM Sans', sans-serif; font-size: .85rem; padding: .4rem .65rem; outline: none; cursor: pointer; }
+    .form-select:focus { border-color: #b84000; }
+
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
+    .metric-card { background: #111; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 1.25rem 1.5rem; }
+    .metric-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.35); margin: 0 0 .4rem; }
+    .metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: .04em; color: #fff; line-height: 1; margin: 0; }
+    .metric-sub { font-size: .75rem; color: rgba(255,255,255,.35); margin: .3rem 0 0; }
+
+    .alert { border-radius: 9px; padding: .75rem 1.1rem; font-size: .88rem; margin-bottom: 1.25rem; }
+    .alert-success { background: rgba(22,163,74,.12); border: 1px solid rgba(22,163,74,.25); color: #4ade80; }
+    .alert-error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); color: #f87171; }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 2.5rem 1rem; color: rgba(255,255,255,.45); font-size: .9rem; }
+
+    /* Partner-specific extras */
+    .cell-title { font-weight: 600; color: #f8f7f5; }
+    .cell-sub { font-size: .8rem; color: rgba(255,255,255,.45); margin-top: 2px; }
+    .mono { font-family: 'Courier New', monospace; font-size: .8rem; color: rgba(255,255,255,.5); background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: 5px; padding: .2rem .5rem; }
+    .actions { display: flex; gap: .5rem; }
   </style>
 </head>
 <body>
-<div class="admin-wrap">
-  <div class="admin-sidebar">
-    <div class="sidebar-logo">Shurget</div>
-    <ul class="sidebar-nav">
-      <li><a href="/admin">Dashboard</a></li>
-      <li><a href="/admin/dispatch">Dispatch</a></li>
-      <li><a href="/admin/bookings">Bookings</a></li>
-      <li><a href="/admin/drivers">Drivers</a></li>
-      <li><a href="/admin/partners" class="active">Partners <span><%= applications.filter(function(a){return a.status==='pending';}).length %></span></a></li>
-      <li><a href="/admin/logout">Sign Out</a></li>
-    </ul>
-  </div>
 
-  <div class="admin-main">
-    <div class="admin-page-header">
-      <div class="admin-page-title">Partner Management</div>
-      <a href="/partners/apply" style="background:#E86A00;color:#fff;padding:0.6rem 1.25rem;border-radius:8px;font-weight:600;text-decoration:none;font-size:0.9rem;">+ New Partner</a>
+  <!-- Top Nav -->
+  <header class="admin-topnav">
+    <a href="/admin" class="admin-topnav-logo">SHUR<span>GET</span> <span class="admin-topnav-badge">Admin</span></a>
+    <div style="display:flex;align-items:center;gap:.65rem;">
+      <a href="/admin" class="tn-btn tn-btn-ghost">← Dashboard</a>
+      <a href="/admin/logout" class="tn-btn tn-btn-primary">Logout</a>
     </div>
+  </header>
 
-    <!-- Summary stats -->
-    <div class="section">
-      <div class="stats-row">
-        <div class="stat-box">
-          <div class="stat-box-label">Total Partners</div>
-          <div class="stat-box-val"><%= partners.length %></div>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" role="navigation" aria-label="Admin sections">
+      <div class="sidebar-section-label">Operations</div>
+      <a href="/admin/dispatch" class="sidebar-link"><span class="sidebar-icon">🚛</span> Dispatch</a>
+      <a href="/admin/bookings" class="sidebar-link"><span class="sidebar-icon">📋</span> Bookings</a>
+      <a href="/admin/drivers" class="sidebar-link"><span class="sidebar-icon">🧑‍✈️</span> Drivers</a>
+      <div class="sidebar-section-label">Analytics</div>
+      <a href="/admin/metrics" class="sidebar-link"><span class="sidebar-icon">📊</span> Metrics</a>
+      <a href="/admin/ratings" class="sidebar-link"><span class="sidebar-icon">⭐</span> Ratings</a>
+      <a href="/admin/attribution" class="sidebar-link"><span class="sidebar-icon">🔗</span> Attribution</a>
+      <div class="sidebar-section-label">Platform</div>
+      <a href="/admin/partners" class="sidebar-link active">
+        <span class="sidebar-icon">🤝</span> Partners
+        <% if (applications.filter(function(a){return a.status==='pending';}).length > 0) { %>
+          <span class="sidebar-count"><%= applications.filter(function(a){return a.status==='pending';}).length %></span>
+        <% } %>
+      </a>
+      <a href="/admin/disputes" class="sidebar-link"><span class="sidebar-icon">⚖️</span> Disputes</a>
+      <a href="/admin/surge" class="sidebar-link"><span class="sidebar-icon">⚡</span> Surge</a>
+    </aside>
+
+    <main class="admin-main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Partner Management</h1>
+          <p class="page-subtitle">Review applications and manage active retail partners.</p>
         </div>
-        <div class="stat-box">
-          <div class="stat-box-label">Pending Applications</div>
-          <div class="stat-box-val"><%= applications.filter(function(a){return a.status==='pending';}).length %></div>
+        <a href="/partners/apply" class="btn btn-primary">+ New Partner</a>
+      </div>
+
+      <!-- Summary stats -->
+      <div class="metric-grid">
+        <div class="metric-card">
+          <p class="metric-label">Total Partners</p>
+          <p class="metric-value"><%= partners.length %></p>
         </div>
-        <div class="stat-box">
-          <div class="stat-box-label">Total Commission Paid</div>
-          <div class="stat-box-val">$<%= (partners.reduce(function(s,p){return s+(p.last_payout_amount_cents||0);},0)/100).toFixed(0) %></div>
+        <div class="metric-card">
+          <p class="metric-label">Pending Applications</p>
+          <p class="metric-value"><%= applications.filter(function(a){return a.status==='pending';}).length %></p>
+        </div>
+        <div class="metric-card">
+          <p class="metric-label">Total Commission Paid</p>
+          <p class="metric-value">$<%= (partners.reduce(function(s,p){return s+(p.last_payout_amount_cents||0);},0)/100).toFixed(0) %></p>
         </div>
       </div>
-    </div>
 
-    <!-- Pending Applications -->
-    <div class="section">
-      <div class="section-title">Pending Applications (<%= applications.filter(function(a){return a.status==='pending';}).length %>)</div>
-      <% var pendingApps = applications.filter(function(a){return a.status==='pending';}); %>
-      <% if (pendingApps.length === 0) { %>
-        <div class="empty-state">No pending applications.</div>
-      <% } else { %>
-        <table>
-          <thead>
-            <tr><th>Store</th><th>Contact</th><th>Volume</th><th>ZIPs Served</th><th>Applied</th><th>Actions</th></tr>
-          </thead>
-          <tbody>
-            <% pendingApps.forEach(function(app) { %>
-              <tr>
-                <td>
-                  <div style="font-weight:600;"><%= app.store_name %></div>
-                  <div style="font-size:0.8rem;color:#888;margin-top:2px;"><%= app.website_url || '' %></div>
-                </td>
-                <td>
-                  <div><%= app.contact_name %></div>
-                  <div style="font-size:0.8rem;color:#888;"><%= app.contact_email %></div>
-                </td>
-                <td><%= app.monthly_volume %></td>
-                <td style="font-size:0.82rem;color:#666;"><%= (app.zip_codes_served || '').substring(0,60) %></td>
-                <td style="font-size:0.82rem;color:#888;"><%= new Date(app.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) %></td>
-                <td class="actions">
-                  <form action="/api/partners/<%= app.id %>/approve" method="post" style="display:inline;">
-                    <button type="submit" class="btn-sm btn-approve">Approve</button>
-                  </form>
-                  <form action="/api/partners/<%= app.id %>/reject" method="post" style="display:inline;">
-                    <button type="submit" class="btn-sm btn-reject">Reject</button>
-                  </form>
-                </td>
-              </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      <% } %>
-    </div>
+      <!-- Pending Applications -->
+      <div class="table-wrap">
+        <div class="table-wrap-header">
+          <h2 class="card-title" style="margin:0;">Pending Applications (<%= applications.filter(function(a){return a.status==='pending';}).length %>)</h2>
+        </div>
+        <% var pendingApps = applications.filter(function(a){return a.status==='pending';}); %>
+        <% if (pendingApps.length === 0) { %>
+          <div class="empty-state">No pending applications.</div>
+        <% } else { %>
+          <table class="data-table">
+            <thead>
+              <tr><th>Store</th><th>Contact</th><th>Volume</th><th>ZIPs Served</th><th>Applied</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <% pendingApps.forEach(function(app) { %>
+                <tr>
+                  <td>
+                    <div class="cell-title"><%= app.store_name %></div>
+                    <div class="cell-sub"><%= app.website_url || '' %></div>
+                  </td>
+                  <td>
+                    <div><%= app.contact_name %></div>
+                    <div class="cell-sub"><%= app.contact_email %></div>
+                  </td>
+                  <td><%= app.monthly_volume %></td>
+                  <td class="cell-sub"><%= (app.zip_codes_served || '').substring(0,60) %></td>
+                  <td class="cell-sub"><%= new Date(app.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) %></td>
+                  <td class="actions">
+                    <form action="/api/partners/<%= app.id %>/approve" method="post" style="display:inline;">
+                      <button type="submit" class="btn btn-primary btn-sm">Approve</button>
+                    </form>
+                    <form action="/api/partners/<%= app.id %>/reject" method="post" style="display:inline;">
+                      <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
 
-    <!-- All Applications -->
-    <div class="section">
-      <div class="section-title">All Applications</div>
-      <% if (applications.length === 0) { %>
-        <div class="empty-state">No applications yet.</div>
-      <% } else { %>
-        <table>
-          <thead>
-            <tr><th>Store</th><th>Contact</th><th>Volume</th><th>Status</th><th>Reviewed</th><th>Reviewed By</th></tr>
-          </thead>
-          <tbody>
-            <% applications.filter(function(a){return a.status!=='pending';}).forEach(function(app) { %>
-              <tr>
-                <td><div style="font-weight:600;"><%= app.store_name %></div></td>
-                <td><div style="font-size:0.82rem;"><%= app.contact_name %> · <%= app.contact_email %></div></td>
-                <td><%= app.monthly_volume %></td>
-                <td><span class="status-badge status-<%= app.status %>"><%= app.status %></span></td>
-                <td style="font-size:0.8rem;color:#888;"><%= app.reviewed_at ? new Date(app.reviewed_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—' %></td>
-                <td style="font-size:0.8rem;color:#888;"><%= app.reviewed_by || '—' %></td>
-              </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      <% } %>
-    </div>
+      <!-- All Applications -->
+      <div class="table-wrap">
+        <div class="table-wrap-header">
+          <h2 class="card-title" style="margin:0;">All Applications</h2>
+        </div>
+        <% if (applications.length === 0) { %>
+          <div class="empty-state">No applications yet.</div>
+        <% } else { %>
+          <table class="data-table">
+            <thead>
+              <tr><th>Store</th><th>Contact</th><th>Volume</th><th>Status</th><th>Reviewed</th><th>Reviewed By</th></tr>
+            </thead>
+            <tbody>
+              <% applications.filter(function(a){return a.status!=='pending';}).forEach(function(app) { %>
+                <tr>
+                  <td><div class="cell-title"><%= app.store_name %></div></td>
+                  <td><div style="font-size:.82rem;"><%= app.contact_name %> · <%= app.contact_email %></div></td>
+                  <td><%= app.monthly_volume %></td>
+                  <td>
+                    <% var appBadge = app.status === 'approved' ? 'badge-green' : (app.status === 'rejected' ? 'badge-red' : 'badge-orange'); %>
+                    <span class="badge <%= appBadge %>"><%= app.status %></span>
+                  </td>
+                  <td class="cell-sub"><%= app.reviewed_at ? new Date(app.reviewed_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '—' %></td>
+                  <td class="cell-sub"><%= app.reviewed_by || '—' %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
 
-    <!-- Active Partners -->
-    <div class="section">
-      <div class="section-title">Active Partners (<%= partners.length %>)</div>
-      <% if (partners.length === 0) { %>
-        <div class="empty-state">No active partners yet. Approve applications above to create partner accounts.</div>
-      <% } else { %>
-        <table>
-          <thead>
-            <tr><th>Store</th><th>Slug</th><th>Commission Rate</th><th>Commission Balance</th><th>Stripe Account</th><th>Created</th><th>Dashboard</th></tr>
-          </thead>
-          <tbody>
-            <% partners.forEach(function(p) { %>
-              <tr>
-                <td><div style="font-weight:600;"><%= p.store_name %></div></td>
-                <td style="font-family:'Courier New',monospace;font-size:0.8rem;color:#888;"><%= p.slug %></td>
-                <td><%= (p.commission_rate * 100).toFixed(0) %>%</td>
-                <td style="font-weight:600;color:<%= p.commission_balance_cents > 2500 ? '#15803d' : '#1a1a1a' %>;">$<%= (p.commission_balance_cents / 100).toFixed(2) %></td>
-                <td><% if (p.stripe_account_id) { %><span class="status-badge status-active">Connected</span><% } else { %><span style="color:#b45309;font-size:0.8rem;">Not connected</span><% } %></td>
-                <td style="font-size:0.8rem;color:#888;"><%= new Date(p.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) %></td>
-                <td><a href="/partners/<%= p.slug %>" target="_blank" class="btn-sm btn-view">Dashboard</a></td>
-              </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      <% } %>
-    </div>
+      <!-- Active Partners -->
+      <div class="table-wrap">
+        <div class="table-wrap-header">
+          <h2 class="card-title" style="margin:0;">Active Partners (<%= partners.length %>)</h2>
+        </div>
+        <% if (partners.length === 0) { %>
+          <div class="empty-state">No active partners yet. Approve applications above to create partner accounts.</div>
+        <% } else { %>
+          <table class="data-table">
+            <thead>
+              <tr><th>Store</th><th>Slug</th><th>Commission Rate</th><th>Commission Balance</th><th>Stripe Account</th><th>Created</th><th>Dashboard</th></tr>
+            </thead>
+            <tbody>
+              <% partners.forEach(function(p) { %>
+                <tr>
+                  <td><div class="cell-title"><%= p.store_name %></div></td>
+                  <td><span class="mono"><%= p.slug %></span></td>
+                  <td><%= (p.commission_rate * 100).toFixed(0) %>%</td>
+                  <td style="font-weight:600;color:<%= p.commission_balance_cents > 2500 ? '#4ade80' : '#f8f7f5' %>;">$<%= (p.commission_balance_cents / 100).toFixed(2) %></td>
+                  <td><% if (p.stripe_account_id) { %><span class="badge badge-green">Connected</span><% } else { %><span class="badge badge-orange">Not connected</span><% } %></td>
+                  <td class="cell-sub"><%= new Date(p.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) %></td>
+                  <td><a href="/partners/<%= p.slug %>" target="_blank" class="btn btn-ghost btn-sm">Dashboard</a></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </main>
   </div>
-</div>
 </body>
 </html>
