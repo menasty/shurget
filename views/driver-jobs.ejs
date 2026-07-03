@@ -249,7 +249,7 @@
 
 <!-- Payout banner -->
 <% if (!driver.stripe_account_id) { %>
-<div class="payout-banner">
+<div class="payout-banner" role="status" aria-live="polite">
   <span><span aria-hidden="true">🔗</span> Connect bank for automatic payouts</span>
   <a href="/driver/payouts?email=<%= encodeURIComponent(driver.email) %>">Set up →</a>
 </div>
