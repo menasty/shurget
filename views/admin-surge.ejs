@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surge Pricing — Shurget Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #0a0a0a; color: #f8f7f5; font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+    /* Top nav */
+    .admin-topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,.92); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      height: 58px; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 clamp(1.25rem,4vw,2.5rem); gap: 1rem;
+    }
+    .admin-topnav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem;
+      letter-spacing: .12em; color: #fff; text-decoration: none;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .admin-topnav-logo span { color: #ea580c; }
+    .admin-topnav-badge {
+      font-size: .62rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; background: rgba(234,88,12,.15); color: #ea580c;
+      border: 1px solid rgba(234,88,12,.3); border-radius: 4px; padding: .15rem .5rem;
+    }
+    .tn-btn {
+      font-size: .78rem; font-weight: 600; text-decoration: none;
+      padding: .4rem .9rem; border-radius: 6px; border: none; cursor: pointer; transition: background .2s;
+    }
+    .tn-btn-ghost { background: rgba(255,255,255,.07); color: rgba(255,255,255,.65); }
+    .tn-btn-ghost:hover { background: rgba(255,255,255,.13); color: #fff; }
+    .tn-btn-primary { background: #b84000; color: #fff; }
+    .tn-btn-primary:hover { background: #9e3800; }
+
+    /* Layout */
+    .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 58px); }
+    @media (max-width: 768px) {
+      .admin-layout { grid-template-columns: 1fr; }
+      .admin-sidebar { display: flex; overflow-x: auto; padding: .75rem; gap: .4rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,.07); }
+      .sidebar-section-label { display: none; }
+    }
+    .admin-sidebar { background: #111; border-right: 1px solid rgba(255,255,255,.07); padding: 1.25rem .75rem; display: flex; flex-direction: column; gap: .15rem; }
+    .sidebar-section-label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.3); padding: .9rem .6rem .35rem; }
+    .sidebar-section-label:first-child { padding-top: 0; margin-top: 0; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: .6rem; padding: .52rem .7rem;
+      border-radius: 7px; text-decoration: none; color: rgba(255,255,255,.55);
+      font-size: .82rem; font-weight: 500; transition: all .18s; white-space: nowrap;
+    }
+    .sidebar-link:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.85); }
+    .sidebar-link.active { background: rgba(184,64,0,.18); color: #ea580c; font-weight: 600; }
+    .sidebar-icon { font-size: 1rem; flex-shrink: 0; }
+    .admin-main { padding: clamp(1.5rem,4vw,2.5rem); overflow-x: hidden; }
+
+    /* Page header */
+    .page-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.75rem; }
+    .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .06em; color: #fff; margin: 0; line-height: 1.1; }
+    .page-subtitle { font-size: .88rem; color: rgba(255,255,255,.45); margin: .3rem 0 0; }
+
+    /* Status badge */
+    .surge-status-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .8rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; border-radius: 6px; padding: .35rem .8rem;
+    }
+    .surge-status-badge.active { background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+    .surge-status-badge.inactive { background: rgba(255,255,255,.06); color: rgba(255,255,255,.4); border: 1px solid rgba(255,255,255,.1); }
+
+    /* Cards */
+    .surge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
+    @media (max-width: 600px) { .surge-grid { grid-template-columns: 1fr; } }
+    .surge-metric {
+      background: #111; border: 1px solid rgba(255,255,255,.07);
+      border-radius: 12px; padding: 1.25rem 1.5rem;
+    }
+    .surge-metric-label { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.35); margin: 0 0 .4rem; }
+    .surge-metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: .04em; color: #fff; line-height: 1; }
+    .surge-metric-value.active-val { color: #ea580c; }
+
+    /* Form card */
+    .form-card { background: #111; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 2rem; }
+    .form-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .06em; color: #fff; margin: 0 0 1.5rem; }
+    .form-row { margin-bottom: 1.25rem; }
+    .form-label { display: block; font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.45); margin-bottom: .45rem; }
+    .form-input {
+      width: 100%; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px; color: #f8f7f5; font-family: 'DM Sans', sans-serif;
+      font-size: .95rem; padding: .6rem .9rem; outline: none; transition: border-color .2s;
+    }
+    .form-input:focus { border-color: #b84000; }
+    .form-hint { font-size: .75rem; color: rgba(255,255,255,.3); margin-top: .3rem; }
+    .multiplier-presets { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .5rem; }
+    .mult-btn {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 6px; color: rgba(255,255,255,.55); font-size: .8rem; font-weight: 600;
+      padding: .35rem .75rem; cursor: pointer; transition: all .2s;
+    }
+    .mult-btn:hover, .mult-btn.active { background: rgba(184,64,0,.18); border-color: #b84000; color: #ea580c; }
+
+    /* Toggle */
+    .toggle-row { display: flex; align-items: center; gap: 1rem; }
+    .toggle-label-text { font-size: .95rem; color: rgba(255,255,255,.7); }
+    .toggle-switch { position: relative; display: inline-block; width: 48px; height: 26px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background: rgba(255,255,255,.1); border-radius: 26px; transition: .3s;
+    }
+    .toggle-slider:before {
+      content: ''; position: absolute; height: 18px; width: 18px; left: 4px; bottom: 4px;
+      background: rgba(255,255,255,.5); border-radius: 50%; transition: .3s;
+    }
+    input:checked + .toggle-slider { background: #b84000; }
+    input:checked + .toggle-slider:before { transform: translateX(22px); background: #fff; }
+
+    /* Submit */
+    .form-actions { display: flex; align-items: center; gap: 1rem; margin-top: 1.75rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: #b84000; color: #fff; font-family: 'DM Sans', sans-serif;
+      font-size: .9rem; font-weight: 700; border: none; border-radius: 8px;
+      padding: .65rem 1.6rem; cursor: pointer; transition: background .2s;
+    }
+    .btn-primary:hover { background: #9e3800; }
+    .btn-ghost {
+      background: transparent; color: rgba(255,255,255,.5); font-family: 'DM Sans', sans-serif;
+      font-size: .88rem; font-weight: 600; text-decoration: none;
+      border: 1px solid rgba(255,255,255,.12); border-radius: 8px; padding: .6rem 1.2rem;
+      transition: all .2s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,.06); color: #fff; }
+
+    /* Alerts */
+    .alert { border-radius: 9px; padding: .75rem 1.1rem; font-size: .88rem; margin-bottom: 1.25rem; }
+    .alert-success { background: rgba(22,163,74,.12); border: 1px solid rgba(22,163,74,.25); color: #4ade80; }
+    .alert-error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); color: #f87171; }
+
+    /* Explainer */
+    .info-card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); border-radius: 10px; padding: 1.1rem 1.4rem; margin-bottom: 2rem; }
+    .info-title { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.35); margin: 0 0 .5rem; }
+    .info-list { margin: 0; padding: 0 0 0 1rem; color: rgba(255,255,255,.5); font-size: .85rem; line-height: 1.7; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <header class="admin-topnav">
+    <a href="/admin" class="admin-topnav-logo">SHUR<span>GET</span> <span class="admin-topnav-badge">Admin</span></a>
+    <div style="display:flex;align-items:center;gap:.65rem;">
+      <a href="/admin" class="tn-btn tn-btn-ghost">← Dashboard</a>
+      <a href="/admin/logout" class="tn-btn tn-btn-primary">Logout</a>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" role="navigation" aria-label="Admin sections">
+      <div class="sidebar-section-label">Operations</div>
+      <a href="/admin/dispatch" class="sidebar-link"><span class="sidebar-icon">🚛</span> Dispatch</a>
+      <a href="/admin/bookings" class="sidebar-link"><span class="sidebar-icon">📋</span> Bookings</a>
+      <a href="/admin/drivers" class="sidebar-link"><span class="sidebar-icon">🧑‍✈️</span> Drivers</a>
+      <div class="sidebar-section-label">Analytics</div>
+      <a href="/admin/metrics" class="sidebar-link"><span class="sidebar-icon">📊</span> Metrics</a>
+      <a href="/admin/ratings" class="sidebar-link"><span class="sidebar-icon">⭐</span> Ratings</a>
+      <a href="/admin/attribution" class="sidebar-link"><span class="sidebar-icon">🔗</span> Attribution</a>
+      <div class="sidebar-section-label">Platform</div>
+      <a href="/admin/partners" class="sidebar-link"><span class="sidebar-icon">🤝</span> Partners</a>
+      <a href="/admin/disputes" class="sidebar-link"><span class="sidebar-icon">⚖️</span> Disputes</a>
+      <a href="/admin/surge" class="sidebar-link active"><span class="sidebar-icon">⚡</span> Surge</a>
+    </aside>
+
+    <main class="admin-main">
+
+      <!-- Alerts -->
+      <% if (saved) { %>
+        <div class="alert alert-success">✓ Surge config updated successfully.</div>
+      <% } %>
+      <% if (error) { %>
+        <div class="alert alert-error">⚠ <%= error %></div>
+      <% } %>
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Surge Pricing</h1>
+          <p class="page-subtitle">Temporarily increase prices during high demand periods.</p>
+        </div>
+        <span class="surge-status-badge <%= surge.active ? 'active' : 'inactive' %>">
+          <%= surge.active ? '⚡ SURGE ACTIVE' : '● STANDARD RATE' %>
+        </span>
+      </div>
+
+      <!-- Current state metrics -->
+      <div class="surge-grid">
+        <div class="surge-metric">
+          <p class="surge-metric-label">Current Multiplier</p>
+          <p class="surge-metric-value <%= surge.active ? 'active-val' : '' %>"><%= parseFloat(surge.multiplier).toFixed(2) %>×</p>
+        </div>
+        <div class="surge-metric">
+          <p class="surge-metric-label">Customer Label</p>
+          <p class="surge-metric-value" style="font-size:1.3rem;font-family:'DM Sans';"><%= surge.label || '—' %></p>
+        </div>
+      </div>
+
+      <!-- Explainer -->
+      <div class="info-card">
+        <p class="info-title">How Surge Works</p>
+        <ul class="info-list">
+          <li>Multiplier applies to the full order subtotal (base + distance + helpers) before the platform fee.</li>
+          <li>1.00× = standard rate. 1.25× = 25% premium. Max allowed: 2.00×.</li>
+          <li>The customer label ("High Demand", "Weekend Rate", etc.) is shown on the booking estimator and confirmation page.</li>
+          <li>Surge multiplier and label are stored on each order for earnings transparency with drivers.</li>
+          <li>Deactivating surge (toggle off) immediately returns all new bookings to standard pricing.</li>
+        </ul>
+      </div>
+
+      <!-- Form -->
+      <div class="form-card">
+        <h2 class="form-title">Update Surge Config</h2>
+        <form method="POST" action="/admin/surge">
+
+          <!-- Toggle active -->
+          <div class="form-row">
+            <label class="form-label">Surge Active</label>
+            <div class="toggle-row">
+              <label class="toggle-switch">
+                <input type="checkbox" name="active" id="surgeToggle" value="on" <%= surge.active ? 'checked' : '' %>>
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="toggle-label-text" id="toggleText"><%= surge.active ? 'Surge is ON — customers see elevated pricing' : 'Surge is OFF — standard pricing in effect' %></span>
+            </div>
+          </div>
+
+          <!-- Multiplier -->
+          <div class="form-row">
+            <label class="form-label" for="multiplierInput">Multiplier</label>
+            <input
+              type="number"
+              class="form-input"
+              id="multiplierInput"
+              name="multiplier"
+              value="<%= parseFloat(surge.multiplier).toFixed(2) %>"
+              min="1.00"
+              max="2.00"
+              step="0.05"
+              style="max-width:200px;"
+            >
+            <p class="form-hint">Range: 1.00 (standard) to 2.00 (double). Decimals OK (e.g. 1.25).</p>
+            <div class="multiplier-presets">
+              <button type="button" class="mult-btn" data-val="1.00">1.00× Off</button>
+              <button type="button" class="mult-btn" data-val="1.15">1.15× Mild</button>
+              <button type="button" class="mult-btn" data-val="1.25">1.25× Peak</button>
+              <button type="button" class="mult-btn" data-val="1.50">1.50× High</button>
+              <button type="button" class="mult-btn" data-val="1.75">1.75× Max</button>
+            </div>
+          </div>
+
+          <!-- Label -->
+          <div class="form-row">
+            <label class="form-label" for="labelInput">Customer-Facing Label</label>
+            <input
+              type="text"
+              class="form-input"
+              id="labelInput"
+              name="label"
+              value="<%= surge.label || 'High Demand' %>"
+              maxlength="40"
+              placeholder="e.g. High Demand, Weekend Rate, Holiday Surge"
+              style="max-width:400px;"
+            >
+            <p class="form-hint">Shown to customers on the booking estimator and confirmation page.</p>
+          </div>
+
+          <!-- Internal note -->
+          <div class="form-row">
+            <label class="form-label" for="reasonInput">Internal Note (optional)</label>
+            <input
+              type="text"
+              class="form-input"
+              id="reasonInput"
+              name="reason"
+              maxlength="100"
+              placeholder="e.g. July 4th weekend, driver shortage in Castle Rock"
+              style="max-width:480px;"
+            >
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary">Save Surge Config</button>
+            <a href="/admin" class="btn-ghost">Cancel</a>
+          </div>
+        </form>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // Toggle text
+    const toggle = document.getElementById('surgeToggle');
+    const toggleText = document.getElementById('toggleText');
+    toggle.addEventListener('change', () => {
+      toggleText.textContent = toggle.checked
+        ? 'Surge is ON — customers see elevated pricing'
+        : 'Surge is OFF — standard pricing in effect';
+    });
+
+    // Multiplier preset buttons
+    document.querySelectorAll('.mult-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('multiplierInput').value = btn.dataset.val;
+        document.querySelectorAll('.mult-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // Auto-enable toggle if > 1.00
+        if (parseFloat(btn.dataset.val) > 1.00) {
+          toggle.checked = true;
+          toggleText.textContent = 'Surge is ON — customers see elevated pricing';
+        } else {
+          toggle.checked = false;
+          toggleText.textContent = 'Surge is OFF — standard pricing in effect';
+        }
+      });
+    });
+
+    // Highlight matching preset on load
+    const current = parseFloat(document.getElementById('multiplierInput').value).toFixed(2);
+    document.querySelectorAll('.mult-btn').forEach(btn => {
+      if (parseFloat(btn.dataset.val).toFixed(2) === current) btn.classList.add('active');
+    });
+  </script>
+</body>
+</html>
