@@ -45,6 +45,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Customer booking + order flow
 app.use('/book', require('./routes/booking'));
 app.use('/confirmation', require('./routes/confirmation'));
+app.use('/tip', require('./routes/tips'));
 app.use('/track', require('./routes/track'));
 
 // Contact / quote requests (page at /contact, API at /api/contact)
@@ -158,6 +159,19 @@ app.use((err, req, res, _next) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`✅ Shurget server running on port ${port}`);
-});
+// ── Initialise DB tables and start server ───────────────────────────────────
+const { initSurgeTable } = require('./db/surge');
+
+async function startServer() {
+  try {
+    await initSurgeTable();
+    console.log('✅ surge_config table ready');
+  } catch (e) {
+    console.warn('[startup] surge init skipped:', e.message);
+  }
+  app.listen(port, () => {
+    console.log(`✅ Shurget server running on port ${port}`);
+  });
+}
+
+startServer();
