@@ -2,26 +2,473 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Payment Successful - Shurget</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Successful — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://js.stripe.com/v3/"></script>
   <style>
-    body { font-family: system-ui; max-width: 700px; margin: 60px auto; padding: 20px; text-align: center; line-height: 1.6; }
-    h1 { color: #ea580c; }
-    .success-box { background: #f0fdf4; border: 2px solid #4ade80; border-radius: 12px; padding: 40px; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      background: #0a0a0a;
+      color: #f8f7f5;
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+
+    /* ── Nav ── */
+    .conf-nav {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+    }
+    .conf-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: .12em;
+      color: #fff;
+      text-decoration: none;
+    }
+    .conf-logo span { color: #ea580c; }
+    .conf-home-link {
+      font-size: .82rem;
+      color: rgba(255,255,255,.5);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .conf-home-link:hover { color: #ea580c; }
+
+    /* ── Success card ── */
+    .success-card {
+      width: 100%;
+      max-width: 580px;
+      background: #111;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+    .success-icon {
+      width: 68px;
+      height: 68px;
+      background: rgba(22,163,74,.15);
+      border: 2px solid rgba(22,163,74,.4);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1.25rem;
+    }
+    .success-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: .08em;
+      color: #fff;
+      margin: 0 0 .5rem;
+    }
+    .success-subtitle {
+      font-size: .95rem;
+      color: rgba(255,255,255,.6);
+      margin: 0 0 1.75rem;
+      line-height: 1.55;
+    }
+    .order-ref {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      padding: .5rem 1rem;
+      font-size: .82rem;
+      color: rgba(255,255,255,.5);
+      margin-bottom: 2rem;
+    }
+    .order-ref strong { color: #f8f7f5; font-weight: 600; }
+
+    /* ── Surge notice ── */
+    .surge-notice {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      background: rgba(234,88,12,.1);
+      border: 1px solid rgba(234,88,12,.25);
+      border-radius: 8px;
+      padding: .65rem 1rem;
+      margin-bottom: 1.5rem;
+      text-align: left;
+      font-size: .82rem;
+      color: #ea580c;
+    }
+
+    /* ── Tip section ── */
+    .tip-section {
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 1.75rem;
+    }
+    .tip-heading {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: .06em;
+      color: #fff;
+      margin: 0 0 .4rem;
+    }
+    .tip-desc {
+      font-size: .88rem;
+      color: rgba(255,255,255,.5);
+      margin: 0 0 1.25rem;
+      line-height: 1.5;
+    }
+    .tip-presets {
+      display: flex;
+      gap: .65rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: .75rem;
+    }
+    .tip-btn {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      color: #f8f7f5;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem;
+      font-weight: 600;
+      padding: .55rem 1.1rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .tip-btn:hover, .tip-btn.selected {
+      background: rgba(184,64,0,.2);
+      border-color: #b84000;
+      color: #ea580c;
+    }
+    .tip-custom-row {
+      display: flex;
+      gap: .5rem;
+      align-items: center;
+      justify-content: center;
+      margin-top: .75rem;
+    }
+    .tip-custom-input {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      color: #f8f7f5;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .95rem;
+      padding: .55rem .85rem;
+      width: 110px;
+      text-align: center;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .tip-custom-input:focus { border-color: #b84000; }
+    .tip-custom-input::placeholder { color: rgba(255,255,255,.25); }
+    .tip-submit-btn {
+      background: #b84000;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: .6rem 1.4rem;
+      cursor: pointer;
+      transition: background .2s;
+      white-space: nowrap;
+    }
+    .tip-submit-btn:hover { background: #9e3800; }
+    .tip-submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Tip result states ── */
+    .tip-success {
+      display: none;
+      background: rgba(22,163,74,.12);
+      border: 1px solid rgba(22,163,74,.3);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      color: #4ade80;
+      font-size: .9rem;
+      margin-top: .75rem;
+      text-align: center;
+    }
+    .tip-error {
+      display: none;
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.25);
+      border-radius: 10px;
+      padding: .75rem 1rem;
+      color: #f87171;
+      font-size: .85rem;
+      margin-top: .75rem;
+      text-align: center;
+    }
+    .tip-skip {
+      display: block;
+      font-size: .78rem;
+      color: rgba(255,255,255,.3);
+      text-decoration: none;
+      margin-top: .9rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: color .2s;
+    }
+    .tip-skip:hover { color: rgba(255,255,255,.55); }
+
+    /* ── Already tipped ── */
+    .already-tipped {
+      display: none;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(22,163,74,.1);
+      border: 1px solid rgba(22,163,74,.2);
+      border-radius: 8px;
+      padding: .65rem 1rem;
+      font-size: .85rem;
+      color: #4ade80;
+      justify-content: center;
+    }
+
+    /* ── CTA buttons ── */
+    .cta-row {
+      display: flex;
+      gap: .75rem;
+      justify-content: center;
+      margin-top: 1.75rem;
+      flex-wrap: wrap;
+    }
+    .cta-primary {
+      background: #b84000;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem;
+      font-weight: 700;
+      text-decoration: none;
+      padding: .65rem 1.4rem;
+      border-radius: 8px;
+      transition: background .2s;
+    }
+    .cta-primary:hover { background: #9e3800; }
+    .cta-ghost {
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.6);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .88rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: .65rem 1.4rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.1);
+      transition: all .2s;
+    }
+    .cta-ghost:hover { background: rgba(255,255,255,.1); color: #fff; }
   </style>
 </head>
 <body>
-  <div class="success-box">
-    <h1>✅ Payment Successful!</h1>
-    <p>Your booking has been confirmed.</p>
-    <p>A Shurget driver will be assigned shortly and will contact you.</p>
-    <p><strong>Order Reference:</strong> <span id="orderId">Loading...</span></p>
+
+  <nav class="conf-nav">
+    <a href="/" class="conf-logo">SHUR<span>GET</span></a>
+    <a href="/" class="conf-home-link">← Back to Home</a>
+  </nav>
+
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h1 class="success-title">Payment Successful</h1>
+    <p class="success-subtitle">
+      Your haul is confirmed. A Shurget driver will be assigned shortly and will contact you directly.
+    </p>
+    <div class="order-ref">
+      Order Ref: <strong id="orderId">Loading...</strong>
+    </div>
+
+    <!-- Surge notice (only shown if surge was active at time of booking) -->
+    <div class="surge-notice" id="surgeNotice" style="display:none;">
+      ⚡ <span id="surgeNoticeText">High-demand pricing was applied to this booking.</span>
+    </div>
+
+    <!-- ── Optional Tip Section ── -->
+    <div class="tip-section" id="tipSection">
+      <h2 class="tip-heading">Leave a Tip?</h2>
+      <p class="tip-desc">
+        100% of your tip goes directly to your driver. Completely optional — only if they earned it.
+      </p>
+
+      <!-- Already tipped -->
+      <div class="already-tipped" id="alreadyTipped">
+        ✓ Tip sent — your driver thanks you!
+      </div>
+
+      <!-- Tip form (hidden if already tipped) -->
+      <div id="tipForm">
+        <div class="tip-presets">
+          <button class="tip-btn" data-cents="500">$5</button>
+          <button class="tip-btn" data-cents="1000">$10</button>
+          <button class="tip-btn" data-cents="1500">$15</button>
+          <button class="tip-btn" data-cents="2000">$20</button>
+        </div>
+        <div class="tip-custom-row">
+          <input
+            type="number"
+            class="tip-custom-input"
+            id="tipCustom"
+            placeholder="Custom $"
+            min="1"
+            max="100"
+            step="1"
+          >
+          <button class="tip-submit-btn" id="tipSubmitBtn" disabled>Send Tip</button>
+        </div>
+        <div class="tip-success" id="tipSuccess"></div>
+        <div class="tip-error" id="tipError"></div>
+        <button class="tip-skip" id="tipSkip">No thanks</button>
+      </div>
+    </div>
+
+    <!-- CTA buttons -->
+    <div class="cta-row">
+      <a href="/book" class="cta-primary">Book Another Haul</a>
+      <a href="/" class="cta-ghost">Back to Home</a>
+    </div>
   </div>
-  <p><a href="/">← Back to Home</a> | <a href="/book">Book Another Haul</a></p>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get('session_id');
-    document.getElementById('orderId').textContent = sessionId ? sessionId.substring(0, 12) + '...' : 'Pending';
+    (function () {
+      // ── Order reference from URL ──────────────────────────────────────────
+      const urlParams = new URLSearchParams(window.location.search);
+      const sessionId = urlParams.get('session_id');
+      const orderId   = urlParams.get('order_id');   // added by booking route
+      const tipped    = urlParams.get('tipped') === '1';
+      const surgeLabel = urlParams.get('surge_label');
+      const surgeActive = urlParams.get('surge') === '1';
+
+      document.getElementById('orderId').textContent =
+        sessionId ? sessionId.substring(0, 14) + '...' : (orderId || 'Pending');
+
+      // ── Surge notice ──────────────────────────────────────────────────────
+      if (surgeActive && surgeLabel) {
+        const notice = document.getElementById('surgeNotice');
+        document.getElementById('surgeNoticeText').textContent =
+          surgeLabel + ' pricing was applied to this booking.';
+        notice.style.display = 'flex';
+      }
+
+      // ── Tip form logic ────────────────────────────────────────────────────
+      let selectedCents = null;
+
+      // If already tipped (e.g. redirect back from Stripe), hide form
+      if (tipped) {
+        document.getElementById('alreadyTipped').style.display = 'flex';
+        document.getElementById('tipForm').style.display = 'none';
+        return;
+      }
+
+      // Preset buttons
+      document.querySelectorAll('.tip-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedCents = parseInt(btn.dataset.cents, 10);
+          document.getElementById('tipCustom').value = '';
+          document.getElementById('tipSubmitBtn').disabled = false;
+        });
+      });
+
+      // Custom input
+      const customInput = document.getElementById('tipCustom');
+      customInput.addEventListener('input', () => {
+        document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('selected'));
+        const val = parseFloat(customInput.value);
+        if (val >= 1 && val <= 100) {
+          selectedCents = Math.round(val * 100);
+          document.getElementById('tipSubmitBtn').disabled = false;
+        } else {
+          selectedCents = null;
+          document.getElementById('tipSubmitBtn').disabled = true;
+        }
+      });
+
+      // Skip
+      document.getElementById('tipSkip').addEventListener('click', () => {
+        document.getElementById('tipSection').style.display = 'none';
+      });
+
+      // Submit
+      document.getElementById('tipSubmitBtn').addEventListener('click', async () => {
+        if (!selectedCents || !orderId) {
+          showError('Please select or enter a tip amount.');
+          return;
+        }
+
+        const btn = document.getElementById('tipSubmitBtn');
+        btn.disabled = true;
+        btn.textContent = 'Processing...';
+
+        try {
+          const res = await fetch('/tip/' + orderId, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipAmountCents: selectedCents }),
+          });
+          const data = await res.json();
+
+          if (!res.ok || data.error) {
+            showError(data.error || 'Something went wrong. Please try again.');
+            btn.disabled = false;
+            btn.textContent = 'Send Tip';
+            return;
+          }
+
+          // If Stripe needs 3DS, redirect to handle it
+          if (data.clientSecret && data.status === 'requires_action') {
+            const stripe = Stripe('<%= stripePublishableKey || "" %>');
+            const { error } = await stripe.handleCardAction(data.clientSecret);
+            if (error) {
+              showError(error.message);
+              btn.disabled = false;
+              btn.textContent = 'Send Tip';
+              return;
+            }
+          }
+
+          // Success
+          document.getElementById('tipForm').style.display = 'none';
+          document.getElementById('alreadyTipped').style.display = 'flex';
+          showSuccess('Thank you! $' + (selectedCents / 100).toFixed(2) + ' tip sent to your driver.');
+        } catch (err) {
+          showError('Network error. Please check your connection.');
+          btn.disabled = false;
+          btn.textContent = 'Send Tip';
+        }
+      });
+
+      function showError(msg) {
+        const el = document.getElementById('tipError');
+        el.textContent = msg;
+        el.style.display = 'block';
+        document.getElementById('tipSuccess').style.display = 'none';
+      }
+
+      function showSuccess(msg) {
+        const el = document.getElementById('tipSuccess');
+        el.textContent = msg;
+        el.style.display = 'block';
+        document.getElementById('tipError').style.display = 'none';
+      }
+    })();
   </script>
 </body>
 </html>
