@@ -410,6 +410,16 @@
           </select>
         </div>
 
+        <!-- Appliance Add-On (shown only when appliance is selected) -->
+        <div class="bk-form-group" id="applianceAddonGroup" style="display:none;">
+          <label class="bk-label" for="applianceAddon">Add a second appliance?</label>
+          <select class="bk-select" name="applianceAddon" id="applianceAddon">
+            <option value="none">No — just one appliance</option>
+            <option value="second_appliance">Yes — add a second appliance (+$59.50)</option>
+          </select>
+          <div style="font-size:0.78rem;color:#9ca3af;margin-top:6px;">Washers, dryers, fridges &amp; more often come in pairs — add a second item at half the base rate.</div>
+        </div>
+
         <!-- Pickup Address -->
         <div class="bk-form-group">
           <label class="bk-label" for="pickupAddress">Pickup Address</label>
@@ -532,19 +542,41 @@
 
 <script>
   function calculatePrice() {
-    const item = document.getElementById('itemType').value;
+    const item    = document.getElementById('itemType').value;
     const helpers = parseInt(document.getElementById('helpers').value) || 0;
+    const addon   = document.getElementById('applianceAddon').value;
 
     const PRICES = {
       furniture: 89, mattress: 79, appliance: 119, building: 99,
       landscaping: 79, moving: 59, marketplace: 69, retail: 69, other: 59
     };
-    const base = PRICES[item] || 59;
-    const helperAdd = helpers === 1 ? 25 : helpers === 2 ? 45 : 0;
-    const total = base + helperAdd;
+    const base       = PRICES[item] || 59;
+    const helperAdd  = helpers === 1 ? 25 : helpers === 2 ? 45 : 0;
+    const addonCost  = (item === 'appliance' && addon === 'second_appliance') ? 59.50 : 0;
+    const total      = base + helperAdd + addonCost;
 
-    document.getElementById('price-estimate').textContent = '$' + total;
+    document.getElementById('price-estimate').textContent = '$' + total.toFixed(2).replace(/\.00$/, '');
   }
+
+  // Show/hide appliance add-on group based on item type selection
+  (function () {
+    const itemSel   = document.getElementById('itemType');
+    const addonGrp  = document.getElementById('applianceAddonGroup');
+    const addonSel  = document.getElementById('applianceAddon');
+
+    function toggleAddon() {
+      if (itemSel.value === 'appliance') {
+        addonGrp.style.display = '';
+      } else {
+        addonGrp.style.display = 'none';
+        addonSel.value = 'none';  // reset when switching away
+        calculatePrice();
+      }
+    }
+    itemSel.addEventListener('change', toggleAddon);
+    toggleAddon(); // run once on page load
+  })();
+
   document.getElementById('bookingForm').addEventListener('change', calculatePrice);
 
   // ── Marketplace disclaimer modal ──────────────────────────────────────────
