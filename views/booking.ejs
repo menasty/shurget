@@ -264,6 +264,92 @@
     outline: 2px solid #ea580c;
     outline-offset: 2px;
   }
+
+  /* ── Marketplace Disclaimer Modal ───────────────────── */
+  .mp-overlay {
+    display: none; position: fixed; inset: 0; z-index: 9000;
+    background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
+    align-items: center; justify-content: center; padding: 1.25rem;
+  }
+  .mp-overlay.open { display: flex; }
+  .mp-modal {
+    background: #111; border: 1px solid rgba(234,88,12,.35);
+    border-radius: 16px; max-width: 520px; width: 100%;
+    padding: 2rem 2rem 1.75rem; position: relative;
+    box-shadow: 0 24px 80px rgba(0,0,0,.7);
+    animation: mp-in .22s ease;
+  }
+  @keyframes mp-in {
+    from { opacity: 0; transform: translateY(16px) scale(.97); }
+    to   { opacity: 1; transform: none; }
+  }
+  .mp-icon {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: rgba(234,88,12,.12); border: 1px solid rgba(234,88,12,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 1rem;
+  }
+  .mp-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem;
+    letter-spacing: .06em; color: #fff; margin: 0 0 .5rem; line-height: 1.15;
+  }
+  .mp-lead {
+    font-size: .88rem; color: rgba(255,255,255,.55);
+    margin: 0 0 1.25rem; line-height: 1.55;
+  }
+  .mp-rules {
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 1.25rem;
+    display: flex; flex-direction: column; gap: .7rem;
+  }
+  .mp-rule {
+    display: flex; gap: .75rem; align-items: flex-start;
+    font-size: .85rem; color: rgba(255,255,255,.7); line-height: 1.5;
+  }
+  .mp-rule-icon { color: #ea580c; font-size: 1rem; flex-shrink: 0; margin-top: .05rem; }
+  .mp-driver-section {
+    background: rgba(234,88,12,.06); border: 1px solid rgba(234,88,12,.2);
+    border-radius: 10px; padding: .9rem 1.1rem; margin-bottom: 1.5rem;
+  }
+  .mp-driver-label {
+    font-size: .68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .1em; color: #ea580c; margin: 0 0 .5rem;
+  }
+  .mp-driver-steps {
+    margin: 0; padding: 0; list-style: none;
+    display: flex; flex-direction: column; gap: .45rem;
+  }
+  .mp-driver-steps li {
+    font-size: .82rem; color: rgba(255,255,255,.6); line-height: 1.5;
+    display: flex; gap: .6rem; align-items: flex-start;
+  }
+  .mp-driver-steps li span { color: #ea580c; font-weight: 700; flex-shrink: 0; }
+  .mp-checkbox-row {
+    display: flex; align-items: flex-start; gap: .65rem;
+    font-size: .82rem; color: rgba(255,255,255,.6); margin-bottom: 1.25rem;
+    cursor: pointer; line-height: 1.5;
+  }
+  .mp-checkbox-row input[type="checkbox"] {
+    width: 16px; height: 16px; accent-color: #b84000;
+    flex-shrink: 0; margin-top: .15rem; cursor: pointer;
+  }
+  .mp-actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .mp-btn-confirm {
+    flex: 1; background: #b84000; color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: .9rem; font-weight: 700; border: none; border-radius: 8px;
+    padding: .7rem 1.4rem; cursor: pointer; transition: background .2s;
+    opacity: .45; pointer-events: none;
+  }
+  .mp-btn-confirm.ready { opacity: 1; pointer-events: auto; }
+  .mp-btn-confirm.ready:hover { background: #9e3800; }
+  .mp-btn-cancel {
+    background: rgba(255,255,255,.06); color: rgba(255,255,255,.55);
+    font-family: 'DM Sans', sans-serif; font-size: .88rem; font-weight: 600;
+    border: 1px solid rgba(255,255,255,.1); border-radius: 8px;
+    padding: .7rem 1.1rem; cursor: pointer; transition: all .2s; white-space: nowrap;
+  }
+  .mp-btn-cancel:hover { background: rgba(255,255,255,.1); color: #fff; }
+
   .bk-fine-print {
     font-family: 'DM Sans', sans-serif;
     font-size: .77rem;
@@ -387,6 +473,59 @@
     </div>
   </section>
 
+
+<!-- ── Marketplace / Craigslist Disclaimer Modal ───────────────────────── -->
+<div class="mp-overlay" id="mpOverlay" role="dialog" aria-modal="true" aria-labelledby="mpTitle">
+  <div class="mp-modal">
+    <div class="mp-icon">⚠</div>
+    <h2 class="mp-title" id="mpTitle">Customer Presence Required</h2>
+    <p class="mp-lead">
+      To prevent fraud, protect against scammers and bots, and maintain the safety of our drivers,
+      <strong style="color:#f8f7f5;">you must be present at both the pickup and drop-off locations</strong>
+      for all Facebook Marketplace and Craigslist pickups.
+    </p>
+
+    <div class="mp-rules">
+      <div class="mp-rule">
+        <span class="mp-rule-icon">🔍</span>
+        <span><strong style="color:#f8f7f5;">Verify the item before handoff.</strong> You are responsible for inspecting the condition, quality, and identity of the item. Shurget drivers transport what you authorize — not what a seller claims.</span>
+      </div>
+      <div class="mp-rule">
+        <span class="mp-rule-icon">💬</span>
+        <span><strong style="color:#f8f7f5;">Negotiate before the driver arrives.</strong> Marketplace prices are not fixed. Any price negotiation must be completed before the driver is expected. Drivers do not participate in seller negotiations.</span>
+      </div>
+      <div class="mp-rule">
+        <span class="mp-rule-icon">✅</span>
+        <span><strong style="color:#f8f7f5;">Approve before the driver loads.</strong> Once you confirm the item is correct and acceptable, you authorize the driver to take possession for transport. This handoff is your responsibility.</span>
+      </div>
+      <div class="mp-rule">
+        <span class="mp-rule-icon">🛡</span>
+        <span><strong style="color:#f8f7f5;">Driver safety is non-negotiable.</strong> Our drivers are independent contractors covered by general liability insurance. They will not enter unsafe situations or handle disputes with sellers.</span>
+      </div>
+    </div>
+
+    <div class="mp-driver-section">
+      <p class="mp-driver-label">Driver No-Show Procedure</p>
+      <ul class="mp-driver-steps">
+        <li><span>1.</span> Driver arrives and customer is not present — driver waits up to <strong style="color:#f8f7f5;">10 minutes</strong> and attempts contact via phone.</li>
+        <li><span>2.</span> If no response after 10 minutes, driver contacts Shurget support and documents the no-show with a timestamped photo of the location.</li>
+        <li><span>3.</span> The booking is marked <strong style="color:#f8f7f5;">Customer No-Show</strong>. A cancellation fee may apply. The driver receives their base compensation.</li>
+        <li><span>4.</span> Customer will be notified and may rebook. Repeated no-shows may result in account suspension.</li>
+      </ul>
+    </div>
+
+    <label class="mp-checkbox-row" for="mpAgree">
+      <input type="checkbox" id="mpAgree">
+      I understand that I must be present at pickup, I have verified the item with the seller in advance, and I accept these terms before my driver arrives.
+    </label>
+
+    <div class="mp-actions">
+      <button class="mp-btn-confirm" id="mpConfirmBtn" disabled>I Understand — Continue Booking</button>
+      <button class="mp-btn-cancel" id="mpCancelBtn">Go Back</button>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <%- include('partials/footer') %>
@@ -407,6 +546,85 @@
     document.getElementById('price-estimate').textContent = '$' + total;
   }
   document.getElementById('bookingForm').addEventListener('change', calculatePrice);
+
+  // ── Marketplace disclaimer modal ──────────────────────────────────────────
+  (function () {
+    const itemSelect   = document.getElementById('itemType');
+    const overlay      = document.getElementById('mpOverlay');
+    const confirmBtn   = document.getElementById('mpConfirmBtn');
+    const cancelBtn    = document.getElementById('mpCancelBtn');
+    const checkbox     = document.getElementById('mpAgree');
+    const bookingForm  = document.getElementById('bookingForm');
+    let   mpAccepted   = false;
+
+    // Open modal when marketplace is selected
+    itemSelect.addEventListener('change', function () {
+      if (this.value === 'marketplace') {
+        if (!mpAccepted) {
+          overlay.classList.add('open');
+          document.body.style.overflow = 'hidden';
+          checkbox.checked = false;
+          confirmBtn.disabled = true;
+          confirmBtn.classList.remove('ready');
+        }
+      }
+    });
+
+    // Enable confirm button only when checkbox is checked
+    checkbox.addEventListener('change', function () {
+      confirmBtn.disabled = !this.checked;
+      confirmBtn.classList.toggle('ready', this.checked);
+    });
+
+    // Confirm — close modal and allow booking to proceed
+    confirmBtn.addEventListener('click', function () {
+      if (!checkbox.checked) return;
+      mpAccepted = true;
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+
+    // Cancel — reset selector and close modal
+    cancelBtn.addEventListener('click', function () {
+      itemSelect.value = '';
+      mpAccepted = false;
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+      calculatePrice();
+    });
+
+    // Close on overlay background click
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) {
+        itemSelect.value = '';
+        mpAccepted = false;
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+        calculatePrice();
+      }
+    });
+
+    // Gate form submission — re-show modal if marketplace selected without acceptance
+    bookingForm.addEventListener('submit', function (e) {
+      if (itemSelect.value === 'marketplace' && !mpAccepted) {
+        e.preventDefault();
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) {
+        itemSelect.value = '';
+        mpAccepted = false;
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+        calculatePrice();
+      }
+    });
+  })();
+
 </script>
 </body>
 </html>
