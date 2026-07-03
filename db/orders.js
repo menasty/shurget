@@ -20,25 +20,48 @@ const BASE_PRICES = {
 const FEE_RATE = 0.20;
 const HELPER_PRICES = { 0: 0, 1: 25, 2: 45 };
 
-function calculatePrice(itemType, distanceMiles, helpers = 0) {
-  const baseRate = BASE_PRICES[itemType] ?? 59;
+/**
+ * Calculate order pricing.
+ * @param {string} itemType
+ * @param {number} distanceMiles
+ * @param {number} helpers
+ * @param {number} [surgeMultiplier=1.00] - 1.25 = 25% surge
+ * @param {string} [surgeLabel=null]      - shown to customer
+ */
+function calculatePrice(itemType, distanceMiles, helpers, surgeMultiplier, surgeLabel) {
+  if (helpers === undefined) helpers = 0;
+  if (surgeMultiplier === undefined) surgeMultiplier = 1.00;
+  const baseRate       = BASE_PRICES[itemType] ?? 59;
   const distanceCharge = Math.round(distanceMiles * 1.50 * 100) / 100;
-  const helperFee = HELPER_PRICES[helpers] ?? 0;
-  const subtotal = baseRate + distanceCharge + helperFee;
-  const fee = Math.round(subtotal * FEE_RATE * 100) / 100;
+  const helperFee      = HELPER_PRICES[helpers] ?? 0;
+  const subtotal       = baseRate + distanceCharge + helperFee;
+  const multiplier     = Math.max(1.00, Math.min(2.00, parseFloat(surgeMultiplier) || 1.00));
+  const surgedSubtotal = Math.round(subtotal * multiplier * 100) / 100;
+  const fee            = Math.round(surgedSubtotal * FEE_RATE * 100) / 100;
   return {
-    priceBaseRate: baseRate,
-    priceDistance: distanceCharge,
-    priceHelpers:  helperFee,
-    priceBase:     Math.round(subtotal * 100) / 100,
-    priceFee:      fee,
-    priceTotal:    Math.round((subtotal + fee) * 100) / 100,
+    priceBaseRate:    baseRate,
+    priceDistance:    distanceCharge,
+    priceHelpers:     helperFee,
+    priceBase:        surgedSubtotal,
+    priceSubtotalPre: Math.round(subtotal * 100) / 100,
+    priceFee:         fee,
+    priceTotal:       Math.round((surgedSubtotal + fee) * 100) / 100,
+    surgeMultiplier:  multiplier,
+    surgeLabel:       multiplier > 1.00 ? (surgeLabel || 'High Demand') : null,
+    surgeApplied:     multiplier > 1.00,
   };
 }
 
 /** Insert a new order. Returns the created order row. */
 async function createOrder(data) {
-  const pricing = calculatePrice(data.itemType, data.distanceMiles || 5);
+  let surgeMultiplier = 1.00;
+  let surgeLabel = null;
+  try {
+    const { getSurgeConfig } = require('./surge');
+    const surge = await getSurgeConfig();
+    if (surge.active) { surgeMultiplier = surge.multiplier; surgeLabel = surge.label; }
+  } catch (_) {}
+  const pricing = calculatePrice(data.itemType, data.distanceMiles || 5, data.helpers || 0, surgeMultiplier, surgeLabel);
   // Apply referral discount: reduce price_total by discount amount (floor at 0)
   const referralDiscount = data.referralDiscountCents || 0;
   const discountDollars  = referralDiscount / 100;
@@ -54,7 +77,8 @@ async function createOrder(data) {
       referral_code_used, referral_discount_cents, partner_slug,
       sms_consent,
       utm_source_first, utm_medium_first, utm_campaign_first,
-      utm_source_last,  utm_medium_last,  utm_campaign_last
+      utm_source_last,  utm_medium_last,  utm_campaign_last,
+      surge_multiplier, surge_label, tip_amount_cents
     ) VALUES (
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,
       $20, $21, $22, $23,
@@ -951,6 +975,29 @@ async function getReferralFunnel(dateRange = 'all') {
     LIMIT 100
   `);
   return rows;
+}
+
+
+/**
+ * Add a tip to a delivered order (one-time, cannot overwrite existing tip).
+ * tipAmountDollars: number (e.g. 5, 10, 15, 20)
+ */
+async function addTipToOrder(orderId, tipAmountDollars) {
+  const tipCents = Math.round(Math.max(0, parseFloat(tipAmountDollars) || 0) * 100);
+  const { rows } = await db.query(
+    `UPDATE orders
+       SET tip_amount_cents = $2, updated_at = NOW()
+     WHERE id = $1
+       AND status IN ('delivered', 'paid', 'confirmed')
+       AND (tip_amount_cents IS NULL OR tip_amount_cents = 0)
+     RETURNING *`,
+    [orderId, tipCents]
+  );
+  return rows[0] || null;
+}
+
+function tipDollars(order) {
+  return ((order.tip_amount_cents || 0) / 100).toFixed(2);
 }
 
 module.exports = {
