@@ -20,6 +20,7 @@ router.post('/', async (req, res) => {
       pickupAddress,
       dropoffAddress,
       helpers = '0',
+      applianceAddon = 'none',
       customerName,
       customerEmail,
       customerPhone,
@@ -31,12 +32,18 @@ router.post('/', async (req, res) => {
 
     const helperCount = parseInt(helpers, 10) || 0;
 
+    // Validate and normalize appliance add-on
+    const addonValue = (itemType === 'appliance' && applianceAddon === 'second_appliance')
+      ? 'second_appliance'
+      : 'none';
+
     // Create the order in pending_payment so the Stripe webhook can flip it to paid.
     const order = await createOrder({
       itemType,
       pickupAddress,
       dropoffAddress,
       helpers: helperCount,
+      applianceAddon: addonValue,
       customerName: customerName || null,
       customerEmail: customerEmail || null,
       customerPhone: customerPhone || null,
