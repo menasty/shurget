@@ -82,4 +82,78 @@ async function setSurgeConfig({ multiplier, active, label, reason, updatedBy }) 
   return rows[0];
 }
 
-module.exports = { initSurgeTable, getSurgeConfig, setSurgeConfig };
+/**
+ * Evaluate weather conditions and return the appropriate surge tier.
+ * Uses Open-Meteo WMO weather codes + windspeed + snowfall.
+ *
+ * WMO code reference (relevant ranges):
+ *   51-67  : Drizzle / freezing drizzle / rain
+ *   71-77  : Snow / snow grains / ice crystals
+ *   80-82  : Rain showers
+ *   85-86  : Snow showers
+ *   95     : Thunderstorm
+ *   96,99  : Thunderstorm w/ hail
+ *
+ * Returns { multiplier, active, label, reason } — ready to pass to setSurgeConfig.
+ */
+function evaluateWeatherSurge(weathercode, windspeedMph, snowfallMm, tempF) {
+  const code = parseInt(weathercode, 10) || 0;
+
+  // ── SEVERE: blizzard / thunderstorm with hail / heavy snow ──────────────
+  // 1.40× — "Severe Weather Rate"
+  const severe =
+    (code >= 95) ||                        // thunderstorm (any)
+    (code >= 85 && code <= 86) ||           // heavy snow showers
+    (code >= 75 && code <= 77) ||           // heavy snow / ice crystals
+    (windspeedMph >= 45) ||                 // near-gale wind regardless of precip
+    (snowfallMm >= 5 && windspeedMph >= 25); // blowing snow combo
+
+  if (severe) {
+    return {
+      multiplier: 1.40,
+      active:     true,
+      label:      'Severe Weather',
+      reason:     `Auto: WMO ${code}, wind ${windspeedMph}mph, snow ${snowfallMm}mm, temp ${tempF}°F`,
+    };
+  }
+
+  // ── MODERATE: snow / freezing rain / ice / high wind ────────────────────
+  // 1.25× — "Winter Conditions"
+  const moderate =
+    (code >= 71 && code <= 77) ||           // any snow / snow grains
+    (code >= 56 && code <= 57) ||           // freezing drizzle
+    (code >= 66 && code <= 67) ||           // freezing rain
+    (windspeedMph >= 30) ||                 // strong wind advisory
+    (tempF !== null && tempF <= 10) ||      // extreme cold (feels dangerous)
+    (snowfallMm > 0 && snowfallMm < 5);    // light snow accumulating
+
+  if (moderate) {
+    return {
+      multiplier: 1.25,
+      active:     true,
+      label:      'Winter Conditions',
+      reason:     `Auto: WMO ${code}, wind ${windspeedMph}mph, snow ${snowfallMm}mm, temp ${tempF}°F`,
+    };
+  }
+
+  // ── HEAT: extreme summer heat (dangerous for drivers + loads) ───────────
+  // 1.20× — "Extreme Heat"
+  if (tempF !== null && tempF >= 100) {
+    return {
+      multiplier: 1.20,
+      active:     true,
+      label:      'Extreme Heat',
+      reason:     `Auto: temp ${tempF}°F — heat advisory conditions`,
+    };
+  }
+
+  // ── NORMAL: clear the auto surge ────────────────────────────────────────
+  return {
+    multiplier: 1.00,
+    active:     false,
+    label:      'Standard Rate',
+    reason:     `Auto: conditions normal (WMO ${code}, wind ${windspeedMph}mph, temp ${tempF}°F)`,
+  };
+}
+
+module.exports = { initSurgeTable, getSurgeConfig, setSurgeConfig, evaluateWeatherSurge };
