@@ -27,14 +27,18 @@ const HELPER_PRICES = { 0: 0, 1: 25, 2: 45 };
  * @param {number} helpers
  * @param {number} [surgeMultiplier=1.00] - 1.25 = 25% surge
  * @param {string} [surgeLabel=null]      - shown to customer
+ * @param {string} [applianceAddon='none'] - 'second_appliance' adds half base rate
  */
-function calculatePrice(itemType, distanceMiles, helpers, surgeMultiplier, surgeLabel) {
+function calculatePrice(itemType, distanceMiles, helpers, surgeMultiplier, surgeLabel, applianceAddon) {
   if (helpers === undefined) helpers = 0;
   if (surgeMultiplier === undefined) surgeMultiplier = 1.00;
+  if (applianceAddon === undefined) applianceAddon = 'none';
   const baseRate       = BASE_PRICES[itemType] ?? 59;
   const distanceCharge = Math.round(distanceMiles * 1.50 * 100) / 100;
   const helperFee      = HELPER_PRICES[helpers] ?? 0;
-  const subtotal       = baseRate + distanceCharge + helperFee;
+  // Second appliance add-on: half the appliance base rate ($119/2 = $59.50)
+  const addonFee       = (itemType === 'appliance' && applianceAddon === 'second_appliance') ? 59.50 : 0;
+  const subtotal       = baseRate + distanceCharge + helperFee + addonFee;
   const multiplier     = Math.max(1.00, Math.min(2.00, parseFloat(surgeMultiplier) || 1.00));
   const surgedSubtotal = Math.round(subtotal * multiplier * 100) / 100;
   const fee            = Math.round(surgedSubtotal * FEE_RATE * 100) / 100;
@@ -42,6 +46,7 @@ function calculatePrice(itemType, distanceMiles, helpers, surgeMultiplier, surge
     priceBaseRate:    baseRate,
     priceDistance:    distanceCharge,
     priceHelpers:     helperFee,
+    priceAddon:       addonFee,
     priceBase:        surgedSubtotal,
     priceSubtotalPre: Math.round(subtotal * 100) / 100,
     priceFee:         fee,
@@ -61,7 +66,7 @@ async function createOrder(data) {
     const surge = await getSurgeConfig();
     if (surge.active) { surgeMultiplier = surge.multiplier; surgeLabel = surge.label; }
   } catch (_) {}
-  const pricing = calculatePrice(data.itemType, data.distanceMiles || 5, data.helpers || 0, surgeMultiplier, surgeLabel);
+  const pricing = calculatePrice(data.itemType, data.distanceMiles || 5, data.helpers || 0, surgeMultiplier, surgeLabel, data.applianceAddon || 'none');
   // Apply referral discount: reduce price_total by discount amount (floor at 0)
   const referralDiscount = data.referralDiscountCents || 0;
   const discountDollars  = referralDiscount / 100;
