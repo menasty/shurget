@@ -3,445 +3,138 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bookings — Admin — Shurget</title>
+  <title>Bookings — Shurget Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/theme.css">
   <style>
-    body { background: var(--bg); }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { background: #0a0a0a; color: #f8f7f5; font-family: 'DM Sans', sans-serif; min-height: 100vh; }
 
-    .dash-page {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 80px 1.5rem 4rem;
+    .admin-topnav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,.92); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      height: 58px; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 clamp(1.25rem,4vw,2.5rem);
     }
+    .admin-topnav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: .12em; color: #fff; text-decoration: none; display: flex; align-items: center; gap: .5rem; }
+    .admin-topnav-logo span { color: #ea580c; }
+    .admin-topnav-badge { font-size: .62rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; background: rgba(234,88,12,.15); color: #ea580c; border: 1px solid rgba(234,88,12,.3); border-radius: 4px; padding: .15rem .5rem; }
+    .tn-btn { font-size: .78rem; font-weight: 600; text-decoration: none; padding: .4rem .9rem; border-radius: 6px; border: none; cursor: pointer; transition: background .2s; font-family: 'DM Sans', sans-serif; }
+    .tn-btn-ghost { background: rgba(255,255,255,.07); color: rgba(255,255,255,.65); }
+    .tn-btn-ghost:hover { background: rgba(255,255,255,.13); color: #fff; }
+    .tn-btn-primary { background: #b84000; color: #fff; }
+    .tn-btn-primary:hover { background: #9e3800; }
 
-    /* ── Header ── */
-    .dash-header { margin-bottom: 1.5rem; }
-    .dash-header .page-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.5rem;
-      letter-spacing: 0.05em;
-      color: var(--charcoal);
-      margin-bottom: 0.25rem;
-    }
-    .dash-header .page-sub { color: var(--gray-mid); font-size: 0.95rem; }
+    .admin-layout { display: grid; grid-template-columns: 220px 1fr; min-height: calc(100vh - 58px); }
+    @media (max-width: 768px) { .admin-layout { grid-template-columns: 1fr; } .admin-sidebar { display: flex; overflow-x: auto; padding: .75rem; gap: .4rem; border-right: none; border-bottom: 1px solid rgba(255,255,255,.07); } .sidebar-section-label { display: none; } }
+    .admin-sidebar { background: #111; border-right: 1px solid rgba(255,255,255,.07); padding: 1.25rem .75rem; display: flex; flex-direction: column; gap: .15rem; }
+    .sidebar-section-label { font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: rgba(255,255,255,.3); padding: .9rem .6rem .35rem; }
+    .sidebar-link { display: flex; align-items: center; gap: .6rem; padding: .52rem .7rem; border-radius: 7px; text-decoration: none; color: rgba(255,255,255,.55); font-size: .82rem; font-weight: 500; transition: all .18s; white-space: nowrap; }
+    .sidebar-link:hover { background: rgba(255,255,255,.06); color: rgba(255,255,255,.85); }
+    .sidebar-link.active { background: rgba(184,64,0,.18); color: #ea580c; font-weight: 600; }
+    .sidebar-icon { font-size: 1rem; flex-shrink: 0; }
+    .admin-main { padding: clamp(1.5rem,4vw,2.5rem); overflow-x: hidden; }
 
-    /* ── Alerts ── */
-    .alert {
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      margin-bottom: 1.5rem;
-      font-weight: 500;
-    }
-    .alert-success { background: #F0FAF5; color: #166534; border: 1px solid #86C9A0; }
-    .alert-error   { background: #FFF7ED; color: #92400E; border: 1px solid #F5C77E; }
+    .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .06em; color: #fff; margin: 0 0 .25rem; }
+    .page-subtitle { font-size: .88rem; color: rgba(255,255,255,.45); margin: 0 0 1.75rem; }
 
-    /* ── Back link ── */
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--gray-mid);
-      text-decoration: none;
-      margin-bottom: 1.5rem;
-    }
-    .back-link:hover { color: var(--orange); }
+    .card { background: #111; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 1.5rem; }
+    .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: .05em; color: #fff; margin: 0 0 1rem; }
 
-    /* ── Admin sidebar nav ── */
-    .admin-nav {
-      display: flex;
-      gap: 0.25rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    .admin-nav-link {
-      padding: 0.5rem 1rem;
-      border-radius: 6px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      text-decoration: none;
-      border: 1.5px solid transparent;
-      transition: all 0.15s;
-      color: var(--gray-mid);
-      background: var(--white);
-    }
-    .admin-nav-link:hover { border-color: var(--orange); color: var(--orange); }
-    .admin-nav-link.active { background: var(--charcoal); color: var(--white); border-color: var(--charcoal); }
+    .data-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    .data-table th { background: #111; color: rgba(255,255,255,.45); font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; padding: .65rem 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,.07); white-space: nowrap; }
+    .data-table th.sortable { cursor: pointer; user-select: none; }
+    .data-table th.sortable:hover { color: #ea580c; }
+    .data-table td { padding: .75rem 1rem; border-bottom: 1px solid rgba(255,255,255,.04); color: #f8f7f5; vertical-align: middle; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: rgba(255,255,255,.03); }
+    .table-wrap { background: #111; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; overflow: hidden; }
 
-    /* ── Filter bar ── */
-    .filter-bar {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-      background: var(--white);
-      border: 1.5px solid var(--gray-light);
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-    }
-    .filter-group {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .filter-label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--gray-mid);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .filter-bar select,
-    .filter-bar input {
-      padding: 0.4rem 0.75rem;
-      border: 1.5px solid var(--gray-light);
-      border-radius: 6px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.82rem;
-      color: var(--charcoal);
-      background: var(--white);
-      cursor: pointer;
-    }
-    .filter-bar select:focus,
-    .filter-bar input:focus {
-      outline: none;
-      border-color: var(--orange);
-    }
-    .filter-bar .btn {
-      padding: 0.4rem 1rem;
-      border: none;
-      border-radius: 6px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      transition: background 0.15s;
-    }
-    .btn-orange { background: var(--orange); color: var(--white); }
-    .btn-orange:hover { background: var(--orange-light); }
-    .btn-gray   { background: var(--gray-light); color: var(--gray-mid); }
+    .badge { display: inline-flex; align-items: center; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; padding: .25rem .6rem; border-radius: 5px; }
+    .badge-green  { background: rgba(22,163,74,.15);  color: #4ade80; border: 1px solid rgba(22,163,74,.25); }
+    .badge-orange { background: rgba(234,88,12,.15);  color: #ea580c; border: 1px solid rgba(234,88,12,.25); }
+    .badge-red    { background: rgba(239,68,68,.15);  color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+    .badge-gray   { background: rgba(255,255,255,.07); color: rgba(255,255,255,.5); border: 1px solid rgba(255,255,255,.1); }
+    .badge-blue   { background: rgba(59,130,246,.15); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
 
-    .results-count {
-      margin-left: auto;
-      font-size: 0.82rem;
-      color: var(--gray-mid);
-    }
+    .btn { display: inline-flex; align-items: center; gap: .4rem; font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 600; padding: .5rem 1rem; border-radius: 7px; border: none; cursor: pointer; text-decoration: none; transition: all .2s; }
+    .btn-primary { background: #b84000; color: #fff; }
+    .btn-primary:hover { background: #9e3800; }
+    .btn-ghost { background: rgba(255,255,255,.06); color: rgba(255,255,255,.65); border: 1px solid rgba(255,255,255,.1); }
+    .btn-ghost:hover { background: rgba(255,255,255,.1); color: #fff; }
+    .btn-danger { background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+    .btn-danger:hover { background: rgba(239,68,68,.25); }
+    .btn-sm { padding: .35rem .7rem; font-size: .72rem; }
 
-    /* ── Orders table ── */
-    .orders-table {
-      background: var(--white);
-      border: 1.5px solid var(--gray-light);
-      border-radius: 12px;
-      overflow: hidden;
-    }
+    .form-input { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); border-radius: 8px; color: #f8f7f5; font-family: 'DM Sans', sans-serif; font-size: .9rem; padding: .55rem .85rem; outline: none; transition: border-color .2s; }
+    .form-input:focus { border-color: #b84000; }
+    .form-select { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); border-radius: 8px; color: #f8f7f5; font-family: 'DM Sans', sans-serif; font-size: .82rem; padding: .4rem .7rem; outline: none; cursor: pointer; }
+    .form-select:focus { border-color: #b84000; }
 
-    .orders-thead th {
-      background: var(--off-white);
-      padding: 0.75rem 1rem;
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--gray-mid);
-      text-align: left;
-      border-bottom: 1.5px solid var(--gray-light);
-      white-space: nowrap;
-    }
-    .orders-thead th.sortable { cursor: pointer; user-select: none; }
-    .orders-thead th.sortable:hover { color: var(--orange); }
+    .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
+    .metric-card { background: #111; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 1.25rem 1.5rem; }
+    .metric-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.35); margin: 0 0 .4rem; }
+    .metric-value { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: .04em; color: #fff; line-height: 1; margin: 0; }
+    .metric-sub { font-size: .75rem; color: rgba(255,255,255,.35); margin: .3rem 0 0; }
 
-    .orders-tbody tr {
-      border-bottom: 1px solid var(--gray-light);
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .orders-tbody tr:last-child { border-bottom: none; }
-    .orders-tbody tr:hover { background: #FAFAF7; }
+    .alert { border-radius: 9px; padding: .75rem 1.1rem; font-size: .88rem; margin-bottom: 1.25rem; }
+    .alert-success { background: rgba(22,163,74,.12); border: 1px solid rgba(22,163,74,.25); color: #4ade80; }
+    .alert-error { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); color: #f87171; }
 
-    .orders-tbody td {
-      padding: 0.85rem 1rem;
-      font-size: 0.85rem;
-      color: var(--charcoal);
-      vertical-align: middle;
-    }
+    /* Filter bar */
+    .filter-bar { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.5rem; background: #111; border: 1px solid rgba(255,255,255,.07); border-radius: 12px; padding: 1rem 1.25rem; }
+    .filter-group { display: flex; align-items: center; gap: .5rem; }
+    .filter-label { font-size: .72rem; font-weight: 700; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .08em; }
+    .results-count { margin-left: auto; font-size: .82rem; color: rgba(255,255,255,.45); }
 
-    .order-id-badge {
-      background: var(--off-white);
-      border: 1px solid var(--gray-light);
-      border-radius: 4px;
-      padding: 0.2rem 0.5rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      font-family: monospace;
-      color: var(--charcoal);
-    }
-
+    .order-id-badge { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 4px; padding: .2rem .5rem; font-size: .78rem; font-weight: 700; font-family: monospace; color: #f8f7f5; }
     .customer-name { font-weight: 600; }
-    .customer-email { font-size: 0.78rem; color: var(--gray-mid); }
-
-    .address-text {
-      font-size: 0.82rem;
-      max-width: 160px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .price-value { font-weight: 700; font-size: 0.9rem; }
-    .price-breakdown { font-size: 0.72rem; color: var(--gray-mid); margin-top: 0.1rem; }
-
-    /* Status badge */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      padding: 0.25rem 0.65rem;
-      border-radius: 99px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-    }
-    .status-badge.pending        { background: #FFF7ED; color: #92400E; border: 1px solid #F5C77E; }
-    .status-badge.paid           { background: #EFF6FF; color: #1E40AF; border: 1px solid #93C5FD; }
-    .status-badge.assigned       { background: #EFF6FF; color: #1E40AF; border: 1px solid #93C5FD; }
-    .status-badge.in_progress    { background: #F0FDF4; color: #166534; border: 1px solid #86C9A0; }
-    .status-badge.delivered      { background: #F0FDF4; color: #166534; border: 1px solid #86C9A0; }
-    .status-badge.cancelled      { background: #FFF7ED; color: #92400E; border: 1px solid #F5C77E; }
-
-    .driver-name { font-weight: 500; font-size: 0.82rem; }
-    .driver-phone { font-size: 0.75rem; color: var(--gray-mid); }
-
-    .date-text { font-size: 0.8rem; color: var(--gray-mid); }
-
-    .actions-cell {
-      display: flex;
-      gap: 0.4rem;
-      align-items: center;
-    }
-
-    .btn-action {
-      padding: 0.3rem 0.65rem;
-      border: none;
-      border-radius: 5px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    .btn-action:hover { opacity: 0.8; }
-    .btn-cancel  { background: #FEE2E2; color: #991B1B; }
-    .btn-reassign{ background: var(--off-white); color: var(--charcoal); border: 1px solid var(--gray-light); }
+    .customer-email { font-size: .78rem; color: rgba(255,255,255,.45); }
+    .address-text { font-size: .82rem; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .price-value { font-weight: 700; font-size: .9rem; }
+    .price-breakdown { font-size: .72rem; color: rgba(255,255,255,.35); margin-top: .1rem; }
+    .driver-name { font-weight: 500; font-size: .82rem; }
+    .driver-phone { font-size: .75rem; color: rgba(255,255,255,.45); }
+    .date-text { font-size: .8rem; color: rgba(255,255,255,.45); }
+    .actions-cell { display: flex; gap: .4rem; align-items: center; }
 
     /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--gray-mid);
-    }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: rgba(255,255,255,.45); }
     .empty-state-icon { font-size: 3rem; margin-bottom: 1rem; }
-    .empty-state h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--charcoal); margin-bottom: 0.5rem; }
-    .empty-state p { font-size: 0.9rem; }
+    .empty-state h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: #fff; margin-bottom: .5rem; letter-spacing: .04em; }
+    .empty-state p { font-size: .9rem; }
 
-    /* ── Detail Drawer ── */
-    .drawer-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 200;
-      backdrop-filter: blur(2px);
-    }
+    /* Detail Drawer */
+    .drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 200; backdrop-filter: blur(2px); }
     .drawer-overlay.open { display: block; }
-
-    .drawer {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: min(560px, 100vw);
-      background: var(--white);
-      z-index: 201;
-      overflow-y: auto;
-      transform: translateX(100%);
-      transition: transform 0.25s ease;
-      box-shadow: -8px 0 32px rgba(0,0,0,0.15);
-    }
+    .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100vw); background: #111; border-left: 1px solid rgba(255,255,255,.07); z-index: 201; overflow-y: auto; transform: translateX(100%); transition: transform .25s ease; box-shadow: -8px 0 32px rgba(0,0,0,.5); }
     .drawer.open { transform: translateX(0); }
-
-    .drawer-header {
-      position: sticky;
-      top: 0;
-      background: var(--white);
-      border-bottom: 1.5px solid var(--gray-light);
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 1;
-    }
-    .drawer-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.5rem;
-      letter-spacing: 0.05em;
-      color: var(--charcoal);
-    }
-    .drawer-close {
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--gray-mid);
-      padding: 0.25rem;
-      line-height: 1;
-    }
-    .drawer-close:hover { color: var(--charcoal); }
-
+    .drawer-header { position: sticky; top: 0; background: #111; border-bottom: 1px solid rgba(255,255,255,.07); padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; z-index: 1; }
+    .drawer-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: .05em; color: #fff; }
+    .drawer-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: rgba(255,255,255,.45); padding: .25rem; line-height: 1; }
+    .drawer-close:hover { color: #fff; }
     .drawer-body { padding: 1.5rem; }
-
-    .detail-section {
-      margin-bottom: 1.75rem;
-    }
-    .detail-section-title {
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--gray-mid);
-      margin-bottom: 0.75rem;
-    }
-
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
-    .detail-item {}
-    .detail-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-mid); margin-bottom: 0.2rem; }
-    .detail-value { font-size: 0.88rem; font-weight: 500; color: var(--charcoal); }
-    .detail-value.mono { font-family: monospace; font-size: 0.85rem; }
-
-    .detail-full { margin-bottom: 0.5rem; }
-    .detail-full .detail-label { margin-bottom: 0.15rem; }
-    .detail-full .detail-value { font-size: 0.88rem; line-height: 1.4; }
-
-    .price-box {
-      background: var(--off-white);
-      border: 1.5px solid var(--gray-light);
-      border-radius: 8px;
-      padding: 1rem;
-    }
-    .price-box .price-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      margin-bottom: 0.4rem;
-    }
-    .price-box .price-row:last-child {
-      margin-bottom: 0;
-      padding-top: 0.5rem;
-      border-top: 1.5px solid var(--gray-light);
-      font-weight: 700;
-      font-size: 1rem;
-    }
-    .price-box .price-row .muted { color: var(--gray-mid); }
-
+    .detail-section { margin-bottom: 1.75rem; }
+    .detail-section-title { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.35); margin-bottom: .75rem; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .detail-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.35); margin-bottom: .2rem; }
+    .detail-value { font-size: .88rem; font-weight: 500; color: #f8f7f5; }
+    .detail-full { margin-bottom: .5rem; }
+    .detail-full .detail-label { margin-bottom: .15rem; }
+    .detail-full .detail-value { font-size: .88rem; line-height: 1.4; }
+    .price-box { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; padding: 1rem; }
+    .price-box .price-row { display: flex; justify-content: space-between; font-size: .85rem; margin-bottom: .4rem; color: #f8f7f5; }
+    .price-box .price-row:last-child { margin-bottom: 0; padding-top: .5rem; border-top: 1px solid rgba(255,255,255,.08); font-weight: 700; font-size: 1rem; }
+    .price-box .price-row .muted { color: rgba(255,255,255,.45); }
     .items-list { list-style: none; padding: 0; margin: 0; }
-    .items-list li {
-      background: var(--off-white);
-      border: 1px solid var(--gray-light);
-      border-radius: 6px;
-      padding: 0.6rem 0.85rem;
-      margin-bottom: 0.4rem;
-      font-size: 0.85rem;
-    }
+    .items-list li { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 6px; padding: .6rem .85rem; margin-bottom: .4rem; font-size: .85rem; color: #f8f7f5; }
     .items-list li:last-child { margin-bottom: 0; }
-
-    .drawer-actions {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 1.5px solid var(--gray-light);
-    }
-    .drawer-actions .btn {
-      flex: 1;
-      padding: 0.75rem 1rem;
-      border: none;
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-      transition: background 0.15s;
-    }
-    .btn-red-drawer   { background: #DC2626; color: var(--white); }
-    .btn-red-drawer:hover { background: #B91C1C; }
-    .btn-orange-drawer { background: var(--orange); color: var(--white); }
-    .btn-orange-drawer:hover { background: var(--orange-light); }
-    .btn-gray-drawer  { background: var(--gray-light); color: var(--gray-mid); cursor: default; }
-
+    .drawer-actions { display: flex; gap: .75rem; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,.07); }
+    .drawer-actions .btn { flex: 1; justify-content: center; padding: .75rem 1rem; font-size: .88rem; }
     .reassign-form { margin-top: 1rem; }
-    .reassign-form select {
-      width: 100%;
-      padding: 0.6rem 0.75rem;
-      border: 1.5px solid var(--gray-light);
-      border-radius: 6px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.88rem;
-      color: var(--charcoal);
-      background: var(--white);
-      margin-bottom: 0.5rem;
-    }
-    .reassign-form select:focus { outline: none; border-color: var(--orange); }
-
-    /* ── Nav ── */
-    .dash-nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 0 clamp(1.5rem, 4vw, 3rem);
-      background: rgba(26,26,26,0.9);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .nav-logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.75rem;
-      letter-spacing: 0.12em;
-      color: var(--white);
-      text-decoration: none;
-    }
-    .nav-right { display: flex; align-items: center; gap: 1rem; }
-    .nav-btn {
-      padding: 0.45rem 1rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-decoration: none;
-      border: none;
-      font-family: 'DM Sans', sans-serif;
-      transition: background 0.2s;
-    }
-    .nav-btn-primary { background: var(--orange); color: var(--white); }
-    .nav-btn-primary:hover { background: var(--orange-light); }
-    .nav-btn-secondary { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
-    .nav-btn-secondary:hover { background: rgba(255,255,255,0.18); }
+    .reassign-form select { width: 100%; margin-bottom: .5rem; }
 
     @media (max-width: 768px) {
       .detail-grid { grid-template-columns: 1fr; }
@@ -451,187 +144,192 @@
   </style>
 </head>
 <body>
-  <nav class="dash-nav">
-    <a href="/" class="nav-logo">
-      <img src="/images/shurget-logo.png" alt="Shurget" height="48" style="vertical-align: middle;">
-    </a>
-    <div class="nav-right">
-      <a href="/dashboard" class="nav-btn nav-btn-secondary">Dashboard</a>
-      <a href="/book" class="nav-btn nav-btn-primary">New Booking</a>
-      <a href="/admin/logout" class="nav-btn nav-btn-secondary">Logout</a>
-    </div>
-  </nav>
 
-  <div class="dash-page">
-    <div class="dash-header">
+  <!-- Top Nav -->
+  <header class="admin-topnav">
+    <a href="/admin" class="admin-topnav-logo">SHUR<span>GET</span> <span class="admin-topnav-badge">Admin</span></a>
+    <div style="display:flex;align-items:center;gap:.65rem;">
+      <a href="/admin" class="tn-btn tn-btn-ghost">← Dashboard</a>
+      <a href="/admin/logout" class="tn-btn tn-btn-primary">Logout</a>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-section-label">Operations</div>
+      <a href="/admin/dispatch" class="sidebar-link"><span class="sidebar-icon">🚛</span> Dispatch</a>
+      <a href="/admin/bookings" class="sidebar-link active"><span class="sidebar-icon">📋</span> Bookings</a>
+      <a href="/admin/drivers" class="sidebar-link"><span class="sidebar-icon">🧑‍✈️</span> Drivers</a>
+      <div class="sidebar-section-label">Analytics</div>
+      <a href="/admin/metrics" class="sidebar-link"><span class="sidebar-icon">📊</span> Metrics</a>
+      <a href="/admin/ratings" class="sidebar-link"><span class="sidebar-icon">⭐</span> Ratings</a>
+      <a href="/admin/attribution" class="sidebar-link"><span class="sidebar-icon">🔗</span> Attribution</a>
+      <div class="sidebar-section-label">Platform</div>
+      <a href="/admin/partners" class="sidebar-link"><span class="sidebar-icon">🤝</span> Partners</a>
+      <a href="/admin/disputes" class="sidebar-link"><span class="sidebar-icon">⚖️</span> Disputes</a>
+      <a href="/admin/surge" class="sidebar-link"><span class="sidebar-icon">⚡</span> Surge</a>
+    </aside>
+
+    <main class="admin-main">
       <h1 class="page-title">Bookings</h1>
-      <p class="page-sub">All orders — full history with filters, sort, and detail view.</p>
-    </div>
+      <p class="page-subtitle">All orders — full history with filters, sort, and detail view.</p>
 
-    <a class="back-link" href="/admin">← Back to Admin</a>
+      <!-- Flash alerts -->
+      <% if (flash === 'cancelled') { %>
+        <div class="alert alert-success">Order cancelled successfully.</div>
+      <% } %>
+      <% if (flash === 'assigned') { %>
+        <div class="alert alert-success">Driver assigned successfully.</div>
+      <% } %>
 
-    <!-- Flash alerts -->
-    <% if (flash === 'cancelled') { %>
-      <div class="alert alert-success">Order cancelled successfully.</div>
-    <% } %>
-    <% if (flash === 'assigned') { %>
-      <div class="alert alert-success">Driver assigned successfully.</div>
-    <% } %>
+      <!-- Filter bar -->
+      <form method="get" class="filter-bar">
+        <input type="hidden" name="admin" value="<%= adminEmail || '' %>">
 
-    <!-- Admin sidebar nav -->
-    <div class="admin-nav">
-      <a class="admin-nav-link" href="/admin">Overview</a>
-      <a class="admin-nav-link" href="/admin/bookings">Bookings</a>
-      <a class="admin-nav-link" href="/admin/dispatch">Dispatch</a>
-      <a class="admin-nav-link" href="/admin/drivers">Drivers</a>
-      <a class="admin-nav-link" href="/admin/metrics">Metrics</a>
-      <a class="admin-nav-link" href="/admin/ratings">Ratings</a>
-    </div>
-
-    <!-- Filter bar -->
-    <form method="get" class="filter-bar">
-      <input type="hidden" name="admin" value="<%= adminEmail || '' %>">
-
-      <div class="filter-group">
-        <span class="filter-label">Status</span>
-        <select name="status" onchange="this.form.submit()">
-          <option value="all" <%= filters.status === 'all' ? 'selected' : '' %>>All</option>
-          <option value="pending" <%= filters.status === 'pending' ? 'selected' : '' %>>Pending</option>
-          <option value="paid" <%= filters.status === 'paid' ? 'selected' : '' %>>Paid</option>
-          <option value="assigned" <%= filters.status === 'assigned' ? 'selected' : '' %>>Assigned</option>
-          <option value="in_progress" <%= filters.status === 'in_progress' ? 'selected' : '' %>>In Progress</option>
-          <option value="delivered" <%= filters.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
-          <option value="cancelled" <%= filters.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <span class="filter-label">Sort</span>
-        <select name="sort" onchange="this.form.submit()">
-          <option value="created_at" <%= filters.sort === 'created_at' ? 'selected' : '' %>>Date</option>
-          <option value="price_total" <%= filters.sort === 'price_total' ? 'selected' : '' %>>Price</option>
-          <option value="status" <%= filters.sort === 'status' ? 'selected' : '' %>>Status</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <span class="filter-label">Direction</span>
-        <select name="dir" onchange="this.form.submit()">
-          <option value="desc" <%= filters.dir === 'desc' ? 'selected' : '' %>>Newest First</option>
-          <option value="asc" <%= filters.dir === 'asc' ? 'selected' : '' %>>Oldest First</option>
-        </select>
-      </div>
-
-      <a href="/admin/bookings" class="btn btn-gray" style="text-decoration:none;">Clear filters</a>
-
-      <span class="results-count"><%= total %> order<%= total === 1 ? '' : 's' %></span>
-    </form>
-
-    <!-- Orders table -->
-    <% if (orders.length === 0) { %>
-      <div class="orders-table">
-        <div class="empty-state">
-          <div class="empty-state-icon">📋</div>
-          <h2>No orders found</h2>
-          <p>Try adjusting your filters.</p>
+        <div class="filter-group">
+          <span class="filter-label">Status</span>
+          <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="all" <%= filters.status === 'all' ? 'selected' : '' %>>All</option>
+            <option value="pending" <%= filters.status === 'pending' ? 'selected' : '' %>>Pending</option>
+            <option value="paid" <%= filters.status === 'paid' ? 'selected' : '' %>>Paid</option>
+            <option value="assigned" <%= filters.status === 'assigned' ? 'selected' : '' %>>Assigned</option>
+            <option value="in_progress" <%= filters.status === 'in_progress' ? 'selected' : '' %>>In Progress</option>
+            <option value="delivered" <%= filters.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+            <option value="cancelled" <%= filters.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+          </select>
         </div>
-      </div>
-    <% } else { %>
-      <div class="orders-table">
-        <table style="width:100%; border-collapse:collapse;">
-          <thead class="orders-thead">
-            <tr>
-              <th class="sortable" onclick="sortBy('id')">#</th>
-              <th>Customer</th>
-              <th>Pickup</th>
-              <th>Dropoff</th>
-              <th>Item</th>
-              <th class="sortable" onclick="sortBy('price_total')">Price</th>
-              <th class="sortable" onclick="sortBy('status')">Status</th>
-              <th>Driver</th>
-              <th>Payout</th>
-              <th class="sortable" onclick="sortBy('created_at')">Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody class="orders-tbody">
-            <% for (const order of orders) { %>
-              <tr onclick="openDrawer(<%= order.id %>)" data-order-id="<%= order.id %>">
-                <td><span class="order-id-badge">#<%= order.id %></span></td>
-                <td>
-                  <div class="customer-name"><%= order.customer_name || '—' %></div>
-                  <% if (order.customer_email) { %>
-                    <div class="customer-email"><%= order.customer_email %></div>
-                  <% } %>
-                </td>
-                <td>
-                  <div class="address-text" title="<%= order.pickup_address %>"><%= order.pickup_address || '—' %></div>
-                </td>
-                <td>
-                  <div class="address-text" title="<%= order.dropoff_address %>"><%= order.dropoff_address || '—' %></div>
-                </td>
-                <td>
-                  <div style="font-size:0.85rem; font-weight:500;"><%= ((order.item_type || '').replace(/-/g, ' ')).replace(/\b\//g, m => m[1] ? m[1].toUpperCase() : m) %></div>
-                  <% if (order.distance_miles) { %>
-                    <div style="font-size:0.75rem; color:var(--gray-mid);"><%= Number(order.distance_miles).toFixed(1) %> mi</div>
-                  <% } %>
-                </td>
-                <td>
-                  <div class="price-value">$<%= Number(order.price_total).toFixed(2) %></div>
-                  <% if (order.price_base) { %>
-                    <div class="price-breakdown">base $<%= Number(order.price_base).toFixed(2) %></div>
-                  <% } %>
-                </td>
-                <td>
-                  <span class="status-badge <%= order.status %>"><%= order.status.replace('_', ' ') %></span>
-                  <% if (order.driver_status === 'accepted') { %>
-                    <div style="font-size:0.7rem; color:var(--gray-mid); margin-top:0.2rem;">accepted</div>
-                  <% } %>
-                </td>
-                <td>
-                  <% if (order.driver_name) { %>
-                    <div class="driver-name"><%= order.driver_name %></div>
-                    <% if (order.driver_phone) { %>
-                      <div class="driver-phone"><%= order.driver_phone %></div>
-                    <% } %>
-                  <% } else { %>
-                    <div style="color:var(--gray-mid); font-size:0.82rem;">—</div>
-                  <% } %>
-                </td>
-                <td>
-                  <% if (order.status === 'delivered') { %>
-                    <% const ps = order.payout_status || 'pending'; %>
-                    <% const psColors = { paid: '#22C55E', pending: '#FACC15', failed: '#F87171', na: '#9CA3AF' }; %>
-                    <span style="font-size:.7rem;font-weight:700;text-transform:uppercase;color:<%= psColors[ps] || '#9CA3AF' %>">
-                      <%= ps %>
-                    </span>
-                    <% if (order.stripe_transfer_id) { %>
-                      <div style="font-size:.65rem;color:var(--gray-mid);font-family:monospace;margin-top:.1rem;"><%= order.stripe_transfer_id.slice(0,10) %>…</div>
-                    <% } %>
-                  <% } else { %>
-                    <span style="font-size:.7rem;color:var(--gray-mid);">N/A</span>
-                  <% } %>
-                </td>
-                <td>
-                  <div class="date-text"><%= new Date(order.created_at).toLocaleDateString('en-US', {month:'short',day:'numeric'}) %></div>
-                  <div style="font-size:0.72rem; color:var(--gray-mid);"><%= new Date(order.created_at).toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'}) %></div>
-                </td>
-                <td onclick="event.stopPropagation()">
-                  <div class="actions-cell">
-                    <% if (order.status !== 'cancelled' && order.status !== 'delivered') { %>
-                      <form method="post" action="/admin/bookings/<%= order.id %>/cancel" onsubmit="return confirm('Cancel order #<%= order.id %>? This cannot be undone.');" style="display:inline;">
-                        <button type="submit" class="btn-action btn-cancel">Cancel</button>
-                      </form>
-                    <% } %>
-                    <button class="btn-action btn-reassign" onclick="openDrawer(<%= order.id %>)">View</button>
-                  </div>
-                </td>
+
+        <div class="filter-group">
+          <span class="filter-label">Sort</span>
+          <select name="sort" class="form-select" onchange="this.form.submit()">
+            <option value="created_at" <%= filters.sort === 'created_at' ? 'selected' : '' %>>Date</option>
+            <option value="price_total" <%= filters.sort === 'price_total' ? 'selected' : '' %>>Price</option>
+            <option value="status" <%= filters.sort === 'status' ? 'selected' : '' %>>Status</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">Direction</span>
+          <select name="dir" class="form-select" onchange="this.form.submit()">
+            <option value="desc" <%= filters.dir === 'desc' ? 'selected' : '' %>>Newest First</option>
+            <option value="asc" <%= filters.dir === 'asc' ? 'selected' : '' %>>Oldest First</option>
+          </select>
+        </div>
+
+        <a href="/admin/bookings" class="btn btn-ghost">Clear filters</a>
+
+        <span class="results-count"><%= total %> order<%= total === 1 ? '' : 's' %></span>
+      </form>
+
+      <!-- Orders table -->
+      <% if (orders.length === 0) { %>
+        <div class="table-wrap">
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <h2>No orders found</h2>
+            <p>Try adjusting your filters.</p>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="sortable" onclick="sortBy('id')">#</th>
+                <th>Customer</th>
+                <th>Pickup</th>
+                <th>Dropoff</th>
+                <th>Item</th>
+                <th class="sortable" onclick="sortBy('price_total')">Price</th>
+                <th class="sortable" onclick="sortBy('status')">Status</th>
+                <th>Driver</th>
+                <th>Payout</th>
+                <th class="sortable" onclick="sortBy('created_at')">Date</th>
+                <th>Actions</th>
               </tr>
-            <% } %>
-          </tbody>
-        </table>
-      </div>
-    <% } %>
+            </thead>
+            <tbody>
+              <% for (const order of orders) { %>
+                <tr onclick="openDrawer(<%= order.id %>)" data-order-id="<%= order.id %>" style="cursor:pointer;">
+                  <td><span class="order-id-badge">#<%= order.id %></span></td>
+                  <td>
+                    <div class="customer-name"><%= order.customer_name || '—' %></div>
+                    <% if (order.customer_email) { %>
+                      <div class="customer-email"><%= order.customer_email %></div>
+                    <% } %>
+                  </td>
+                  <td>
+                    <div class="address-text" title="<%= order.pickup_address %>"><%= order.pickup_address || '—' %></div>
+                  </td>
+                  <td>
+                    <div class="address-text" title="<%= order.dropoff_address %>"><%= order.dropoff_address || '—' %></div>
+                  </td>
+                  <td>
+                    <div style="font-size:0.85rem; font-weight:500;"><%= ((order.item_type || '').replace(/-/g, ' ')).replace(/\b\//g, m => m[1] ? m[1].toUpperCase() : m) %></div>
+                    <% if (order.distance_miles) { %>
+                      <div style="font-size:0.75rem; color:rgba(255,255,255,.35);"><%= Number(order.distance_miles).toFixed(1) %> mi</div>
+                    <% } %>
+                  </td>
+                  <td>
+                    <div class="price-value">$<%= Number(order.price_total).toFixed(2) %></div>
+                    <% if (order.price_base) { %>
+                      <div class="price-breakdown">base $<%= Number(order.price_base).toFixed(2) %></div>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% const bStatus = order.status; %>
+                    <% const bBadge = (bStatus === 'delivered') ? 'badge-green' : (bStatus === 'paid' || bStatus === 'assigned' || bStatus === 'in_progress') ? 'badge-blue' : (bStatus === 'cancelled') ? 'badge-red' : 'badge-orange'; %>
+                    <span class="badge <%= bBadge %>"><%= order.status.replace('_', ' ') %></span>
+                    <% if (order.driver_status === 'accepted') { %>
+                      <div style="font-size:0.7rem; color:rgba(255,255,255,.35); margin-top:0.2rem;">accepted</div>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (order.driver_name) { %>
+                      <div class="driver-name"><%= order.driver_name %></div>
+                      <% if (order.driver_phone) { %>
+                        <div class="driver-phone"><%= order.driver_phone %></div>
+                      <% } %>
+                    <% } else { %>
+                      <div style="color:rgba(255,255,255,.35); font-size:0.82rem;">—</div>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (order.status === 'delivered') { %>
+                      <% const ps = order.payout_status || 'pending'; %>
+                      <% const psColors = { paid: '#4ade80', pending: '#ea580c', failed: '#f87171', na: 'rgba(255,255,255,.35)' }; %>
+                      <span style="font-size:.7rem;font-weight:700;text-transform:uppercase;color:<%= psColors[ps] || 'rgba(255,255,255,.35)' %>">
+                        <%= ps %>
+                      </span>
+                      <% if (order.stripe_transfer_id) { %>
+                        <div style="font-size:.65rem;color:rgba(255,255,255,.35);font-family:monospace;margin-top:.1rem;"><%= order.stripe_transfer_id.slice(0,10) %>…</div>
+                      <% } %>
+                    <% } else { %>
+                      <span style="font-size:.7rem;color:rgba(255,255,255,.35);">N/A</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <div class="date-text"><%= new Date(order.created_at).toLocaleDateString('en-US', {month:'short',day:'numeric'}) %></div>
+                    <div style="font-size:0.72rem; color:rgba(255,255,255,.35);"><%= new Date(order.created_at).toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'}) %></div>
+                  </td>
+                  <td onclick="event.stopPropagation()">
+                    <div class="actions-cell">
+                      <% if (order.status !== 'cancelled' && order.status !== 'delivered') { %>
+                        <form method="post" action="/admin/bookings/<%= order.id %>/cancel" onsubmit="return confirm('Cancel order #<%= order.id %>? This cannot be undone.');" style="display:inline;">
+                          <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                        </form>
+                      <% } %>
+                      <button class="btn btn-ghost btn-sm" onclick="openDrawer(<%= order.id %>)">View</button>
+                    </div>
+                  </td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </main>
   </div>
 
   <!-- Detail Drawer -->
@@ -651,6 +349,13 @@
     const allOrders = <%- JSON.stringify(orders) %>;
     const driversList = <%- JSON.stringify(drivers.map(d => ({ id: d.id, name: d.name, phone: d.phone, city: d.city, vehicle_type: d.vehicle_type }))) %>;
 
+    function statusBadgeClass(status) {
+      if (status === 'delivered') return 'badge-green';
+      if (status === 'paid' || status === 'assigned' || status === 'in_progress') return 'badge-blue';
+      if (status === 'cancelled') return 'badge-red';
+      return 'badge-orange';
+    }
+
     function openDrawer(orderId) {
       const order = allOrders.find(o => o.id === orderId);
       if (!order) return;
@@ -663,17 +368,16 @@
       const items = Array.isArray(order.items) ? order.items : [];
       const itemsHTML = items.length > 0
         ? items.map(it => `<li><strong>${it.description || 'Item'}</strong>${it.quantity > 1 ? ' ×' + it.quantity : ''} ${it.length_in ? `· ${it.length_in}×${it.width_in || '?'}×${it.height_in || '?'} in` : ''}</li>`).join('')
-        : '<li style="color:var(--gray-mid);">No item details recorded.</li>';
+        : '<li style="color:rgba(255,255,255,.45);">No item details recorded.</li>';
 
-      const statusBadgeClass = order.status;
+      const badgeClass = statusBadgeClass(order.status);
       const canCancel = order.status !== 'cancelled' && order.status !== 'delivered';
-      const hasDriver = order.driver_id;
 
       body.innerHTML = `
         <div class="detail-section">
           <div class="detail-section-title">Status</div>
-          <span class="status-badge ${statusBadgeClass}">${order.status.replace('_', ' ')}</span>
-          ${order.driver_status ? `<div style="margin-top:0.5rem; font-size:0.82rem; color:var(--gray-mid);">Driver status: ${order.driver_status}</div>` : ''}
+          <span class="badge ${badgeClass}">${order.status.replace('_', ' ')}</span>
+          ${order.driver_status ? `<div style="margin-top:0.5rem; font-size:0.82rem; color:rgba(255,255,255,.45);">Driver status: ${order.driver_status}</div>` : ''}
         </div>
 
         <div class="detail-section">
@@ -785,21 +489,21 @@
 
         <div class="drawer-actions">
           ${canCancel ? `
-            <form method="post" action="/admin/bookings/${order.id}/cancel" onsubmit="return confirm('Cancel order #' + ${order.id} + '? This cannot be undone.');">
-              <button type="submit" class="btn btn-red-drawer">Cancel Order</button>
+            <form method="post" action="/admin/bookings/${order.id}/cancel" onsubmit="return confirm('Cancel order #' + ${order.id} + '? This cannot be undone.');" style="flex:1;">
+              <button type="submit" class="btn btn-danger" style="width:100%;">Cancel Order</button>
             </form>
-          ` : `<div class="btn btn-gray-drawer">${order.status === 'delivered' ? 'Completed' : 'Cancelled'}</div>`}
+          ` : `<div class="btn btn-ghost" style="flex:1;cursor:default;">${order.status === 'delivered' ? 'Completed' : 'Cancelled'}</div>`}
         </div>
 
         ${canCancel ? `
         <div class="reassign-form" style="margin-top:1rem;">
           <div class="detail-section-title">Reassign Driver</div>
           <form method="post" action="/admin/bookings/${order.id}/reassign">
-            <select name="driverId" required>
+            <select name="driverId" class="form-select" style="width:100%;" required>
               <option value="">Select a driver…</option>
               ${driversList.map(d => `<option value="${d.id}">${d.name} · ${d.city} · ${d.vehicle_type}</option>`).join('')}
             </select>
-            <button type="submit" class="btn btn-orange-drawer" style="width:100%;">Assign Driver</button>
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:.5rem;justify-content:center;">Assign Driver</button>
           </form>
         </div>
         ` : ''}
