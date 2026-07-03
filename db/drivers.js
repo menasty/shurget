@@ -300,6 +300,122 @@ async function recordAgreementSignature(driverId, signatureName, ipAddress) {
   return rows[0] || null;
 }
 
+/**
+ * Record that a driver paid for their background check upfront.
+ * Stores the amount they paid and when, so we can reimburse exactly what they spent (capped at $85).
+ */
+async function recordBgCheckPayment(driverId, amountCents) {
+  const { rows } = await db.query(
+    `UPDATE driver_applications
+       SET bgcheck_fee_paid_cents = $2,
+           bgcheck_fee_paid_at    = NOW()
+     WHERE id = $1
+     RETURNING *`,
+    [driverId, amountCents]
+  );
+  return rows[0] || null;
+}
+
+/**
+ * Check whether a driver is eligible for background check reimbursement.
+ * Eligible = passed bgcheck, completed >= 5 delivered orders, not yet reimbursed.
+ * Returns { eligible: bool, completedOrders: number, reimbursementCents: number }
+ */
+async function getBgCheckReimbursementEligibility(driverId) {
+  const MAX_REIMBURSEMENT_CENTS = 8500; // $85.00 cap
+
+  const { rows: driverRows } = await db.query(
+    `SELECT id, status, bgcheck_fee_paid_cents, bgcheck_fee_paid_at,
+            bgcheck_reimbursed_at, bgcheck_reimbursement_transfer_id,
+            background_check_status
+     FROM driver_applications WHERE id = $1 LIMIT 1`,
+    [driverId]
+  );
+  const driver = driverRows[0];
+  if (!driver) return { eligible: false, reason: 'driver_not_found' };
+
+  // Already reimbursed
+  if (driver.bgcheck_reimbursed_at) {
+    return { eligible: false, reason: 'already_reimbursed', reimbursedAt: driver.bgcheck_reimbursed_at };
+  }
+  // No fee on record
+  if (!driver.bgcheck_fee_paid_cents) {
+    return { eligible: false, reason: 'no_fee_recorded' };
+  }
+  // Must have passed
+  if (driver.background_check_status !== 'cleared') {
+    return { eligible: false, reason: 'check_not_cleared', status: driver.background_check_status };
+  }
+
+  const { rows: orderRows } = await db.query(
+    `SELECT COUNT(*) AS cnt FROM orders WHERE driver_id = $1 AND status = 'delivered'`,
+    [driverId]
+  );
+  const completedOrders = parseInt(orderRows[0].cnt, 10);
+
+  if (completedOrders < 5) {
+    return {
+      eligible: false,
+      reason: 'threshold_not_met',
+      completedOrders,
+      remaining: 5 - completedOrders,
+    };
+  }
+
+  const reimbursementCents = Math.min(driver.bgcheck_fee_paid_cents, MAX_REIMBURSEMENT_CENTS);
+  return {
+    eligible: true,
+    completedOrders,
+    reimbursementCents,
+    feePaidCents: driver.bgcheck_fee_paid_cents,
+  };
+}
+
+/**
+ * Mark a background check reimbursement as paid.
+ * Idempotent — will not overwrite an existing reimbursement record.
+ * transferId is the Stripe transfer/payout ID for auditing.
+ */
+async function recordBgCheckReimbursement(driverId, transferId, amountCents) {
+  const { rows } = await db.query(
+    `UPDATE driver_applications
+       SET bgcheck_reimbursed_at                = NOW(),
+           bgcheck_reimbursement_transfer_id    = $2,
+           bgcheck_reimbursement_amount_cents   = $3
+     WHERE id = $1
+       AND bgcheck_reimbursed_at IS NULL
+     RETURNING *`,
+    [driverId, transferId, amountCents]
+  );
+  return rows[0] || null;
+}
+
+/**
+ * Fetch all active drivers who are eligible for bgcheck reimbursement.
+ * Called by the weekly payout job to batch-process reimbursement credits.
+ * Returns drivers with 5+ deliveries, cleared bgcheck, unpaid reimbursement, fee on record.
+ */
+async function getDriversDueForBgCheckReimbursement() {
+  const { rows } = await db.query(
+    `SELECT d.id, d.name, d.email, d.stripe_account_id,
+            d.bgcheck_fee_paid_cents,
+            LEAST(d.bgcheck_fee_paid_cents, 8500) AS reimbursement_cents,
+            COUNT(o.id) AS delivered_count
+     FROM driver_applications d
+     JOIN orders o ON o.driver_id = d.id AND o.status = 'delivered'
+     WHERE d.status = 'active'
+       AND d.background_check_status = 'cleared'
+       AND d.bgcheck_fee_paid_cents IS NOT NULL
+       AND d.bgcheck_reimbursed_at IS NULL
+       AND d.stripe_account_id IS NOT NULL
+     GROUP BY d.id
+     HAVING COUNT(o.id) >= 5
+     ORDER BY d.reviewed_at ASC`
+  );
+  return rows;
+}
+
+
 module.exports = {
   createDriverApplication,
   getDriverApplicationByEmail,
@@ -316,4 +432,8 @@ module.exports = {
   recordReferralBounty,
   updateBackgroundCheckStatus,
   recordAgreementSignature,
+  recordBgCheckPayment,
+  getBgCheckReimbursementEligibility,
+  recordBgCheckReimbursement,
+  getDriversDueForBgCheckReimbursement,
 };
