@@ -476,4 +476,48 @@ router.post('/drivers/:id/background-check', async (req, res) => {
   }
 });
 
+
+// ─── Surge Pricing ──────────────────────────────────────────────────────────
+
+/** GET /admin/surge — render surge control panel */
+router.get('/surge', async (req, res) => {
+  const { getSurgeConfig } = require('../db/surge');
+  let surge = { multiplier: 1.00, active: false, label: 'Standard Rate' };
+  try { surge = await getSurgeConfig(); } catch (e) { /* non-fatal */ }
+  res.render('admin-surge', { surge, saved: req.query.saved === '1', error: null });
+});
+
+/** POST /admin/surge — update surge config */
+router.post('/surge', async (req, res) => {
+  const { setSurgeConfig } = require('../db/surge');
+  const { multiplier, active, label, reason } = req.body || {};
+  try {
+    await setSurgeConfig({
+      multiplier: parseFloat(multiplier) || 1.00,
+      active: active === 'on' || active === 'true' || active === '1',
+      label: label || 'High Demand',
+      reason: reason || null,
+      updatedBy: req.adminEmail || 'admin',
+    });
+    res.redirect('/admin/surge?saved=1');
+  } catch (e) {
+    console.error('[admin] surge update failed:', e.message);
+    const { getSurgeConfig } = require('../db/surge');
+    let surge = { multiplier: 1.00, active: false, label: 'Standard Rate' };
+    try { surge = await getSurgeConfig(); } catch (_) {}
+    res.render('admin-surge', { surge, saved: false, error: 'Failed to update surge config. Please try again.' });
+  }
+});
+
+/** GET /admin/surge/status — JSON API for current surge state */
+router.get('/surge/status', async (req, res) => {
+  const { getSurgeConfig } = require('../db/surge');
+  try {
+    const surge = await getSurgeConfig();
+    res.json({ ok: true, surge });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message });
+  }
+});
+
 module.exports = router;
