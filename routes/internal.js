@@ -21,7 +21,10 @@ const {
 
 // ─── Auth middleware ──────────────────────────────────────────────────────────
 
-const INTERNAL_KEY = process.env.INTERNAL_API_KEY || 'shurget-dispatch-2026';
+const INTERNAL_KEY = process.env.INTERNAL_API_KEY;
+if (!INTERNAL_KEY) {
+  console.error('[FATAL] INTERNAL_API_KEY env var is not set. Internal API routes will reject all requests.');
+}
 
 function requireInternalKey(req, res, next) {
   const key = req.headers['x-internal-key'];
