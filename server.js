@@ -84,6 +84,9 @@ app.use('/api/partners', partners);
 // Order status + dispatch API
 app.use('/api/orders', require('./routes/orders'));
 
+// Internal API — called by background cron agents (auth via X-Internal-Key header)
+app.use('/api/internal', require('./routes/internal'));
+
 // Referral API
 app.use('/api/referral', require('./routes/referral'));
 
