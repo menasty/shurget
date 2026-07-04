@@ -315,6 +315,175 @@ router.get('/ratings', (req, res) => {
   res.render('admin-ratings', { adminEmail: getAdminEmail(req) });
 });
 
+// Attribution
+router.get('/attribution', async (req, res) => {
+  const adminEmail = getAdminEmail(req);
+  const range = ['7d', '30d', 'all'].includes(req.query.range) ? req.query.range : '30d';
+  const intervalClause = range === '7d' ? "AND created_at >= NOW() - INTERVAL '7 days'"
+    : range === '30d' ? "AND created_at >= NOW() - INTERVAL '30 days'" : '';
+
+  try {
+    const [bookingsResult, driversResult, referralsResult] = await Promise.all([
+      pool.query(`
+        SELECT
+          COALESCE(NULLIF(utm_source_last,''),'direct')   AS source,
+          COALESCE(NULLIF(utm_medium_last,''),'(none)')   AS medium,
+          COALESCE(NULLIF(utm_campaign_last,''),'(none)') AS campaign,
+          COUNT(*)::int                                   AS bookings,
+          COALESCE(SUM(price_fee),0)::float               AS net_fee,
+          COALESCE(SUM(price_total),0)::float             AS gross_revenue,
+          COALESCE(AVG(price_total),0)::float             AS avg_order_value
+        FROM orders
+        WHERE 1=1 ${intervalClause}
+        GROUP BY source, medium, campaign
+        ORDER BY bookings DESC
+      `),
+      pool.query(`
+        SELECT
+          COALESCE(NULLIF(utm_source,''),'direct')   AS source,
+          COALESCE(NULLIF(utm_medium,''),'(none)')   AS medium,
+          COALESCE(NULLIF(utm_campaign,''),'(none)') AS campaign,
+          COUNT(*)::int AS signups
+        FROM driver_applications
+        WHERE 1=1 ${intervalClause}
+        GROUP BY source, medium, campaign
+        ORDER BY signups DESC
+      `),
+      pool.query(`
+        SELECT
+          rc.code,
+          rc.owner_email,
+          rc.use_count  AS redemptions,
+          rc.max_uses,
+          COALESCE(SUM(rr.credit_amount),0)::float AS discount_paid_cents,
+          COUNT(CASE WHEN o.status = 'delivered' THEN 1 END)::int AS paid_orders
+        FROM referral_codes rc
+        LEFT JOIN referral_redemptions rr ON rr.code_id = rc.id
+        LEFT JOIN orders o ON o.id = rr.order_id
+        GROUP BY rc.id, rc.code, rc.owner_email, rc.use_count, rc.max_uses
+        ORDER BY rc.use_count DESC
+      `),
+    ]);
+
+    const bookings   = bookingsResult.rows || [];
+    const drivers    = driversResult.rows || [];
+    const referrals  = referralsResult.rows || [];
+
+    const totalBookings    = bookings.reduce((s, r) => s + (r.bookings || 0), 0);
+    const totalRevenue     = bookings.reduce((s, r) => s + (r.gross_revenue || 0), 0);
+    const totalNetFee      = bookings.reduce((s, r) => s + (r.net_fee || 0), 0);
+    const totalDrivers     = drivers.reduce((s, r) => s + (r.signups || 0), 0);
+    const totalRedemptions = referrals.reduce((s, r) => s + (r.redemptions || 0), 0);
+    const totalPaid        = referrals.reduce((s, r) => s + (r.paid_orders || 0), 0);
+    const avgOrderValue    = totalBookings > 0 ? totalRevenue / totalBookings : 0;
+
+    res.render('admin-attribution', {
+      adminEmail, range, bookings, drivers, referrals,
+      totalBookings, totalRevenue, totalNetFee, totalDrivers,
+      totalRedemptions, totalPaid, avgOrderValue,
+    });
+  } catch (e) {
+    console.error('[admin] attribution failed:', e.message);
+    res.render('admin-attribution', {
+      adminEmail, range: '30d', bookings: [], drivers: [], referrals: [],
+      totalBookings: 0, totalRevenue: 0, totalNetFee: 0, totalDrivers: 0,
+      totalRedemptions: 0, totalPaid: 0, avgOrderValue: 0,
+    });
+  }
+});
+
+// Partners
+router.get('/partners', async (req, res) => {
+  const adminEmail = getAdminEmail(req);
+  try {
+    const { getAllApplications, getAllPartners } = require('../db/partners');
+    const [applications, partners] = await Promise.all([
+      getAllApplications(),
+      getAllPartners(),
+    ]);
+    res.render('admin-partners', {
+      adminEmail,
+      applications: applications || [],
+      partners: partners || [],
+    });
+  } catch (e) {
+    console.error('[admin] partners failed:', e.message);
+    res.render('admin-partners', { adminEmail, applications: [], partners: [] });
+  }
+});
+
+/** POST /admin/partners/:id/approve — approve a partner application */
+router.post('/partners/:id/approve', async (req, res) => {
+  const appId = parseInt(req.params.id, 10);
+  try {
+    const { updateApplicationStatus } = require('../db/partners');
+    await updateApplicationStatus(appId, 'approved', getAdminEmail(req));
+    res.redirect('/admin/partners');
+  } catch (e) {
+    console.error('[admin] partner approve failed:', e.message);
+    res.redirect('/admin/partners');
+  }
+});
+
+/** POST /admin/partners/:id/reject — reject a partner application */
+router.post('/partners/:id/reject', async (req, res) => {
+  const appId = parseInt(req.params.id, 10);
+  try {
+    const { updateApplicationStatus } = require('../db/partners');
+    await updateApplicationStatus(appId, 'rejected', getAdminEmail(req));
+    res.redirect('/admin/partners');
+  } catch (e) {
+    console.error('[admin] partner reject failed:', e.message);
+    res.redirect('/admin/partners');
+  }
+});
+
+// Disputes
+router.get('/disputes', async (req, res) => {
+  const adminEmail = getAdminEmail(req);
+  const statusFilter = ['open', 'resolved', 'dismissed', 'overridden', 'all'].includes(req.query.status)
+    ? req.query.status : 'open';
+  try {
+    const { getDisputes } = require('../db/ratings');
+    const allDisputes = await getDisputes(statusFilter === 'all' ? {} : { status: statusFilter });
+    // Enrich each dispute with order info (pickup, dropoff, customer, price)
+    const enriched = await Promise.all((allDisputes || []).map(async (d) => {
+      try {
+        const { rows } = await pool.query(
+          'SELECT pickup_address, dropoff_address, customer_name, customer_email, price_total, item_type FROM orders WHERE id = $1',
+          [d.order_id]
+        );
+        return { ...d, ...(rows[0] || {}) };
+      } catch (_) { return d; }
+    }));
+    res.render('admin-disputes', {
+      adminEmail,
+      disputes: enriched,
+      statusFilter,
+      flash: req.query.flash || null,
+    });
+  } catch (e) {
+    console.error('[admin] disputes failed:', e.message);
+    res.render('admin-disputes', { adminEmail, disputes: [], statusFilter: 'open', flash: null });
+  }
+});
+
+/** POST /admin/disputes/:id/resolve — resolve or dismiss a dispute */
+router.post('/disputes/:id/resolve', async (req, res) => {
+  const disputeId = parseInt(req.params.id, 10);
+  const allowed = new Set(['resolved', 'dismissed', 'overridden']);
+  const status = allowed.has(req.body.status) ? req.body.status : 'dismissed';
+  const adminNotes = (req.body.admin_notes || '').trim().slice(0, 1000);
+  try {
+    const { resolveDispute } = require('../db/ratings');
+    await resolveDispute(disputeId, { status, adminNotes });
+    res.redirect('/admin/disputes?flash=Dispute+resolved');
+  } catch (e) {
+    console.error('[admin] dispute resolve failed:', e.message);
+    res.redirect('/admin/disputes?flash=Error+resolving+dispute');
+  }
+});
+
 // ─── Dispatch actions ─────────────────────────────────────────────────────────
 
 async function lookupDriver(driverId) {
