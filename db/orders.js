@@ -531,12 +531,70 @@ async function markDelivered(orderId) {
 }
 
 /**
- * Cancel an order (admin dispatch action).
+ * Cancel an order and issue a Stripe refund.
+ *
+ * Refund policy:
+ *   - status 'paid' or 'assigned' (driver not yet en-route) → full refund
+ *   - status 'in_progress' (driver already en-route / on-site) → no refund (platform
+ *     has incurred driver cost) — admin must handle manually via Stripe dashboard
+ *   - status 'delivered' → no refund
+ *
+ * Returns the updated order row including refund details.
  */
 async function cancelOrder(orderId) {
-  const { rows } = await db.query(
-    `UPDATE orders SET status = 'cancelled', driver_status = NULL WHERE id = $1 RETURNING *`,
+  // Fetch the order first so we have stripe_session_id and current status
+  const { rows: fetchRows } = await db.query(
+    `SELECT * FROM orders WHERE id = $1`,
     [orderId]
+  );
+  const order = fetchRows[0];
+  if (!order) return null;
+
+  // Determine refund eligibility
+  const refundableStatuses = ['paid', 'assigned'];
+  const isRefundable = refundableStatuses.includes(order.status);
+
+  let refundId       = null;
+  let refundCents    = 0;
+  let refundedAt     = null;
+
+  if (isRefundable && order.stripe_session_id) {
+    try {
+      const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+      // Retrieve the checkout session to get the payment_intent
+      const session = await stripe.checkout.sessions.retrieve(order.stripe_session_id);
+      const paymentIntentId = session.payment_intent;
+
+      if (paymentIntentId) {
+        // Issue full refund against the payment intent
+        const refund = await stripe.refunds.create({
+          payment_intent: paymentIntentId,
+          reason: 'requested_by_customer',
+          metadata: { order_id: String(orderId), cancelled_by: 'admin' },
+        });
+        refundId    = refund.id;
+        refundCents = refund.amount;  // in cents
+        refundedAt  = new Date();
+        console.log(`[cancelOrder] Stripe refund ${refundId} issued for order ${orderId} — $${(refundCents/100).toFixed(2)}`);
+      }
+    } catch (stripeErr) {
+      // Log but don't block the cancel — admin can process refund manually
+      console.error(`[cancelOrder] Stripe refund failed for order ${orderId}:`, stripeErr.message);
+    }
+  }
+
+  // Update order in DB regardless of refund outcome
+  const { rows } = await db.query(
+    `UPDATE orders
+        SET status         = 'cancelled',
+            driver_status  = NULL,
+            stripe_refund_id    = $2,
+            refund_amount_cents = $3,
+            refunded_at         = $4
+      WHERE id = $1
+      RETURNING *`,
+    [orderId, refundId, refundCents, refundedAt]
   );
   return rows[0] || null;
 }
