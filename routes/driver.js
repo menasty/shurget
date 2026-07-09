@@ -160,6 +160,22 @@ router.post('/jobs/:id/accept', requireDriver, async (req, res) => {
   }
 });
 
+// POST /driver/toggle-online — driver flips their online/offline availability
+router.post('/toggle-online', requireDriver, async (req, res) => {
+  try {
+    const db = require('../db/index');
+    const result = await db.query(
+      'UPDATE driver_applications SET is_online = NOT COALESCE(is_online, false) WHERE id = $1 RETURNING is_online',
+      [req.driver.id]
+    );
+    const isOnline = result.rows[0]?.is_online ?? false;
+    res.json({ is_online: isOnline });
+  } catch (err) {
+    console.error('[toggle-online]', err.message);
+    res.status(500).json({ error: 'Toggle failed' });
+  }
+});
+
 // POST /driver/jobs/:id/decline
 router.post('/jobs/:id/decline', requireDriver, async (req, res) => {
   try {
@@ -202,6 +218,58 @@ router.post('/jobs/:id/complete', requireDriver, async (req, res) => {
   } catch (err) {
     console.error('[driver] completeJob:', err.message);
     res.status(500).json({ error: 'Failed to complete job' });
+  }
+});
+
+// GET /driver/pending-jobs — jobs auto-assigned to this driver awaiting accept/decline (polling)
+router.get('/pending-jobs', requireDriver, async (req, res) => {
+  try {
+    const db = require('../db/index');
+    const result = await db.query(
+      `SELECT id, item_type, pickup_address, dropoff_address, price_total, helpers, accept_deadline
+       FROM orders
+       WHERE driver_id = $1
+         AND status = 'assigned'
+         AND driver_accepted IS NULL
+         AND accept_deadline > NOW()`,
+      [req.driver.id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('[pending-jobs]', err.message);
+    res.status(500).json({ error: 'Failed to fetch pending jobs' });
+  }
+});
+
+// POST /driver/orders/:id/accept — driver accepts an auto-assigned job within the response window
+router.post('/orders/:id/accept', requireDriver, async (req, res) => {
+  try {
+    const db = require('../db/index');
+    await db.query(
+      'UPDATE orders SET driver_accepted=TRUE WHERE id=$1 AND driver_id=$2',
+      [req.params.id, req.driver.id]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[orders/:id/accept]', err.message);
+    res.status(500).json({ error: 'Accept failed' });
+  }
+});
+
+// POST /driver/orders/:id/decline — driver declines an auto-assigned job; returns it to the pool
+router.post('/orders/:id/decline', requireDriver, async (req, res) => {
+  try {
+    const db = require('../db/index');
+    await db.query(
+      `UPDATE orders SET driver_id=NULL, driver_name=NULL, driver_phone=NULL,
+       status='paid', driver_accepted=NULL, accept_deadline=NULL
+       WHERE id=$1 AND driver_id=$2`,
+      [req.params.id, req.driver.id]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[orders/:id/decline]', err.message);
+    res.status(500).json({ error: 'Decline failed' });
   }
 });
 
