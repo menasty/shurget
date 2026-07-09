@@ -4,7 +4,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { getOrderById, updateDriverLocation, dispatchOrder, completeOrder } = require('../db/orders');
+const { getOrderById, updateDriverLocation, dispatchOrder, completeOrder, cancelOrderByCustomer } = require('../db/orders');
 const { sendConfirmationEmail } = require('../services/email');
 
 /**
@@ -263,6 +263,33 @@ router.post('/payment-failure', async (req, res) => {
   } catch (err) {
     console.error('[api/orders/payment-failure]', err);
     res.status(500).json({ error: 'Failed to send payment failure notification' });
+  }
+});
+
+/**
+ * POST /api/orders/:id/cancel
+ * Customer-initiated cancel + refund.
+ *   - status 'paid' (no driver yet)  → 100% refund
+ *   - status 'assigned' (driver assigned, not en-route) → 50% refund + driver lost-time compensation
+ *   - any other status → 400, direct customer to support
+ * Public endpoint — access is gated by knowledge of the order id (same trust model as /track/:id).
+ */
+router.post('/:id/cancel', async (req, res) => {
+  try {
+    const orderId = parseInt(req.params.id, 10);
+    if (!orderId) return res.status(400).json({ error: 'Invalid order id' });
+
+    const result = await cancelOrderByCustomer(orderId);
+    if (!result) return res.status(404).json({ error: 'Order not found' });
+
+    if (result.notCancellable) {
+      return res.status(400).json({ error: 'Order cannot be cancelled at this stage. Contact support.' });
+    }
+
+    res.json({ success: true, refundAmount: result.refundAmount, message: result.message });
+  } catch (err) {
+    console.error('[cancel order]', err);
+    res.status(500).json({ error: 'Cancel failed. Please try again.' });
   }
 });
 
