@@ -8,6 +8,8 @@ const { pool } = require('../db/index');
 const {
   assignDriverToOrder,
   getOrderById,
+  getPendingReviewEmails,
+  markReviewEmailSent,
 } = require('../db/orders');
 const {
   activateDriver,
@@ -17,7 +19,10 @@ const {
   sendDriverNewJobAlert,
   sendDriverAssignedEmail,
   sendDriverApplicationConfirmation,
+  sendPostDeliveryReviewEmail,
 } = require('../services/email');
+const { getOrCreateReferralCode } = require('../db/referrals');
+const { generateRatingToken } = require('../services/rating-token');
 
 // ─── Auth middleware ──────────────────────────────────────────────────────────
 
@@ -169,6 +174,60 @@ router.get('/bgcheck-status', async (req, res) => {
     console.error('[internal] bgcheck-status failed:', e.message);
     res.status(500).json({ ok: false, error: e.message });
   }
+});
+
+// ─── POST /api/internal/send-review-requests ─────────────────────────────────
+// Called by the review-email cron agent (every ~15 min). Processes orders
+// whose scheduled_review_email_at is due and haven't been sent yet, reusing
+// the exact same pipeline as jobs/review-email-worker.js: rating token via
+// services/rating-token.js, /rate/:id link, driver_ratings-backed review flow.
+// Idempotent: markReviewEmailSent claims each row before sending so retries
+// and overlapping cron runs can't double-send.
+
+router.post('/send-review-requests', async (req, res) => {
+  const pending = await getPendingReviewEmails(20).catch(err => {
+    console.error('[internal] send-review-requests: query failed:', err.message);
+    return [];
+  });
+
+  let processed = 0;
+  const errors = [];
+
+  for (const order of pending) {
+    try {
+      // Claim the send slot first (idempotency) — if another run races, only one wins.
+      const claimed = await markReviewEmailSent(order.id);
+      if (!claimed) continue;
+
+      const refRow = await getOrCreateReferralCode(order.customer_email);
+      const referralCode      = refRow.code;
+      const appUrl             = process.env.APP_URL || 'https://shurget.com';
+      const referralShareLink  = `${appUrl}/book?ref=${referralCode}&utm_source=referral&utm_medium=email&utm_campaign=customer_referral`;
+
+      const token      = generateRatingToken(order.id);
+      const ratingLink = `${appUrl}/rate/${order.id}?token=${token}`;
+
+      const driverFirstName = order.driver_first_name_full
+        ? order.driver_first_name_full.split(' ')[0]
+        : (order.driver_name ? order.driver_name.split(' ')[0] : 'your driver');
+
+      await sendPostDeliveryReviewEmail({
+        order,
+        driverFirstName,
+        ratingLink,
+        referralCode,
+        referralShareLink,
+      });
+
+      processed++;
+      console.log(`[internal] send-review-requests: sent review email for order #${order.id} to ${order.customer_email}`);
+    } catch (e) {
+      errors.push({ orderId: order.id, error: e.message });
+      console.error(`[internal] send-review-requests: failed for order #${order.id}:`, e.message);
+    }
+  }
+
+  res.json({ ok: true, processed, errors });
 });
 
 module.exports = router;
