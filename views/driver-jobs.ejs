@@ -234,6 +234,33 @@
   <% } %>
 </header>
 
+<!-- Online/offline toggle -->
+<% if (driver) { %>
+<div style="display:flex;align-items:center;gap:12px;padding:12px 20px;background:#111;border-bottom:1px solid #222;">
+  <span style="font-family:'DM Sans',sans-serif;color:#aaa;font-size:14px;">Status:</span>
+  <button id="onlineToggle" onclick="toggleOnline()"
+    style="padding:8px 20px;border-radius:20px;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;
+    background:<%= driver.is_online ? '#437a22' : '#444' %>;
+    color:<%= driver.is_online ? '#fff' : '#aaa' %>;">
+    <%= driver.is_online ? '● Online' : '○ Offline' %>
+  </button>
+</div>
+<script>
+let _isOnline = <%= driver.is_online ? 'true' : 'false' %>;
+async function toggleOnline() {
+  const btn = document.getElementById('onlineToggle');
+  btn.disabled = true;
+  const res = await fetch('/driver/toggle-online', { method:'POST', headers:{'Content-Type':'application/json'} });
+  const data = await res.json();
+  _isOnline = data.is_online;
+  btn.style.background = _isOnline ? '#437a22' : '#444';
+  btn.style.color = _isOnline ? '#fff' : '#aaa';
+  btn.textContent = _isOnline ? '● Online' : '○ Offline';
+  btn.disabled = false;
+}
+</script>
+<% } %>
+
 <!-- ── Tab nav ── -->
 <% if (driver) { %>
 <nav class="tab-nav" id="main-tabs" aria-label="Driver portal tabs">
@@ -711,6 +738,150 @@ setInterval(() => {
 <% } else { %>
 const saved = getEmail();
 if (saved && document.getElementById('gate-email')) document.getElementById('gate-email').value = saved;
+<% } %>
+</script>
+
+<!-- Job notification modal -->
+<div id="jobModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#111;border:1px solid #333;border-radius:12px;padding:32px;max-width:480px;width:90%;font-family:'DM Sans',sans-serif;">
+    <h2 style="font-family:'Bebas Neue',sans-serif;color:#f8f7f5;font-size:28px;margin:0 0 8px;">New Job Available</h2>
+    <p id="jobCountdown" style="color:#b84000;font-size:13px;margin:0 0 20px;"></p>
+    <div id="jobDetails" style="color:#ccc;font-size:15px;line-height:1.8;margin-bottom:24px;"></div>
+    <div style="display:flex;gap:12px;">
+      <button onclick="openEquipmentModal()" style="flex:1;background:#b84000;color:#fff;border:none;padding:12px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">Accept</button>
+      <button onclick="declineJobWindow()" style="flex:1;background:transparent;border:1px solid #555;color:#aaa;padding:12px;border-radius:8px;font-size:15px;cursor:pointer;">Decline</button>
+    </div>
+  </div>
+</div>
+
+<!-- Equipment checklist modal -->
+<div id="equipModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:#111;border:1px solid #b84000;border-radius:12px;padding:32px;max-width:440px;width:90%;font-family:'DM Sans',sans-serif;">
+    <h2 style="font-family:'Bebas Neue',sans-serif;color:#f8f7f5;font-size:26px;margin:0 0 6px;">Before You Accept</h2>
+    <p style="color:#aaa;font-size:13px;margin:0 0 20px;">Confirm you have the required equipment. Arriving unprepared may result in a $15 penalty.</p>
+    <div id="equipChecklist" style="margin-bottom:24px;"></div>
+    <div style="display:flex;gap:12px;">
+      <button id="confirmAcceptBtn" onclick="confirmAccept()" disabled style="flex:1;background:#555;color:#888;border:none;padding:12px;border-radius:8px;font-size:16px;font-weight:600;cursor:not-allowed;transition:all 0.2s;">Confirm & Accept</button>
+      <button onclick="closeEquipModal()" style="flex:1;background:transparent;border:1px solid #555;color:#aaa;padding:12px;border-radius:8px;font-size:15px;cursor:pointer;">Back</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const EQUIPMENT_CHECKLIST = {
+  furniture:    ['Moving blankets', 'Furniture dolly'],
+  mattress:     ['Mattress bag or plastic wrap', 'Ratchet straps'],
+  appliance:    ['Appliance dolly', 'Moving blankets', 'Ratchet straps'],
+  building:     ['Tarps', 'Tie-down straps'],
+  landscaping:  ['Tarps', 'Gloves'],
+  moving:       ['Moving blankets', 'Furniture dolly', 'Ratchet straps'],
+  marketplace:  ['Moving blankets', 'Basic straps'],
+  retail:       ['Moving blankets', 'Basic straps'],
+  other:        ['Basic securing straps'],
+};
+
+let _currentJob = null;
+let _countdownInterval = null;
+
+async function pollJobs() {
+  try {
+    const res = await fetch('/driver/pending-jobs');
+    if (res.status === 401) return;
+    const jobs = await res.json();
+    if (jobs && jobs.length > 0 && !_currentJob) {
+      _currentJob = jobs[0];
+      showJobModal(_currentJob);
+    }
+  } catch(e) {}
+}
+
+function showJobModal(job) {
+  const modal = document.getElementById('jobModal');
+  const details = document.getElementById('jobDetails');
+  details.innerHTML = `
+    <strong style="color:#f8f7f5;">Item:</strong> ${job.item_type}<br>
+    <strong style="color:#f8f7f5;">Pickup:</strong> ${job.pickup_address}<br>
+    <strong style="color:#f8f7f5;">Dropoff:</strong> ${job.dropoff_address}<br>
+    <strong style="color:#f8f7f5;">Payout:</strong> $${(job.price_total * 0.8).toFixed(2)} (80% of $${parseFloat(job.price_total).toFixed(2)})
+    ${job.helpers > 0 ? `<br><strong style="color:#f8f7f5;">Helpers:</strong> ${job.helpers}` : ''}
+  `;
+  modal.style.display = 'flex';
+  startCountdown(job.accept_deadline);
+}
+
+function startCountdown(deadline) {
+  const el = document.getElementById('jobCountdown');
+  if (_countdownInterval) clearInterval(_countdownInterval);
+  _countdownInterval = setInterval(() => {
+    const secs = Math.max(0, Math.floor((new Date(deadline) - Date.now()) / 1000));
+    const m = Math.floor(secs / 60), s = secs % 60;
+    el.textContent = `⏱ ${m}:${s.toString().padStart(2,'0')} to respond`;
+    if (secs === 0) {
+      clearInterval(_countdownInterval);
+      closeJobModal();
+    }
+  }, 1000);
+}
+
+function closeJobModal() {
+  document.getElementById('jobModal').style.display = 'none';
+  if (_countdownInterval) clearInterval(_countdownInterval);
+  _currentJob = null;
+}
+
+function openEquipmentModal() {
+  if (!_currentJob) return;
+  const items = EQUIPMENT_CHECKLIST[_currentJob.item_type] || EQUIPMENT_CHECKLIST.other;
+  const checklist = document.getElementById('equipChecklist');
+  checklist.innerHTML = items.map((item, i) => `
+    <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;color:#ccc;font-size:15px;">
+      <input type="checkbox" id="equip_${i}" onchange="checkEquipAll()" style="width:18px;height:18px;accent-color:#b84000;">
+      ${item}
+    </label>
+  `).join('');
+  document.getElementById('confirmAcceptBtn').disabled = true;
+  document.getElementById('confirmAcceptBtn').style.background = '#555';
+  document.getElementById('confirmAcceptBtn').style.color = '#888';
+  document.getElementById('confirmAcceptBtn').style.cursor = 'not-allowed';
+  document.getElementById('equipModal').style.display = 'flex';
+}
+
+function closeEquipModal() {
+  document.getElementById('equipModal').style.display = 'none';
+}
+
+function checkEquipAll() {
+  if (!_currentJob) return;
+  const items = EQUIPMENT_CHECKLIST[_currentJob.item_type] || EQUIPMENT_CHECKLIST.other;
+  const allChecked = items.every((_, i) => document.getElementById(`equip_${i}`)?.checked);
+  const btn = document.getElementById('confirmAcceptBtn');
+  btn.disabled = !allChecked;
+  btn.style.background = allChecked ? '#b84000' : '#555';
+  btn.style.color = allChecked ? '#fff' : '#888';
+  btn.style.cursor = allChecked ? 'pointer' : 'not-allowed';
+}
+
+async function confirmAccept() {
+  if (!_currentJob) return;
+  const btn = document.getElementById('confirmAcceptBtn');
+  btn.disabled = true; btn.textContent = 'Accepting...';
+  await fetch(`/driver/orders/${_currentJob.id}/accept`, { method:'POST' });
+  document.getElementById('equipModal').style.display = 'none';
+  closeJobModal();
+  alert('Job accepted! Check your active jobs below.');
+  location.reload();
+}
+
+async function declineJobWindow() {
+  if (!_currentJob) return;
+  await fetch(`/driver/orders/${_currentJob.id}/decline`, { method:'POST' });
+  closeJobModal();
+}
+
+<% if (driver) { %>
+// Poll every 30 seconds
+pollJobs();
+setInterval(pollJobs, 30000);
 <% } %>
 </script>
 </body>
