@@ -377,13 +377,20 @@ async function markJobDelivered(orderId, driverId) {
   const { rows } = await db.query(
     `UPDATE orders
         SET status        = 'delivered',
-            driver_status = 'completed'
+            driver_status = 'completed',
+            delivered_at  = NOW()
       WHERE id = $1 AND driver_id = $2
         AND status = 'in_progress'
       RETURNING *`,
     [orderId, driverId]
   );
-  return rows[0] || null;
+  const order = rows[0] || null;
+  if (order) {
+    scheduleReviewEmail(order.id).catch(err => {
+      console.error(`[markJobDelivered] Failed to schedule review email for order ${order.id}:`, err.message);
+    });
+  }
+  return order;
 }
 
 /**
@@ -524,10 +531,16 @@ async function assignDriverToOrder(orderId, driverId, driverName, driverPhone, e
  */
 async function markDelivered(orderId) {
   const { rows } = await db.query(
-    `UPDATE orders SET status = 'delivered', driver_status = 'completed' WHERE id = $1 RETURNING *`,
+    `UPDATE orders SET status = 'delivered', driver_status = 'completed', delivered_at = NOW() WHERE id = $1 RETURNING *`,
     [orderId]
   );
-  return rows[0] || null;
+  const order = rows[0] || null;
+  if (order) {
+    scheduleReviewEmail(order.id).catch(err => {
+      console.error(`[markDelivered] Failed to schedule review email for order ${order.id}:`, err.message);
+    });
+  }
+  return order;
 }
 
 /**
