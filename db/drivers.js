@@ -145,11 +145,13 @@ async function getActiveDrivers() {
       `SELECT id, name, email, phone, vehicle_type, city
        FROM driver_applications
        WHERE status = 'active'
+         AND is_online = TRUE
        ORDER BY reviewed_at DESC, created_at ASC`
     );
     return rows;
   } catch (err) {
     if (err && err.code === '42703') {
+      // is_online column not present yet (pre-migration) — fall back to all active drivers
       const { rows } = await db.query(
         `SELECT id, name, email, phone, vehicle_type, city
          FROM driver_applications
