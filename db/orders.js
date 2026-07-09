@@ -669,6 +669,78 @@ async function cancelOrderByCustomer(orderId) {
 }
 
 /**
+ * Customer-initiated cancellation for a driver who arrived without proper
+ * equipment (dollies, straps, moving blankets, etc).
+ * Only valid while status === 'assigned'. Always a full refund (customer is
+ * not at fault), plus a $15 penalty charged against the driver via
+ * driver_adjustments, and a strike counter on driver_applications that
+ * auto-flags the driver for equipment review at 3+ incidents.
+ * Returns { order, refundAmount, message } or null if not found /
+ * { notCancellable: true } if status isn't 'assigned'.
+ */
+async function cancelOrderUnprepared(orderId) {
+  const order = await getOrderById(orderId);
+  if (!order) return null;
+
+  if (order.status !== 'assigned') {
+    return { notCancellable: true, order };
+  }
+
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+  // Full refund — customer isn't at fault for the driver showing up unprepared.
+  let refundId = null;
+  let refundCents = Math.round(parseFloat(order.price_total) * 100);
+  if (order.stripe_session_id) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(order.stripe_session_id);
+      const refund = await stripe.refunds.create({ payment_intent: session.payment_intent });
+      refundId = refund.id;
+      refundCents = refund.amount;
+    } catch (stripeErr) {
+      console.error(`[cancelOrderUnprepared] Stripe refund failed for order ${orderId}:`, stripeErr.message);
+    }
+  }
+
+  const { rows } = await db.query(
+    `UPDATE orders
+        SET status = 'cancelled',
+            driver_status = NULL,
+            refund_amount_cents = $2,
+            stripe_refund_id = $3,
+            refunded_at = NOW(),
+            cancellation_reason = 'driver_unprepared'
+      WHERE id = $1
+      RETURNING *`,
+    [orderId, refundCents, refundId]
+  );
+
+  if (order.driver_id) {
+    await db.query(
+      `INSERT INTO driver_adjustments (driver_id, order_id, amount_cents, reason) VALUES ($1,$2,-1500,$3)`,
+      [order.driver_id, orderId, `Equipment penalty: arrived unprepared for job #${orderId}`]
+    );
+    await db.query(
+      `UPDATE driver_applications
+          SET unprepared_cancellations = COALESCE(unprepared_cancellations, 0) + 1,
+              equipment_review_flagged = CASE
+                WHEN COALESCE(unprepared_cancellations, 0) + 1 >= 3 THEN TRUE
+                ELSE equipment_review_flagged
+              END
+        WHERE id = $1`,
+      [order.driver_id]
+    );
+    console.error(`[ADMIN ALERT] $15 equipment penalty applied to driver #${order.driver_id} for order #${orderId} (arrived unprepared).`);
+  }
+
+  return {
+    order: rows[0],
+    refundAmount: refundCents / 100,
+    message: 'Full refund issued. Driver has been penalised $15 for arriving unprepared.',
+  };
+}
+
+/**
  * Mark a job as in_progress — driver has left for pickup (en-route ping).
  */
 async function markJobStarted(orderId) {
@@ -1162,6 +1234,7 @@ module.exports = {
   markDelivered,
   cancelOrder,
   cancelOrderByCustomer,
+  cancelOrderUnprepared,
   markJobStarted,
   getMetrics,
   getOrdersByStatus,
