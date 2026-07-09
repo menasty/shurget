@@ -483,6 +483,15 @@
         Cancel Order
       </button>
       <p id="cancelMsg" style="color:#aaa;font-size:13px;margin-top:8px;display:none;"></p>
+      <% if (order.status === 'assigned') { %>
+      <div style="margin-top:12px;">
+        <button id="cancelUnpreparedBtn" onclick="cancelUnprepared(<%= order.id %>)"
+          style="background:transparent;border:1px solid #555;color:#888;padding:8px 20px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;">
+          Driver arrived without proper equipment?
+        </button>
+        <p id="unpreparedMsg" style="color:#aaa;font-size:12px;margin-top:6px;display:none;"></p>
+      </div>
+      <% } %>
     </div>
     <% } else if (order && (order.status === 'in_progress' || order.status === 'delivered')) { %>
     <div style="margin-top:24px;text-align:center;">
@@ -515,6 +524,37 @@
         btn.disabled = false;
         btn.textContent = 'Cancel Order';
         msg.style.display = 'block';
+        msg.textContent = 'Something went wrong. Please try again.';
+      }
+    }
+
+    async function cancelUnprepared(orderId) {
+      if (!confirm('This will cancel your order with a full refund. A $15 penalty will be applied to the driver. Continue?')) return;
+      const btn = document.getElementById('cancelUnpreparedBtn');
+      const msg = document.getElementById('unpreparedMsg');
+      btn.disabled = true;
+      btn.textContent = 'Cancelling...';
+      try {
+        const res = await fetch(`/api/orders/${orderId}/cancel-unprepared`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({}) });
+        const data = await res.json();
+        msg.style.display = 'block';
+        if (data.success) {
+          btn.style.display = 'none';
+          const cancelBtn = document.getElementById('cancelOrderBtn');
+          if (cancelBtn) cancelBtn.style.display = 'none';
+          msg.style.color = '#6daa45';
+          msg.textContent = data.message || 'Order cancelled. Full refund issued.';
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Driver arrived without proper equipment?';
+          msg.style.color = '#dd6974';
+          msg.textContent = data.error || 'Unable to cancel. Please contact support.';
+        }
+      } catch(e) {
+        btn.disabled = false;
+        btn.textContent = 'Driver arrived without proper equipment?';
+        msg.style.display = 'block';
+        msg.style.color = '#dd6974';
         msg.textContent = 'Something went wrong. Please try again.';
       }
     }
