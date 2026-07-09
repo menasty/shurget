@@ -5,6 +5,7 @@
 const express = require('express');
 const router = express.Router();
 const { markOrderPaidFromWebhook, getOrderById } = require('../db/orders');
+const { pool } = require('../db/index');
 const { sendConfirmationEmail, sendReferralCodeEmail, sendReferrerCreditEmail, sendPaymentFailureEmail } = require('../services/email');
 const { sendOrderConfirmedSms, sendAdminPaymentFailureSms } = require('../services/sms');
 const { getOrCreateReferralCode, getReferralCodeByCode, recordRedemption, getRedemptionByOrderId, createSingleUseCreditCode } = require('../db/referrals');
@@ -58,6 +59,13 @@ router.post('/stripe', express.raw({ type: 'application/json' }), async (req, re
       if (!order) {
         console.error('[webhooks] Order not found:', orderId);
         return res.status(404).json({ error: 'Order not found' });
+      }
+
+      // Persist the payment_intent id so chargebacks (charge.dispute.created)
+      // can be matched directly back to this order without re-querying Stripe.
+      if (session.payment_intent) {
+        pool.query('UPDATE orders SET stripe_payment_intent_id = $1 WHERE id = $2', [session.payment_intent, order.id])
+          .catch(err => console.error('[webhooks] Failed to save payment_intent id:', err.message));
       }
 
       // Send confirmation email (fire-and-forget)
@@ -126,6 +134,61 @@ router.post('/stripe', express.raw({ type: 'application/json' }), async (req, re
           console.error('[webhooks] getOrderById failed for async payment failure:', err.message);
         });
         console.log(`[webhooks] Async payment failed for order ${orderId}: ${reason}`);
+      }
+    }
+
+    // Handle chargeback: freeze payout, mark order disputed, alert admin.
+    if (event.type === 'charge.dispute.created') {
+      const dispute = event.data.object;
+      const paymentIntentId = dispute.payment_intent;
+
+      let orderRow = null;
+      if (paymentIntentId) {
+        const byIntent = await pool.query(
+          'SELECT id, driver_id, price_total FROM orders WHERE stripe_payment_intent_id = $1 LIMIT 1',
+          [paymentIntentId]
+        );
+        orderRow = byIntent.rows[0] || null;
+      }
+
+      if (!orderRow) {
+        console.error(`[webhooks] charge.dispute.created: no order found for payment_intent ${paymentIntentId}. Dispute ${dispute.id} could not be matched — manual lookup required.`);
+      } else {
+        await pool.query('UPDATE orders SET status = $1 WHERE id = $2', ['disputed', orderRow.id]);
+
+        if (orderRow.driver_id) {
+          // $0 hold entry — freezes the driver's payout for this order pending resolution.
+          // (driver_adjustments has no separate "held" flag, so a $0 line item with an
+          // explanatory reason is used as the audit trail; admin resolves manually.)
+          await pool.query(
+            'INSERT INTO driver_adjustments (driver_id, order_id, amount_cents, reason) VALUES ($1,$2,0,$3)',
+            [orderRow.driver_id, orderRow.id, `HOLD: chargeback dispute on order #${orderRow.id} — payout frozen pending resolution (dispute ${dispute.id})`]
+          );
+        }
+
+        console.error(`[ADMIN ALERT] Chargeback filed on Order #${orderRow.id} — dispute ${dispute.id}, amount $${(dispute.amount / 100).toFixed(2)}. Payout frozen.`);
+      }
+    }
+
+    // Handle a failed driver payout transfer — alert admin, queue for retry.
+    if (event.type === 'transfer.failed') {
+      const transfer = event.data.object;
+      const stripeAccountId = transfer.destination;
+
+      const driverRes = await pool.query(
+        'SELECT id, name FROM driver_applications WHERE stripe_account_id = $1 LIMIT 1',
+        [stripeAccountId]
+      );
+
+      if (driverRes.rows.length === 0) {
+        console.error(`[webhooks] transfer.failed: no driver found for Stripe account ${stripeAccountId}. Transfer ${transfer.id} could not be matched.`);
+      } else {
+        const driver = driverRes.rows[0];
+        await pool.query(
+          'INSERT INTO driver_adjustments (driver_id, order_id, amount_cents, reason) VALUES ($1,NULL,$2,$3)',
+          [driver.id, transfer.amount, `Failed transfer retry queued — transfer ${transfer.id}`]
+        );
+        console.error(`[ADMIN ALERT] Driver payout failed: ${driver.name} (driver #${driver.id}), $${(transfer.amount / 100).toFixed(2)}, transfer ${transfer.id}.`);
       }
     }
 
