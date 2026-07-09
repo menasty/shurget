@@ -600,6 +600,75 @@ async function cancelOrder(orderId) {
 }
 
 /**
+ * Customer-initiated cancel + refund.
+ * Refund policy:
+ *   - status 'paid' (no driver assigned yet)      → 100% refund
+ *   - status 'assigned' (driver assigned, not en-route) → 50% refund to customer,
+ *       50% lost-time compensation recorded for the driver via driver_adjustments
+ *   - any other status (in_progress/delivered/etc.)     → not cancellable via this path
+ * Returns { order, refundAmount, message } or throws/returns null on not-found.
+ */
+async function cancelOrderByCustomer(orderId) {
+  const order = await getOrderById(orderId);
+  if (!order) return null;
+
+  if (!['paid', 'assigned'].includes(order.status)) {
+    return { notCancellable: true, order };
+  }
+
+  const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+  if (order.status === 'paid' && !order.driver_id) {
+    // 100% refund
+    let refundId = null;
+    let refundCents = Math.round(parseFloat(order.price_total) * 100);
+    if (order.stripe_session_id) {
+      const session = await stripe.checkout.sessions.retrieve(order.stripe_session_id);
+      const refund = await stripe.refunds.create({ payment_intent: session.payment_intent });
+      refundId = refund.id;
+      refundCents = refund.amount;
+    }
+    const { rows } = await db.query(
+      `UPDATE orders SET status=$1, refund_amount_cents=$2, stripe_refund_id=$3, refunded_at=NOW() WHERE id=$4 RETURNING *`,
+      ['cancelled', refundCents, refundId, orderId]
+    );
+    return {
+      order: rows[0],
+      refundAmount: refundCents / 100,
+      message: 'Full refund issued.',
+    };
+  }
+
+  if (order.status === 'assigned') {
+    // 50% refund to customer, 50% lost-time compensation record for driver
+    let refundId = null;
+    const halfCents = Math.round(parseFloat(order.price_total) * 100 / 2);
+    let refundCents = halfCents;
+    if (order.stripe_session_id) {
+      const session = await stripe.checkout.sessions.retrieve(order.stripe_session_id);
+      const refund = await stripe.refunds.create({ payment_intent: session.payment_intent, amount: halfCents });
+      refundId = refund.id;
+      refundCents = refund.amount;
+    }
+    const { rows } = await db.query(
+      `UPDATE orders SET status=$1, refund_amount_cents=$2, stripe_refund_id=$3, refunded_at=NOW() WHERE id=$4 RETURNING *`,
+      ['cancelled', refundCents, refundId, orderId]
+    );
+    if (order.driver_id) {
+      await db.query(
+        `INSERT INTO driver_adjustments (driver_id, order_id, amount_cents, reason) VALUES ($1,$2,$3,$4)`,
+        [order.driver_id, orderId, halfCents, `Lost-time compensation: customer cancelled after assignment, order #${orderId}`]
+      );
+    }
+    return {
+      order: rows[0],
+      refundAmount: refundCents / 100,
+      message: '50% refund issued. Driver compensated for lost time.',
+    };
+  }
+}
+
+/**
  * Mark a job as in_progress — driver has left for pickup (en-route ping).
  */
 async function markJobStarted(orderId) {
@@ -1092,6 +1161,7 @@ module.exports = {
   assignDriverToOrder,
   markDelivered,
   cancelOrder,
+  cancelOrderByCustomer,
   markJobStarted,
   getMetrics,
   getOrdersByStatus,
