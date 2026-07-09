@@ -511,6 +511,11 @@ async function getRecentCompleted(limit = 10) {
  * Sets driver info, status to 'assigned', and confirmed_at.
  */
 async function assignDriverToOrder(orderId, driverId, driverName, driverPhone, etaMinutes = 15) {
+  // Dispatch entry point: reset any expired accept/decline windows before
+  // assigning a driver, so stale 'assigned' orders past their accept_deadline
+  // are returned to the pool instead of staying stuck.
+  await resetExpiredAcceptWindows();
+
   const { rows } = await db.query(
     `UPDATE orders
         SET driver_id = $2,
@@ -518,12 +523,35 @@ async function assignDriverToOrder(orderId, driverId, driverName, driverPhone, e
             driver_phone = $4,
             eta_minutes = $5,
             status = 'assigned',
-            confirmed_at = NOW()
+            confirmed_at = NOW(),
+            accept_deadline = NOW() + INTERVAL '10 minutes',
+            accept_notified_at = NOW(),
+            driver_accepted = NULL
       WHERE id = $1
       RETURNING *`,
     [orderId, driverId, driverName, driverPhone, etaMinutes]
   );
   return rows[0] || null;
+}
+
+/**
+ * Reset expired accept/decline windows — called at the start of any dispatch
+ * run. Orders that were auto-assigned to a driver but never got an accept/
+ * decline response within their accept_deadline are returned to the pool
+ * ('paid', unassigned) so they can be re-dispatched to another driver.
+ */
+async function resetExpiredAcceptWindows() {
+  const { rows } = await db.query(
+    `UPDATE orders
+        SET driver_id = NULL, driver_name = NULL, driver_phone = NULL,
+            status = 'paid', driver_accepted = NULL, accept_deadline = NULL
+      WHERE status = 'assigned'
+        AND driver_accepted IS NULL
+        AND accept_deadline IS NOT NULL
+        AND accept_deadline < NOW()
+      RETURNING id`
+  );
+  return rows;
 }
 
 /**
@@ -1244,6 +1272,7 @@ module.exports = {
   getActiveDispatches,
   getRecentCompleted,
   assignDriverToOrder,
+  resetExpiredAcceptWindows,
   markDelivered,
   cancelOrder,
   cancelOrderByCustomer,
