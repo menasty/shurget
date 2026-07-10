@@ -138,8 +138,19 @@ router.post('/stripe', express.raw({ type: 'application/json' }), async (req, re
     }
 
     // Handle chargeback: freeze payout, mark order disputed, alert admin.
+    // Supports both snapshot (full object) and thin (id-only) payload styles.
     if (event.type === 'charge.dispute.created') {
-      const dispute = event.data.object;
+      const stripe = getStripe();
+      // Thin payload: event.data.object may only contain { id, object }
+      // Re-fetch the full dispute from Stripe to guarantee all fields are present.
+      const disputeId = event.data.object.id;
+      let dispute;
+      try {
+        dispute = await stripe.disputes.retrieve(disputeId);
+      } catch (fetchErr) {
+        console.error(`[webhooks] Failed to retrieve dispute ${disputeId}:`, fetchErr.message);
+        return res.status(200).json({ received: true }); // ack to Stripe, handle manually
+      }
       const paymentIntentId = dispute.payment_intent;
 
       let orderRow = null;
@@ -171,8 +182,18 @@ router.post('/stripe', express.raw({ type: 'application/json' }), async (req, re
     }
 
     // Handle a failed driver payout transfer — alert admin, queue for retry.
+    // Supports both snapshot (full object) and thin (id-only) payload styles.
     if (event.type === 'transfer.failed') {
-      const transfer = event.data.object;
+      const stripe = getStripe();
+      // Thin payload: re-fetch the full transfer object from Stripe.
+      const transferId = event.data.object.id;
+      let transfer;
+      try {
+        transfer = await stripe.transfers.retrieve(transferId);
+      } catch (fetchErr) {
+        console.error(`[webhooks] Failed to retrieve transfer ${transferId}:`, fetchErr.message);
+        return res.status(200).json({ received: true }); // ack to Stripe, handle manually
+      }
       const stripeAccountId = transfer.destination;
 
       const driverRes = await pool.query(
