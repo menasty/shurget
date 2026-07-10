@@ -47,3 +47,6 @@ services:
       # OpenRouteService geocoding (optional; falls back to ZIP estimation)
       - key: ORS_API_KEY
         sync: false
+      # Shurget LLC EIN (Employer Identification Number) — used for 1099 issuance and tax reporting
+      - key: SHURGET_EIN
+        value: "42-3730877"
