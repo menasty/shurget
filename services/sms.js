@@ -7,7 +7,7 @@ const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN  = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_PHONE_FROM  = process.env.TWILIO_PHONE_FROM;
 const ADMIN_PHONE        = process.env.ADMIN_PHONE;
-const APP_URL = process.env.APP_URL || 'https://shurget-5..app';
+const APP_URL = process.env.APP_URL || 'https://shurgetapp.com';
 
 // ─── Low-level send ──────────────────────────────────────────────────────────
 
