@@ -37,6 +37,9 @@ services:
         sync: false
       - key: POSTMARK_FROM_EMAIL
         sync: false
+      # App base URL (used in SMS links)
+      - key: APP_URL
+        value: "https://shurgetapp.com"
       # Twilio SMS notifications
       - key: TWILIO_ACCOUNT_SID
         sync: false
