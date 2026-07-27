@@ -18,6 +18,12 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Minimal cookie parser (no external dependency). middleware/session.js and
 // routes/partners.js read req.cookies, so this must run before any auth route.
+// Inject public env vars into all EJS templates
+app.use((_req, res, next) => {
+  res.locals.mapboxToken = process.env.MAPBOX_PUBLIC_TOKEN || '';
+  next();
+});
+
 app.use((req, _res, next) => {
   req.cookies = {};
   const header = req.headers.cookie;
