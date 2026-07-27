@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/theme.css">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"></script>
   <style>
     body { background: var(--bg); }
 
@@ -341,6 +343,17 @@
     .nav-btn-primary:hover { background: var(--orange-light); }
     .nav-btn-secondary { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
     .nav-btn-secondary:hover { background: rgba(255,255,255,0.18); }
+
+    /* ── Mapbox live map ── */
+    #live-map {
+      width: 100%;
+      height: 260px;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      border: 1.5px solid var(--gray-light);
+      overflow: hidden;
+    }
+    .mapboxgl-ctrl-logo, .mapboxgl-ctrl-attrib { display: none !important; }
   </style>
 </head>
 <body>
@@ -420,14 +433,18 @@
     </div>
     <% } %>
 
-    <div id="driver-location-card" class="driver-location-card" style="display:none">
-      <div class="location-dot">
-        <div class="pulse-ring"></div>
-        <div class="pulse-center"></div>
-      </div>
-      <div class="location-info">
-        <div class="location-status-label">Driver is on the way</div>
-        <div class="location-update-time" id="location-update-time"></div>
+    <!-- Live Mapbox map — shown when driver location is available -->
+    <div id="live-map-wrap" style="display:none">
+      <div id="live-map"></div>
+      <div class="driver-location-card" style="margin-top:-0.75rem;border-top-left-radius:0;border-top-right-radius:0">
+        <div class="location-dot">
+          <div class="pulse-ring"></div>
+          <div class="pulse-center"></div>
+        </div>
+        <div class="location-info">
+          <div class="location-status-label">Driver is on the way</div>
+          <div class="location-update-time" id="location-update-time"></div>
+        </div>
       </div>
     </div>
 
@@ -562,35 +579,127 @@
   </div>
 
   <script>
-    (function pollStatus() {
-      const orderId = '<%= order.id %>';
-      const locationCard = document.getElementById('driver-location-card');
-      const locationTimeEl = document.getElementById('location-update-time');
-      let pollCount = 0;
+  (function initTracker() {
+    var MAPBOX_TOKEN = '<%- mapboxToken %>';
+    var orderId = '<%= order.id %>';
+    var orderStatus = '<%= order.status %>';
+    var pickupLat = <%= order.pickup_lat || 'null' %>;
+    var pickupLng = <%= order.pickup_lng || 'null' %>;
+    var dropoffLat = <%= order.dropoff_lat || 'null' %>;
+    var dropoffLng = <%= order.dropoff_lng || 'null' %>;
 
-      function check() {
-        fetch('/track/api/' + orderId)
-          .then(function(r) { return r.json(); })
-          .then(function(data) {
-            if (data.driver_location && locationCard && locationTimeEl) {
-              locationCard.style.display = 'flex';
+    var mapWrap = document.getElementById('live-map-wrap');
+    var locationTimeEl = document.getElementById('location-update-time');
+    var map = null;
+    var driverMarker = null;
+    var pickupMarker = null;
+    var dropoffMarker = null;
+    var pollCount = 0;
+    var maxPolls = 120; // 30 min at 15s intervals
+
+    // Stop polling if already delivered
+    if (orderStatus === 'delivered') return;
+
+    function makeEl(color, emoji) {
+      var el = document.createElement('div');
+      el.style.cssText = 'width:36px;height:36px;border-radius:50%;background:' + color + ';display:flex;align-items:center;justify-content:center;font-size:18px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);cursor:default';
+      el.textContent = emoji;
+      return el;
+    }
+
+    function initMap(driverLat, driverLng) {
+      if (map) return;
+      mapboxgl.accessToken = MAPBOX_TOKEN;
+      map = new mapboxgl.Map({
+        container: 'live-map',
+        style: 'mapbox://styles/mapbox/dark-v11',
+        center: [driverLng, driverLat],
+        zoom: 13,
+        interactive: true
+      });
+
+      map.on('load', function() {
+        // Driver marker
+        driverMarker = new mapboxgl.Marker({ element: makeEl('#b84000', '🚛'), anchor: 'center' })
+          .setLngLat([driverLng, driverLat])
+          .addTo(map);
+
+        // Pickup marker
+        if (pickupLat && pickupLng) {
+          pickupMarker = new mapboxgl.Marker({ element: makeEl('#22c55e', '📍'), anchor: 'center' })
+            .setLngLat([pickupLng, pickupLat])
+            .addTo(map);
+        }
+
+        // Dropoff marker
+        if (dropoffLat && dropoffLng) {
+          dropoffMarker = new mapboxgl.Marker({ element: makeEl('#3b82f6', '🏠'), anchor: 'center' })
+            .setLngLat([dropoffLng, dropoffLat])
+            .addTo(map);
+        }
+
+        // Fit bounds to show all markers
+        if (pickupLat && dropoffLat) {
+          var bounds = new mapboxgl.LngLatBounds();
+          bounds.extend([driverLng, driverLat]);
+          bounds.extend([pickupLng, pickupLat]);
+          bounds.extend([dropoffLng, dropoffLat]);
+          map.fitBounds(bounds, { padding: 50, maxZoom: 15 });
+        }
+      });
+    }
+
+    function updateDriverMarker(lat, lng) {
+      if (!map) { initMap(lat, lng); return; }
+      if (driverMarker) {
+        driverMarker.setLngLat([lng, lat]);
+        // Smoothly pan toward driver
+        map.easeTo({ center: [lng, lat], duration: 800 });
+      }
+    }
+
+    function check() {
+      fetch('/track/api/' + orderId)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.driver_location && data.driver_location.lat) {
+            var lat = data.driver_location.lat;
+            var lng = data.driver_location.lng;
+
+            // Show map wrap
+            mapWrap.style.display = 'block';
+
+            // Init or update marker
+            updateDriverMarker(lat, lng);
+
+            // Update timestamp
+            if (locationTimeEl) {
               var updated = new Date(data.driver_location.updated_at);
               var diff = Math.round((Date.now() - updated) / 1000);
               locationTimeEl.textContent = diff < 60
                 ? 'Updated ' + diff + 's ago'
                 : 'Updated ' + Math.round(diff / 60) + 'm ago';
             }
-          })
-          .catch(function() {})
-          .finally(function() {
-            if (++pollCount < 30) {
-              setTimeout(check, 10000);
-            }
-          });
-      }
+          }
 
-      check();
-    })();
+          // Stop polling if delivered
+          if (data.status === 'delivered') {
+            if (locationTimeEl) locationTimeEl.textContent = 'Delivered ✓';
+            return;
+          }
+
+          if (++pollCount < maxPolls) {
+            setTimeout(check, 15000);
+          }
+        })
+        .catch(function() {
+          if (++pollCount < maxPolls) setTimeout(check, 15000);
+        });
+    }
+
+    // Start polling immediately
+    check();
+  })();
   </script>
 </body>
 </html>
