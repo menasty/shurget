@@ -53,3 +53,5 @@ services:
       # Shurget LLC EIN (Employer Identification Number) — used for 1099 issuance and tax reporting
       - key: SHURGET_EIN
         value: "42-3730877"
+      - key: MAPBOX_PUBLIC_TOKEN
+        sync: false
