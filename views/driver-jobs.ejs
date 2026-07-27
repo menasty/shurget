@@ -462,6 +462,9 @@ function renderAvailableJobs(jobs) {
     return;
   }
 
+  // GPS ping check — start/stop based on in_progress jobs
+  if (window._gpsPingCheck) window._gpsPingCheck(jobs);
+
   list.innerHTML = jobs.map(job => {
     const payout = (parseFloat(job.price_total || 0) * 0.85).toFixed(2);
     const total  = parseFloat(job.price_total || 0).toFixed(2);
@@ -721,6 +724,62 @@ function copyReferralLink(code) {
     document.body.removeChild(el); showToast('Referral link copied!');
   });
 }
+
+
+// ── GPS Location Ping
+// Starts when a job goes in_progress, pings every 30s, stops on delivered/page unload
+(function initGpsPing() {
+  let pingInterval = null;
+  let activeOrderId = null;
+
+  function getDriverEmail() {
+    return localStorage.getItem('driver_email') || '';
+  }
+
+  function startPing(orderId) {
+    if (pingInterval && activeOrderId === orderId) return; // already pinging this order
+    stopPing();
+    activeOrderId = orderId;
+    if (!navigator.geolocation) return;
+
+    function sendLocation() {
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        fetch('/api/orders/' + orderId + '/location', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude })
+        }).catch(function() {}); // silent — non-fatal
+      }, function() {}); // permission denied — silent
+    }
+
+    sendLocation(); // immediate first ping
+    pingInterval = setInterval(sendLocation, 30000);
+  }
+
+  function stopPing() {
+    if (pingInterval) { clearInterval(pingInterval); pingInterval = null; }
+    activeOrderId = null;
+  }
+
+  // Hook into active jobs refresh — check for in_progress jobs and start/stop ping
+  function checkActiveJobsForGps(jobs) {
+    if (!jobs || !jobs.length) { stopPing(); return; }
+    const liveJob = jobs.find(function(j) {
+      return j.status === 'in_progress' && j.driver_status !== 'completed';
+    });
+    if (liveJob) {
+      startPing(liveJob.id);
+    } else {
+      stopPing();
+    }
+  }
+
+  // Expose so loadActiveJobs can call it after rendering
+  window._gpsPingCheck = checkActiveJobsForGps;
+
+  // Stop on page unload
+  window.addEventListener('beforeunload', stopPing);
+})();
 
 // ── Init
 <% if (driver) { %>
