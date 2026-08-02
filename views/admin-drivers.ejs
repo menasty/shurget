@@ -192,16 +192,27 @@
                     <% } %>
                   </td>
                   <td>
-                    <span class="badge <%= driver.status === 'active' ? 'badge-green' : 'badge-orange' %>"><%= driver.status %></span>
+                    <span class="badge <%= driver.status === 'active' ? 'badge-green' : driver.status === 'rejected' ? 'badge-red' : 'badge-orange' %>"><%= driver.status %></span>
                   </td>
                   <td>
-                    <% if (driver.status === 'pending') { %>
-                      <form method="post" action="/admin/drivers/<%= driver.id %>/activate">
-                        <button type="submit" class="btn btn-primary">Activate</button>
-                      </form>
-                    <% } else { %>
-                      <span style="font-size:0.8rem;color:rgba(255,255,255,.35);">—</span>
-                    <% } %>
+                    <div style="display:flex;flex-direction:column;gap:.4rem;">
+                      <% if (driver.status === 'pending' || driver.status === 'rejected') { %>
+                        <form method="post" action="/admin/drivers/<%= driver.id %>/<%= driver.status === 'rejected' ? 'reactivate' : 'activate' %>">
+                          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">✓ Approve</button>
+                        </form>
+                      <% } %>
+                      <% if (driver.status === 'pending' || driver.status === 'active') { %>
+                        <form method="post" action="/admin/drivers/<%= driver.id %>/reject" onsubmit="return confirm('Reject <%= driver.name %>?')">
+                          <button type="submit" class="btn btn-danger" style="width:100%;justify-content:center;">✕ Reject</button>
+                        </form>
+                      <% } %>
+                      <% if (driver.status === 'active') { %>
+                        <span style="font-size:.75rem;color:#4ade80;text-align:center;">● Active</span>
+                      <% } %>
+                      <% if (driver.status === 'rejected') { %>
+                        <span style="font-size:.75rem;color:#f87171;text-align:center;">● Rejected</span>
+                      <% } %>
+                    </div>
                   </td>
                 </tr>
               <% } %>
