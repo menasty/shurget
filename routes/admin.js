@@ -626,6 +626,40 @@ router.post('/drivers/:id/activate', async (req, res) => {
   }
 });
 
+/** POST /admin/drivers/:id/reject — reject a driver application */
+router.post('/drivers/:id/reject', async (req, res) => {
+  const driverId = parseInt(req.params.id, 10);
+  try {
+    if (driverId) {
+      await pool.query(
+        "UPDATE driver_applications SET status = 'rejected', reviewed_at = NOW() WHERE id = $1",
+        [driverId]
+      );
+    }
+    res.redirect('/admin/drivers');
+  } catch (e) {
+    console.error('[admin] reject failed:', e.message);
+    res.redirect('/admin/drivers');
+  }
+});
+
+/** POST /admin/drivers/:id/reactivate — move a rejected driver back to active */
+router.post('/drivers/:id/reactivate', async (req, res) => {
+  const driverId = parseInt(req.params.id, 10);
+  try {
+    if (driverId) {
+      await pool.query(
+        "UPDATE driver_applications SET status = 'active', reviewed_at = NOW() WHERE id = $1",
+        [driverId]
+      );
+    }
+    res.redirect('/admin/drivers');
+  } catch (e) {
+    console.error('[admin] reactivate failed:', e.message);
+    res.redirect('/admin/drivers');
+  }
+});
+
 /** POST /admin/drivers/:id/background-check — update background check status */
 router.post('/drivers/:id/background-check', async (req, res) => {
   const driverId = parseInt(req.params.id, 10);
