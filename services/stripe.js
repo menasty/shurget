@@ -10,7 +10,7 @@ function getStripe() {
     throw new Error('STRIPE_SECRET_KEY environment variable is not set');
   }
   const Stripe = require('stripe');
-  return new Stripe(STRIPE_SECRET_KEY, { apiVersion: '2025-04-30.basil' });
+  return new Stripe(STRIPE_SECRET_KEY, { apiVersion: '2026-07-29.dahlia' });
 }
 
 const APP_URL = process.env.APP_URL || 'https://shurget-5..app';
