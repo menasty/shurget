@@ -121,6 +121,9 @@ async function createOrder(data) {
     data.utmSourceLast    || null,
     data.utmMediumLast    || null,
     data.utmCampaignLast  || null,
+    surgeMultiplier,
+    surgeLabel,
+    data.tipAmountCents   || null,
   ]);
   return rows[0];
 }
