@@ -614,6 +614,13 @@ router.post('/drivers/:id/activate', async (req, res) => {
   const driverId = parseInt(req.params.id, 10);
   try {
     if (driverId) {
+      // Guard: background check must be cleared before activation
+      const { rows: check } = await pool.query(
+        'SELECT background_check_status FROM driver_applications WHERE id = $1', [driverId]
+      );
+      if (!check.length || check[0].background_check_status !== 'cleared') {
+        return res.redirect('/admin/drivers?error=bg_check_required');
+      }
       await pool.query(
         "UPDATE driver_applications SET status = 'active', reviewed_at = NOW() WHERE id = $1",
         [driverId]
