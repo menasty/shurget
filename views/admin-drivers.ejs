@@ -196,10 +196,15 @@
                   </td>
                   <td>
                     <div style="display:flex;flex-direction:column;gap:.4rem;">
+                      <% const bgCleared = (driver.background_check_status === 'cleared'); %>
                       <% if (driver.status === 'pending' || driver.status === 'rejected') { %>
-                        <form method="post" action="/admin/drivers/<%= driver.id %>/<%= driver.status === 'rejected' ? 'reactivate' : 'activate' %>">
-                          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">✓ Approve</button>
-                        </form>
+                        <% if (bgCleared) { %>
+                          <form method="post" action="/admin/drivers/<%= driver.id %>/<%= driver.status === 'rejected' ? 'reactivate' : 'activate' %>">
+                            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">✓ Approve</button>
+                          </form>
+                        <% } else { %>
+                          <button class="btn btn-ghost" disabled style="width:100%;justify-content:center;opacity:.4;cursor:not-allowed;" title="Background check must be cleared before approving">⏳ Awaiting BG Check</button>
+                        <% } %>
                       <% } %>
                       <% if (driver.status === 'pending' || driver.status === 'active') { %>
                         <form method="post" action="/admin/drivers/<%= driver.id %>/reject" onsubmit="return confirm('Reject <%= driver.name %>?')">
