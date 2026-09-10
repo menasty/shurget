@@ -447,7 +447,8 @@ async function getMyJobs(driverId) {
             pickup_lat, pickup_lng, dropoff_lat, dropoff_lng
      FROM orders
      WHERE driver_id = $1
-       AND driver_status = 'accepted'
+       AND (driver_status = 'accepted' OR (status = 'assigned' AND driver_accepted IS NULL))
+       AND status NOT IN ('delivered', 'cancelled')
      ORDER BY
        CASE WHEN status = 'assigned' THEN 0 ELSE 1 END,
        confirmed_at DESC`,
