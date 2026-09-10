@@ -108,7 +108,7 @@
 
     .dispatch-row { display: grid; padding: 1rem 1.25rem; align-items: start; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,.06); }
     .dispatch-row:last-child { border-bottom: none; }
-    .dispatch-row-pending { grid-template-columns: 90px 1fr 1fr 1fr 90px auto; }
+    .dispatch-row-pending { grid-template-columns: 90px 120px 1fr 1fr 1fr 90px auto; }
     .dispatch-row-active { grid-template-columns: 90px 1fr 1fr 1fr 90px auto; }
     .dispatch-row-recent { grid-template-columns: 90px 1fr 1fr 1fr 90px; }
     @media (max-width: 768px) { .dispatch-row-pending, .dispatch-row-active, .dispatch-row-recent { grid-template-columns: 1fr 1fr; } }
@@ -244,6 +244,13 @@
                   </div>
                 </div>
                 <div>
+                  <span class="cell-label">Item</span>
+                  <div class="cell-value" style="font-weight:600;"><%= (order.item_type || 'other').charAt(0).toUpperCase() + (order.item_type || 'other').slice(1) %></div>
+                  <% if (order.helpers > 0) { %>
+                    <div class="cell-value muted" style="font-size:0.75rem;">+<%= order.helpers %> helper<%= order.helpers > 1 ? 's' : '' %></div>
+                  <% } %>
+                </div>
+                <div>
                   <span class="cell-label">Pickup</span>
                   <div class="cell-value"><%= order.pickup_address %></div>
                 </div>
@@ -268,7 +275,7 @@
                       <select name="driverId" class="form-select" required>
                         <option value="">Select driver…</option>
                         <% for (const driver of drivers) { %>
-                          <option value="<%= driver.id %>"><%= driver.name %> · <%= driver.city %></option>
+                          <option value="<%= driver.id %>"><%= driver.is_online ? '🟢' : '⚪' %> <%= driver.name %> · <%= driver.vehicle_type %> · <%= driver.city %></option>
                         <% } %>
                       </select>
                       <input type="hidden" name="driverName" value="">
