@@ -269,7 +269,8 @@
   .mp-overlay {
     display: none; position: fixed; inset: 0; z-index: 9000;
     background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
-    align-items: center; justify-content: center; padding: 1.25rem;
+    align-items: flex-start; justify-content: center; padding: 1.25rem;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
   .mp-overlay.open { display: flex; }
   .mp-modal {
@@ -278,6 +279,7 @@
     padding: 2rem 2rem 1.75rem; position: relative;
     box-shadow: 0 24px 80px rgba(0,0,0,.7);
     animation: mp-in .22s ease;
+    max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
   @keyframes mp-in {
     from { opacity: 0; transform: translateY(16px) scale(.97); }
