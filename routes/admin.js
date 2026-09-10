@@ -175,7 +175,7 @@ router.get('/dispatch', async (req, res) => {
   const adminEmail = getAdminEmail(req);
   try {
     const [driversResult, pendingResult, activeResult, recentResult] = await Promise.all([
-      pool.query('SELECT * FROM driver_applications WHERE status = $1 ORDER BY created_at DESC', ['active']),
+      pool.query('SELECT id, name, phone, email, city, vehicle_type, is_online FROM driver_applications WHERE status = $1 ORDER BY is_online DESC, name ASC', ['active']),
       pool.query("SELECT * FROM orders WHERE status IN ('pending', 'paid', 'pending_payment') ORDER BY created_at DESC"),
       pool.query("SELECT * FROM orders WHERE status IN ('assigned', 'in_progress') ORDER BY created_at DESC"),
       pool.query("SELECT * FROM orders WHERE status IN ('delivered', 'cancelled') ORDER BY COALESCE(updated_at, created_at) DESC LIMIT 20")
