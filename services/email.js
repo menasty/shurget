@@ -108,8 +108,8 @@ function buildConfirmationHtml(order) {
       <div style="color:#6b7280; font-size:13px;">${order.driverPhone}</div>
     </div>` : ''}
 
-    <p style="color:#6b7280; font-size:13px; margin:0;">Track your order at <a href="https://shurget-5..app/confirmation/${order.id}">shurget-5..app</a></p>
-    <p style="color:#6b7280; font-size:13px; margin:8px 0 0;">Questions? <a href="https://shurget-5..app/help" style="color:#ea580c;">Help Center →</a></p>
+    <p style="color:#6b7280; font-size:13px; margin:0;">Track your order at <a href="https://shurget.com/confirmation/${order.id}">shurget-5..app</a></p>
+    <p style="color:#6b7280; font-size:13px; margin:8px 0 0;">Questions? <a href="https://shurget.com/help" style="color:#ea580c;">Help Center →</a></p>
   </div>
 </body>
 </html>`;
@@ -130,7 +130,7 @@ Driver ETA: ~${order.etaMinutes} minutes
 Total: $${Number(order.priceTotal).toFixed(2)}
 ${order.driverName ? `\nDriver: ${order.driverName} (${order.driverPhone})` : ''}
 
-Track your order: https://shurget-5..app/confirmation/${order.id}
+Track your order: https://shurget.com/confirmation/${order.id}
 `;
 }
 
@@ -337,7 +337,7 @@ function buildDriverAssignedHtml(order) {
   const etaDisplay = order.etaMinutes
     ? `~${order.etaMinutes} minutes`
     : 'Arriving soon';
-  const trackUrl = `https://shurget-5..app/track/${order.id}`;
+  const trackUrl = `https://shurget.com/track/${order.id}`;
 
   return `<!DOCTYPE html>
 <html>
@@ -387,7 +387,7 @@ function buildDriverAssignedHtml(order) {
 
 function buildDriverAssignedText(order) {
   const etaDisplay = order.etaMinutes ? `~${order.etaMinutes} minutes` : 'Arriving soon';
-  const trackUrl = `https://shurget-5..app/track/${order.id}`;
+  const trackUrl = `https://shurget.com/track/${order.id}`;
 
   return `Shurget — Your Driver Is On The Way #${order.id}
 
@@ -895,7 +895,7 @@ async function sendInTransitEmail(order) {
 
   if (!normalized.customerEmail) return;
 
-  const trackUrl = `https://shurget-5..app/track/${normalized.id}`;
+  const trackUrl = `https://shurget.com/track/${normalized.id}`;
   const etaDisplay = normalized.etaMinutes ? `~${normalized.etaMinutes} min` : 'Soon';
 
   const html = `<!DOCTYPE html>
@@ -969,7 +969,7 @@ async function sendDeliveredEmail(order, ratingLink) {
 
   if (!normalized.customerEmail) return;
 
-  const ratingUrl = ratingLink || `https://shurget-5..app/rate/${normalized.id}`;
+  const ratingUrl = ratingLink || `https://shurget.com/rate/${normalized.id}`;
 
   const html = `<!DOCTYPE html>
 <html>
@@ -986,7 +986,7 @@ async function sendDeliveredEmail(order, ratingLink) {
     <div style="text-align:center;margin-bottom:24px;">
       <a href="${ratingUrl}" style="display:inline-block;background:#ea580c;color:#fff;text-decoration:none;padding:14px 28px;border-radius:6px;font-weight:bold;font-size:16px;">⭐ Rate Your Driver</a>
     </div>
-    <p style="color:#6b7280;font-size:13px;margin:0;text-align:center;">Had an issue? <a href="mailto:hello@shurgetapp.com?subject=Order%20%23${normalized.id}" style="color:#ea580c;">Contact support</a> &nbsp;·&nbsp; <a href="https://shurget-5..app/help" style="color:#ea580c;">Help Center</a></p>
+    <p style="color:#6b7280;font-size:13px;margin:0;text-align:center;">Had an issue? <a href="mailto:hello@shurgetapp.com?subject=Order%20%23${normalized.id}" style="color:#ea580c;">Contact support</a> &nbsp;·&nbsp; <a href="https://shurget.com/help" style="color:#ea580c;">Help Center</a></p>
   </div>
 </body>
 </html>`;
