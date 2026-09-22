@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rate Your Customer — Shurget</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{background:#0a0a0a;color:#f8f7f5;font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+    .card{background:#111;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:2rem;max-width:480px;width:100%}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.12em;color:#fff;margin-bottom:1.5rem;display:block;text-decoration:none}
+    .logo span{color:#ea580c}
+    h1{font-family:'Bebas Neue',sans-serif;font-size:1.75rem;letter-spacing:.05em;margin-bottom:.35rem}
+    .sub{font-size:.88rem;color:rgba(255,255,255,.45);margin-bottom:1.75rem}
+    .order-info{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:.9rem 1rem;margin-bottom:1.5rem;font-size:.85rem;color:rgba(255,255,255,.55)}
+    .order-info strong{color:#f8f7f5}
+    .stars{display:flex;gap:.5rem;margin-bottom:1.5rem;justify-content:center}
+    .star{font-size:2.5rem;cursor:pointer;transition:transform .15s;color:rgba(255,255,255,.15);line-height:1}
+    .star.active,.star:hover{color:#ea580c;transform:scale(1.15)}
+    .label{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:.5rem}
+    textarea{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#f8f7f5;font-family:'DM Sans',sans-serif;font-size:.9rem;padding:.75rem 1rem;resize:vertical;min-height:100px;outline:none;margin-bottom:1.25rem}
+    textarea:focus{border-color:#b84000}
+    textarea::placeholder{color:rgba(255,255,255,.25)}
+    .btn{width:100%;background:#b84000;color:#fff;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;padding:.85rem;cursor:pointer;transition:background .2s}
+    .btn:hover{background:#9e3800}
+    .btn:disabled{opacity:.4;cursor:not-allowed}
+    .already-rated{text-align:center;padding:2rem 0;color:rgba(255,255,255,.45)}
+    .alert-success{background:rgba(22,163,74,.12);border:1px solid rgba(22,163,74,.25);color:#4ade80;border-radius:9px;padding:.75rem 1rem;margin-bottom:1.25rem;font-size:.88rem}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <a href="/" class="logo">SHUR<span>GET</span></a>
+    <h1>Rate Your Customer</h1>
+    <p class="sub">Help us maintain a great community. Your feedback is private and only seen by Shurget admin.</p>
+
+    <% if (alreadyRated) { %>
+      <div class="already-rated">
+        <p style="font-size:1.5rem;margin-bottom:.5rem">✓</p>
+        <p>You've already rated this customer.</p>
+      </div>
+    <% } else if (rated) { %>
+      <div class="alert-success">Thanks — your rating has been submitted.</div>
+      <div class="already-rated"><a href="/driver/my-jobs" style="color:#ea580c;text-decoration:none">← Back to My Jobs</a></div>
+    <% } else { %>
+      <div class="order-info">
+        <strong>Order #<%= order.id %></strong> &middot;
+        <%= (order.item_type || 'Delivery').charAt(0).toUpperCase() + (order.item_type||'delivery').slice(1) %><br>
+        <span>Customer: <strong><%= order.customer_name || 'Anonymous' %></strong></span>
+      </div>
+
+      <form method="post" action="/driver/rate-customer/<%= order.id %>" id="rateForm">
+        <div class="label">Overall Rating</div>
+        <div class="stars" id="stars">
+          <% for (let i = 1; i <= 5; i++) { %>
+            <span class="star" data-val="<%= i %>" onclick="setRating(<%= i %>)">★</span>
+          <% } %>
+        </div>
+        <input type="hidden" name="score" id="scoreInput" required>
+
+        <div class="label">Comments (optional)</div>
+        <textarea name="comment" placeholder="Was the customer ready? Polite? Any issues?"></textarea>
+
+        <button class="btn" type="submit" id="submitBtn" disabled>Submit Rating</button>
+      </form>
+    <% } %>
+  </div>
+  <script>
+    let selected = 0;
+    function setRating(val) {
+      selected = val;
+      document.getElementById('scoreInput').value = val;
+      document.querySelectorAll('.star').forEach((s,i) => s.classList.toggle('active', i < val));
+      document.getElementById('submitBtn').disabled = false;
+    }
+    document.querySelectorAll('.star').forEach(s => {
+      s.addEventListener('mouseenter', () => {
+        const v = parseInt(s.dataset.val);
+        document.querySelectorAll('.star').forEach((x,i) => x.classList.toggle('active', i < v));
+      });
+      s.addEventListener('mouseleave', () => {
+        document.querySelectorAll('.star').forEach((x,i) => x.classList.toggle('active', i < selected));
+      });
+    });
+  </script>
+</body>
+</html>
