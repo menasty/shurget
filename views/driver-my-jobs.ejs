@@ -150,6 +150,9 @@
             <div style="margin-top:.75rem;font-size:.8rem;color:#22c55e;font-weight:600;text-align:center">
               Delivery Complete
             </div>
+            <% if (!job.customer_rated_at) { %>
+              <a href="/driver/rate-customer/<%= job.id %>" style="display:block;margin-top:.6rem;text-align:center;font-size:.82rem;color:#ea580c;text-decoration:none;font-weight:600;">⭐ Rate Customer</a>
+            <% } %>
           <% } %>
         </div>
       <% }); %>
