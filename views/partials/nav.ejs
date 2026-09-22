@@ -3,11 +3,33 @@
     <img src="/images/shurget-logo-nav.png" alt="Shurget" class="nav-logo-img" />
   </a>
   <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">&#9776;</button>
+<style>
+  .nav-divider { height: 1px; background: rgba(255,255,255,.08); margin: .5rem 0; }
+  .nav-section-label { font-size: .65rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .12em; color: rgba(255,255,255,.3); padding: .5rem 0 .25rem; }
+  .nav-link-driver { font-size: .88rem !important; color: rgba(255,255,255,.6) !important; }
+  .nav-link-driver:hover { color: #ea580c !important; }
+  @media (min-width: 769px) {
+    .nav-divider, .nav-section-label, .nav-link-driver { display: none !important; }
+  }
+</style>
   <div class="nav-links" id="nav-links">
     <a href="/book" class="nav-link">Book a Haul</a>
     <a href="/drive" class="nav-link">Drive</a>
     <a href="/partners" class="nav-link">For Business</a>
     <a href="/help" class="nav-link">Help</a>
+
+    <div class="nav-divider"></div>
+    <div class="nav-section-label">Driver Portal</div>
+    <a href="/driver/login" class="nav-link nav-link-driver">🔑 Driver Login</a>
+    <a href="/driver/jobs" class="nav-link nav-link-driver">🚛 Available Jobs</a>
+    <a href="/driver/my-jobs" class="nav-link nav-link-driver">📋 My Active Jobs</a>
+    <a href="/driver/earnings" class="nav-link nav-link-driver">💰 My Earnings</a>
+    <a href="/driver/payouts" class="nav-link nav-link-driver">🏦 Payouts</a>
+    <a href="/contact?from=driver" class="nav-link nav-link-driver">📞 Contact Admin</a>
+    <a href="/driver/logout" class="nav-link nav-link-driver" style="color:rgba(255,255,255,.35);font-size:.8rem;">Sign Out</a>
+
+    <div class="nav-divider"></div>
     <a href="/book" class="nav-cta">Get Started →</a>
   </div>
 </nav>
