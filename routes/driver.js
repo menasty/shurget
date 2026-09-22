@@ -273,4 +273,47 @@ router.post('/orders/:id/decline', requireDriver, async (req, res) => {
   }
 });
 
+
+// GET /driver/rate-customer/:orderId — rate a customer after delivery
+router.get('/rate-customer/:orderId', requireDriver, async (req, res) => {
+  try {
+    const { getOrderById } = require('../db/orders');
+    const order = await getOrderById(req.params.orderId);
+    if (!order || order.driver_id !== req.driver.id) {
+      return res.status(403).send('Not authorised');
+    }
+    const alreadyRated = !!order.customer_rated_at;
+    res.render('rate-customer', { order, alreadyRated, rated: req.query.rated === '1' });
+  } catch (e) {
+    console.error('[driver] rate-customer GET:', e.message);
+    res.status(500).send('Something went wrong');
+  }
+});
+
+// POST /driver/rate-customer/:orderId — submit customer rating
+router.post('/rate-customer/:orderId', requireDriver, async (req, res) => {
+  try {
+    const { getOrderById } = require('../db/orders');
+    const order = await getOrderById(req.params.orderId);
+    if (!order || order.driver_id !== req.driver.id) {
+      return res.status(403).send('Not authorised');
+    }
+    if (order.customer_rated_at) {
+      return res.redirect(`/driver/rate-customer/${order.id}?alreadyRated=1`);
+    }
+    const score   = Math.min(5, Math.max(1, parseInt(req.body.score, 10) || 0));
+    const comment = (req.body.comment || '').trim().slice(0, 1000);
+    if (!score) return res.redirect(`/driver/rate-customer/${order.id}`);
+    const pool = require('../db/index');
+    await pool.query(
+      `UPDATE orders SET customer_score = $1, customer_review_comment = $2, customer_rated_at = NOW() WHERE id = $3`,
+      [score, comment || null, order.id]
+    );
+    res.redirect(`/driver/rate-customer/${order.id}?rated=1`);
+  } catch (e) {
+    console.error('[driver] rate-customer POST:', e.message);
+    res.status(500).send('Something went wrong');
+  }
+});
+
 module.exports = router;
