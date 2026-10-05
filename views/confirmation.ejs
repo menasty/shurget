@@ -289,7 +289,7 @@
     <div class="success-icon">✓</div>
     <h1 class="success-title">Payment Successful</h1>
     <p class="success-subtitle">
-      Your haul is confirmed. A Shurget driver will be assigned shortly and will contact you directly.
+      Your haul is confirmed. We're matching you with a local driver now. You'll get an email the moment a driver is assigned, and you can follow your delivery live on the tracking page.
     </p>
     <div class="order-ref">
       Order Ref: <strong id="orderId">Loading...</strong>
@@ -340,7 +340,8 @@
 
     <!-- CTA buttons -->
     <div class="cta-row">
-      <a href="/book" class="cta-primary">Book Another Haul</a>
+      <% if (order) { %><a href="/track/<%= order.id %>" class="cta-primary">Track Your Delivery →</a><% } %>
+      <a href="/book" class="<%= order ? 'cta-ghost' : 'cta-primary' %>">Book Another Haul</a>
       <a href="/" class="cta-ghost">Back to Home</a>
     </div>
   </div>
@@ -356,7 +357,7 @@
       const surgeActive = urlParams.get('surge') === '1';
 
       document.getElementById('orderId').textContent =
-        sessionId ? sessionId.substring(0, 14) + '...' : (orderId || 'Pending');
+        '#' + (window.location.pathname.split('/').filter(Boolean)[1] || orderId || 'Pending');
 
       // ── Surge notice ──────────────────────────────────────────────────────
       if (surgeActive && surgeLabel) {
