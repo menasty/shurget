@@ -50,7 +50,13 @@ router.post('/', async (req, res) => {
       status: 'pending_payment',
     });
 
+    // Return the customer to the same domain they booked from (whitelisted)
+    const ALLOWED_HOSTS = ['shurget.com', 'www.shurget.com', 'shurgetapp.com', 'www.shurgetapp.com'];
+    const reqHost = String(req.get('x-forwarded-host') || req.get('host') || '').split(',')[0].trim().toLowerCase();
+    const baseUrl = ALLOWED_HOSTS.includes(reqHost) ? `https://${reqHost.replace(/^www\./, '')}` : null;
+
     const session = await createCheckoutSession({
+      baseUrl,
       orderId: order.id,
       amount: order.price_total,
       itemType: order.item_type,
