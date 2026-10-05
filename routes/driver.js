@@ -316,4 +316,14 @@ router.post('/rate-customer/:orderId', requireDriver, async (req, res) => {
   }
 });
 
+// JSON auth for /api/driver/* (same driver session cookie, returns 401 instead of redirect)
+router.apiAuth = async function apiAuth(req, res, next) {
+  const sess = getDriverSession(req.cookies?.[DRIVER_COOKIE]);
+  if (!sess) return res.status(401).json({ error: 'Please log in again.' });
+  const driver = await getDriverByEmail(sess.email).catch(() => null);
+  if (!driver) return res.status(401).json({ error: 'Driver account not found.' });
+  req.driver = driver;
+  next();
+};
+
 module.exports = router;
