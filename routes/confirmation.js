@@ -19,6 +19,7 @@ async function renderConfirmation(req, res) {
   res.render('confirmation', {
     order,
     title: 'Booking Confirmed - Shurget',
+    stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '',
   });
 }
 
