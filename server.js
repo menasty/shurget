@@ -76,6 +76,7 @@ app.use('/', require('./routes/payouts')); // /driver/payouts, /driver/earnings,
 
 // Driver job board (email-gated)
 app.use('/driver', require('./routes/driver'));
+app.use('/api/driver', require('./routes/driver-api')); // trip steps + GPS (session auth)
 
 // Embeddable widget (page at /embed/quote, API at /api/embed/calculate)
 const embed = require('./routes/embed');
