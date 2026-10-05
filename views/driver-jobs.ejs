@@ -462,8 +462,6 @@ function renderAvailableJobs(jobs) {
     return;
   }
 
-  // GPS ping check — start/stop based on in_progress jobs
-  if (window._gpsPingCheck) window._gpsPingCheck(jobs);
 
   list.innerHTML = jobs.map(job => {
     const payout = (parseFloat(job.price_total || 0) * 0.85).toFixed(2);
@@ -624,6 +622,7 @@ async function loadActiveJobs() {
 }
 
 function renderActiveJobs(jobs) {
+  if (window._gpsPingCheck) window._gpsPingCheck(jobs); // live GPS for in-progress trips
   const list = document.getElementById('active-list');
   const head = document.getElementById('active-head');
   const badge = document.getElementById('badge-active');
@@ -651,13 +650,13 @@ function renderActiveJobs(jobs) {
     const st = job.status || '';
 
     let actionBtns = '';
-    if (st === 'assigned' && ds === 'accepted') {
+    if (st === 'assigned') {
       actionBtns = `<button class="btn-status btn-enroute" onclick="updateJobStatus(${job.id},'start')">🚗 En Route to Pickup</button>`;
-    } else if (st === 'assigned' && ds === 'en_route') {
+    } else if (ds === 'en_route') {
       actionBtns = `<button class="btn-status btn-arrived" onclick="updateJobStatus(${job.id},'arrived')">📍 Arrived at Pickup</button>`;
     } else if (ds === 'arrived') {
       actionBtns = `<button class="btn-status btn-loaded" onclick="updateJobStatus(${job.id},'loaded')">📦 Item Loaded</button>`;
-    } else if (st === 'in_progress' && (ds === 'loaded' || ds === 'en_route')) {
+    } else if (st === 'in_progress' && ds === 'loaded') {
       actionBtns = `<button class="btn-status btn-delivered" onclick="updateJobStatus(${job.id},'deliver')">✅ Mark Delivered</button>`;
     } else if (st === 'delivered') {
       actionBtns = `<div style="font-size:.8rem;color:#22C55E;font-weight:600;padding:.5rem 0">✓ Delivered — payout queued</div>`;
@@ -744,7 +743,7 @@ function copyReferralLink(code) {
 
     function sendLocation() {
       navigator.geolocation.getCurrentPosition(function(pos) {
-        fetch('/api/orders/' + orderId + '/location', {
+        fetch('/api/driver/jobs/' + orderId + '/location', { credentials: 'same-origin',
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lat: pos.coords.latitude, lng: pos.coords.longitude })
