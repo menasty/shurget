@@ -138,14 +138,15 @@
           <% } %>
 
           <% if (job.status !== 'delivered') { %>
-            <button
-              class="btn-complete"
-              data-job-id="<%= job.id %>"
-              data-item="<%= (job.item_type || 'Delivery').replace(/-/g,' ') %>"
-              onclick="promptComplete(this)"
-            >
-              Mark as Delivered
-            </button>
+            <% var ds = job.driver_status || '';
+               var step = (job.status === 'assigned') ? ['start', '🚗 Start Trip — En Route to Pickup']
+                        : (ds === 'en_route') ? ['arrived', '📍 Arrived at Pickup']
+                        : (ds === 'arrived')  ? ['loaded', '📦 Item Loaded — Heading to Dropoff']
+                        : ['deliver', '✅ Mark as Delivered'];
+               var stepLabel = ds === 'en_route' ? 'En route to pickup' : ds === 'arrived' ? 'At pickup' : ds === 'loaded' ? 'In transit to dropoff' : 'Not started'; %>
+            <div class="addr"><strong>Trip:</strong> <%= stepLabel %><% if (job.status === 'in_progress') { %> &middot; <span style="color:#22c55e">● sharing live location</span><% } %></div>
+            <button class="btn-complete" data-job-id="<%= job.id %>" data-action="<%= step[0] %>" onclick="advanceTrip(this)"><%= step[1] %></button>
+            <% if (job.status === 'in_progress') { %><span class="gps-live" data-job-id="<%= job.id %>" hidden></span><% } %>
           <% } else { %>
             <div style="margin-top:.75rem;font-size:.8rem;color:#22c55e;font-weight:600;text-align:center">
               Delivery Complete
@@ -252,5 +253,35 @@
       if (e.key === 'Escape') closeConfirm();
     });
   </script>
+<script>
+  async function advanceTrip(btn) {
+    var id = btn.dataset.jobId, action = btn.dataset.action;
+    if (action === 'deliver' && !confirm('Has the item been delivered and the customer confirmed receipt?')) return;
+    var label = btn.textContent; btn.disabled = true; btn.textContent = 'Updating…';
+    try {
+      var r = await fetch('/api/driver/jobs/' + id + '/' + action, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' });
+      var d = await r.json().catch(function () { return {}; });
+      if (r.ok && d.success) { location.reload(); return; }
+      if (r.status === 401) { location.href = '/driver/login'; return; }
+      alert(d.error || 'Update failed — try again.');
+    } catch (e) { alert('Network error — try again.'); }
+    btn.disabled = false; btn.textContent = label;
+  }
+  // Live GPS ping for the customer's tracking map (every 20s while a trip is in progress)
+  (function () {
+    var live = document.querySelector('.gps-live');
+    if (!live || !navigator.geolocation) return;
+    var id = live.dataset.jobId;
+    function ping() {
+      navigator.geolocation.getCurrentPosition(function (p) {
+        fetch('/api/driver/jobs/' + id + '/location', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin',
+          body: JSON.stringify({ lat: p.coords.latitude, lng: p.coords.longitude })
+        }).catch(function () {});
+      }, function () {}, { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 });
+    }
+    ping(); setInterval(ping, 20000);
+  })();
+</script>
 </body>
 </html>
