@@ -445,11 +445,11 @@ async function getMyJobs(driverId) {
             eta_minutes, status, created_at, confirmed_at,
             driver_lat, driver_lng, driver_location_updated_at,
             pickup_lat, pickup_lng, dropoff_lat, dropoff_lng,
-            customer_rated_at
+            customer_rated_at, driver_status
      FROM orders
      WHERE driver_id = $1
-       AND (driver_status = 'accepted' OR (status = 'assigned' AND driver_accepted IS NULL) OR status = 'delivered')
-       AND status NOT IN ('cancelled')
+       AND status IN ('assigned', 'in_progress', 'delivered')
+       AND (status <> 'delivered' OR delivered_at IS NULL OR delivered_at > NOW() - INTERVAL '7 days')
      ORDER BY
        CASE WHEN status = 'assigned' THEN 0 ELSE 1 END,
        confirmed_at DESC`,
