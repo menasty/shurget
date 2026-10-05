@@ -13,7 +13,7 @@ function getStripe() {
   return new Stripe(STRIPE_SECRET_KEY, { apiVersion: '2026-07-29.dahlia' });
 }
 
-const APP_URL = process.env.APP_URL || 'https://shurget-5..app';
+const APP_URL = process.env.APP_URL || 'https://shurget.com';
 
 /**
  * Create a Stripe Checkout session for an order.
@@ -21,7 +21,7 @@ const APP_URL = process.env.APP_URL || 'https://shurget-5..app';
  * If referralDiscountCents > 0, the `amount` passed in should already be the discounted total;
  * we also add a visible discount line item for clarity.
  */
-async function createCheckoutSession({ orderId, amount, itemType, customerEmail, referralDiscountCents = 0, originalAmount = null }) {
+async function createCheckoutSession({ orderId, amount, itemType, customerEmail, referralDiscountCents = 0, originalAmount = null, baseUrl = null }) {
   const stripe = getStripe();
 
   const lineItems = [
@@ -61,8 +61,8 @@ async function createCheckoutSession({ orderId, amount, itemType, customerEmail,
     metadata: {
       orderId: String(orderId),
     },
-    success_url: `${APP_URL}/confirmation/${orderId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${APP_URL}/confirmation/${orderId}?payment=cancelled`,
+    success_url: `${baseUrl || APP_URL}/confirmation/${orderId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${baseUrl || APP_URL}/confirmation/${orderId}?payment=cancelled`,
   });
 
   return session;
