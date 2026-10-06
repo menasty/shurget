@@ -78,7 +78,12 @@ router.post('/api/driver/payouts/connect', requireDriver, async (req, res) => {
       stripeAccountId = account.id;
       await saveStripeAccountId(req.driver.id, stripeAccountId);
     }
-    const base = process.env.APP_URL || baseUrl(req);
+    // Return the driver to the same domain they started from (whitelisted), else APP_URL
+    const ALLOWED_HOSTS = ['shurget.com', 'www.shurget.com', 'shurgetapp.com', 'www.shurgetapp.com'];
+    const reqHost = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim().toLowerCase();
+    const base = ALLOWED_HOSTS.includes(reqHost)
+      ? `https://${reqHost.replace(/^www\./, '')}`
+      : (process.env.APP_URL || baseUrl(req));
     const link = await createAccountLink(stripeAccountId, {
       refreshUrl: `${base}/driver/payouts`,
       returnUrl:  `${base}/driver/payouts?connected=1`,
