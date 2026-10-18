@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Signed Out — Shurget</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0a0a0a; color: #f8f7f5; font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+    .top { padding: 1.25rem 1.5rem; }
+    .brand { font-family: 'Bebas Neue', sans-serif; font-size: 1.75rem; letter-spacing: .06em; text-decoration: none; color: #f8f7f5; }
+    .brand span { color: #ea580c; }
+    main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1.5rem 4rem; }
+    .card { max-width: 480px; width: 100%; text-align: center; }
+    h1 { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: clamp(2.6rem, 9vw, 3.6rem); line-height: 1.05; letter-spacing: .03em; margin-bottom: 1.5rem; }
+    .notice { display: flex; align-items: center; justify-content: center; gap: .6rem; background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.35); color: #bbf7d0; border-radius: 10px; padding: .9rem 1.1rem; font-size: 1rem; font-weight: 500; margin-bottom: 2rem; }
+    .notice .check { display: inline-flex; align-items: center; justify-content: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: #22c55e; color: #0a0a0a; font-weight: 700; font-size: .85rem; flex-shrink: 0; }
+    .actions { display: flex; flex-direction: column; gap: .75rem; }
+    .btn { display: block; padding: .9rem 1rem; border-radius: 10px; font-weight: 600; font-size: 1rem; text-decoration: none; }
+    .btn-primary { background: #b84000; color: #fff; }
+    .btn-primary:hover { background: #9e3800; }
+    .btn-ghost { border: 1px solid rgba(255,255,255,.2); color: #f8f7f5; }
+    .btn-ghost:hover { border-color: rgba(255,255,255,.5); }
+  </style>
+</head>
+<body>
+  <div class="top"><a href="/" class="brand">SHUR<span>GET</span></a></div>
+  <main>
+    <div class="card">
+      <h1>Can't wait until next time!</h1>
+      <div class="notice" role="status"><span class="check" aria-hidden="true">✓</span> You have been signed out successfully.</div>
+      <div class="actions">
+        <a href="<%= signInUrl %>" class="btn btn-primary">Sign Back In</a>
+        <a href="/" class="btn btn-ghost">Back to Home</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
