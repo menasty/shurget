@@ -132,6 +132,15 @@ app.get('/dashboard', async (req, res) => {
 });
 
 // Static informational pages
+app.get('/signed-out', (req, res) => {
+  const who = String(req.query.who || '');
+  const slug = String(req.query.slug || '');
+  const signInUrl = who === 'driver' ? '/driver/login'
+    : (who === 'partner' && /^[a-z0-9-]+$/i.test(slug)) ? `/partners/${slug}`
+    : '/';
+  res.set('Cache-Control', 'no-store');
+  res.render('signed-out', { signInUrl });
+});
 app.get('/terms', (_req, res) => res.render('terms'));
 app.get('/privacy', (_req, res) => res.render('privacy'));
 app.get('/cookies', (_req, res) => res.render('cookies'));
