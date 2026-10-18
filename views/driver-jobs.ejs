@@ -610,10 +610,10 @@ async function declineJob(orderId) {
 
 // ── Load active jobs
 async function loadActiveJobs() {
-  const email = getEmail();
-  if (!email) return;
+  // Uses the driver login session cookie — no saved email required
   try {
-    const r = await fetch('/api/driver/my-jobs?email=' + encodeURIComponent(email));
+    const r = await fetch('/api/driver/my-jobs', { credentials: 'same-origin' });
+    if (r.status === 401) { window.location.href = '/driver/login'; return; }
     const data = await r.json();
     renderActiveJobs(data.jobs || []);
   } catch(e) {
