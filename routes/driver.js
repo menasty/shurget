@@ -112,14 +112,16 @@ router.post('/login', async (req, res) => {
   res.redirect('/driver/jobs');
 });
 
-// POST /driver/logout
-router.post('/logout', (req, res) => {
+// GET|POST /driver/logout → signed-out landing page
+function driverLogout(req, res) {
   const sess = getDriverSession(req.cookies?.[DRIVER_COOKIE]);
   if (sess) DRIVER_SESSIONS.delete(sess.id);
   res.clearCookie(DRIVER_COOKIE);
   res.clearCookie('dr_email');
-  res.redirect('/driver/login');
-});
+  res.redirect('/signed-out?who=driver');
+}
+router.get('/logout', driverLogout);   // menu "Sign Out" link
+router.post('/logout', driverLogout);
 
 // ─── Protected routes (require login) ────────────────────────────────────────
 
