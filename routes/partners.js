@@ -246,7 +246,7 @@ router.get('/:slug/verify', async (req, res) => {
 router.post('/:slug/logout', (req, res) => {
   res.setHeader('Set-Cookie',
     'shurget_partner_session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/');
-  return res.redirect(`/partners/${req.params.slug}`);
+  return res.redirect(`/signed-out?who=partner&slug=${encodeURIComponent(req.params.slug)}`);
 });
 
 // ─── Admin: approve/reject applications ──────────────────────────────────────
