@@ -8,13 +8,13 @@ Express.js + EJS + PostgreSQL (Neon) + Render
 
 ## Directory map
 - `server.js` — Express entry point; route mounts only
-- `routes/` — API route groups (booking.js, drive.js, webhooks.js, driver.js, contact.js, partners.js, referral.js, embed.js, seo.js, reviews.js, admin.js, payouts.js, sms.js, disputes.js, orders.js)
+- `routes/` — API route groups (booking.js, drive.js, webhooks.js, driver.js, contact.js, partners.js, referral.js, embed.js, reviews.js, admin.js, payouts.js, sms.js, disputes.js, orders.js)
 - `middleware/` — Auth middleware (session.js = signed-cookie admin sessions)
 - `db/` — Database access (index.js = pool, orders.js = order queries, drivers.js = driver queries, partners.js = partner queries, referrals.js = referral code/redemption queries, ratings.js = driver rating queries, quote_requests.js = quote/partner lead queries)
 - `services/` — Business logic (maps.js = geocoding, driver.js = driver matching, stripe.js = Checkout sessions, stripe-connect.js = Connect Express onboarding + transfers, rating-token.js = HMAC signed tokens for rating links, email.js = all Postmark transactional emails, sms.js = Twilio customer + driver notifications, opt-out handling)
 - `jobs/` — Background workers run by .toml crons (review-email-worker.js = post-delivery review email sender)
 - `views/` — EJS templates (layout.ejs, booking.ejs, confirmation.ejs, contact.ejs, partners.ejs, embed-quote.ejs, partners-embed.ejs, partner-apply.ejs, partner-login.ejs, partner-dashboard.ejs, partner-magic-sent.ejs, partials/)
-- `public/css/` — Styles (theme.css = design tokens, seo-pages.css = SEO pages, booking.css = booking flow)
+- `public/css/` — Styles (theme.css = design tokens, booking.css = booking flow)
 - `public/js/` — Booking flow JS (booking.js)
 - `public/widget.js` — Embeddable "Shurget it" quote widget for retailer product pages
 - `lib/` — Utilities (landing-context.js)

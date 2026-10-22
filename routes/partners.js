@@ -85,7 +85,7 @@ router.get('/b2b-pilot-kit', (_req, res) => {
   res.render('partners-b2b-pilot-kit');
 });
 
-/** GET /partners/pilot-kit — shareable B2B pilot kit for Austin retailer outreach */
+/** GET /partners/pilot-kit — shareable B2B pilot kit for Denver retailer outreach */
 router.get('/pilot-kit', (_req, res) => {
   res.render('partners/pilot-kit');
 });
