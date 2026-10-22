@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const { getOrderById, updateDriverLocation, dispatchOrder, completeOrder, cancelOrderByCustomer, cancelOrderUnprepared } = require('../db/orders');
 const { sendConfirmationEmail } = require('../services/email');
+const { requireAdminApi } = require('../middleware/session');
 
 /**
  * GET /api/orders/:id
@@ -89,7 +90,7 @@ router.post('/:id/location', async (req, res) => {
  * Assigns a driver to a paid/assigned order. Call this after Stripe confirms payment.
  * Body: { driverName, driverPhone, etaMinutes, driverId }
  */
-router.post('/:id/dispatch', async (req, res) => {
+router.post('/:id/dispatch', requireAdminApi, async (req, res) => {
   try {
     const { driverName, driverPhone, etaMinutes, driverId } = req.body;
     if (!driverName || !driverPhone || !etaMinutes) {
@@ -117,13 +118,8 @@ router.post('/:id/dispatch', async (req, res) => {
  * Drivers should use POST /driver/jobs/:id/complete (session-authenticated).
  * This endpoint is admin-scoped — requires admin session cookie.
  */
-router.post('/:id/complete', async (req, res) => {
+router.post('/:id/complete', requireAdminApi, async (req, res) => {
   try {
-    // Verify admin session (same cookie pattern as admin routes)
-    const adminSession = req.cookies && req.cookies['adm_session'];
-    if (!adminSession) {
-      return res.status(401).json({ error: 'Unauthorized. Use /driver/jobs/:id/complete for driver-initiated completions.' });
-    }
     const order = await completeOrder(req.params.id);
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
@@ -155,7 +151,7 @@ const { sendAdminPaymentFailureSms } = require('../services/sms');
  * POST /api/orders/:id/assign — admin assigns driver, triggers in-transit email.
  * Body: { driverId, driverName, driverPhone, etaMinutes }
  */
-router.post('/:id/assign', async (req, res, next) => {
+router.post('/:id/assign', requireAdminApi, async (req, res, next) => {
   try {
     const { driverId, driverName, driverPhone, etaMinutes } = req.body;
     if (!driverId || !driverName) {
@@ -184,7 +180,7 @@ router.post('/:id/assign', async (req, res, next) => {
 /**
  * POST /api/orders/:id/start — admin marks job in-progress (driver left for pickup).
  */
-router.post('/:id/start', async (req, res, next) => {
+router.post('/:id/start', requireAdminApi, async (req, res, next) => {
   try {
     const order = await markJobStarted(req.params.id);
     if (!order) {
@@ -203,7 +199,7 @@ router.post('/:id/start', async (req, res, next) => {
 /**
  * POST /api/orders/:id/delivered — admin marks order delivered, triggers delivered email.
  */
-router.post('/:id/delivered', async (req, res, next) => {
+router.post('/:id/delivered', requireAdminApi, async (req, res, next) => {
   try {
     const order = await markDelivered(req.params.id);
     if (!order) {
@@ -225,7 +221,7 @@ router.post('/:id/delivered', async (req, res, next) => {
 /**
  * POST /api/orders/:id/cancel-order — admin cancels order, triggers cancellation email.
  */
-router.post('/:id/cancel-order', async (req, res, next) => {
+router.post('/:id/cancel-order', requireAdminApi, async (req, res, next) => {
   try {
     const order = await cancelOrder(req.params.id);
     if (!order) {
@@ -245,7 +241,7 @@ router.post('/:id/cancel-order', async (req, res, next) => {
  * POST /api/orders/payment-failure — handle Stripe charge failure.
  * Body: { orderId, reason }
  */
-router.post('/payment-failure', async (req, res) => {
+router.post('/payment-failure', requireAdminApi, async (req, res) => {
   try {
     const { orderId, reason } = req.body;
     if (!orderId) return res.status(400).json({ error: 'orderId is required' });

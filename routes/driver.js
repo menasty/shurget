@@ -8,54 +8,15 @@ const { getDriverByEmail } = require('../db/drivers');
 const { getAvailableJobs, acceptJob, declineJob, getMyJobs } = require('../db/orders');
 
 // ─── Session helpers (driver-scoped, separate from admin sessions) ────────────
-const DRIVER_SESSIONS  = new Map(); // sessionId -> { driverId, email, createdAt }
-const DRIVER_COOKIE    = 'dr_session';
-const SESSION_TTL_MS   = 12 * 60 * 60 * 1000; // 12 hours
-const COOKIE_SECRET    = process.env.COOKIE_SECRET || crypto.randomBytes(32).toString('hex');
-
-function signId(id) {
-  const hmac = crypto.createHmac('sha256', COOKIE_SECRET);
-  hmac.update(id);
-  return id + '.' + hmac.digest('base64url');
-}
-
-function unsignId(cookie) {
-  if (!cookie || typeof cookie !== 'string') return null;
-  const dot = cookie.lastIndexOf('.');
-  if (dot === -1) return null;
-  const id  = cookie.slice(0, dot);
-  const sig = cookie.slice(dot + 1);
-  const expected = signId(id).split('.').pop();
-  if (sig !== expected) return null;
-  return id;
-}
-
-function createDriverSession(driverId, email) {
-  const id = crypto.randomBytes(32).toString('base64url');
-  DRIVER_SESSIONS.set(id, { driverId, email, createdAt: Date.now() });
-  return id;
-}
-
-function getDriverSession(cookie) {
-  const id = unsignId(cookie);
-  if (!id) return null;
-  const sess = DRIVER_SESSIONS.get(id);
-  if (!sess) return null;
-  if (Date.now() - sess.createdAt > SESSION_TTL_MS) {
-    DRIVER_SESSIONS.delete(id);
-    return null;
-  }
-  return { id, ...sess };
-}
-
-function setDriverCookie(res, sessionId) {
-  res.cookie(DRIVER_COOKIE, signId(sessionId), {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure:   process.env.NODE_ENV === 'production',
-    maxAge:   SESSION_TTL_MS,
-  });
-}
+// Shared store lives in middleware/driver-session.js so payouts/disputes can
+// validate sessions server-side instead of trusting client-supplied identity.
+const {
+  DRIVER_COOKIE,
+  createDriverSession,
+  getDriverSession,
+  destroyDriverSession,
+  setDriverCookie,
+} = require('../middleware/driver-session');
 
 // ─── Auth middleware ──────────────────────────────────────────────────────────
 async function requireDriver(req, res, next) {
@@ -102,22 +63,15 @@ router.post('/login', async (req, res) => {
 
   const sessionId = createDriverSession(driver.id, driver.email);
   setDriverCookie(res, sessionId);
-  // Set a separate signed email cookie so disputes/payouts modules can resolve the driver
-  res.cookie('dr_email', Buffer.from(driver.email).toString('base64'), {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure:   process.env.NODE_ENV === 'production',
-    maxAge:   SESSION_TTL_MS,
-  });
   res.redirect('/driver/jobs');
 });
 
 // GET|POST /driver/logout → signed-out landing page
 function driverLogout(req, res) {
   const sess = getDriverSession(req.cookies?.[DRIVER_COOKIE]);
-  if (sess) DRIVER_SESSIONS.delete(sess.id);
+  if (sess) destroyDriverSession(sess.id);
   res.clearCookie(DRIVER_COOKIE);
-  res.clearCookie('dr_email');
+  res.clearCookie('dr_email'); // legacy cookie — no longer set or trusted
   res.redirect('/signed-out?who=driver');
 }
 router.get('/logout', driverLogout);   // menu "Sign Out" link

@@ -51,7 +51,8 @@ services:
       - key: ORS_API_KEY
         sync: false
       # Shurget LLC EIN (Employer Identification Number) — used for 1099 issuance and tax reporting
+      # Set the real value in the Render dashboard; never commit it here.
       - key: SHURGET_EIN
-        value: "42-3730877"
+        sync: false
       - key: MAPBOX_PUBLIC_TOKEN
         sync: false

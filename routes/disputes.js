@@ -4,44 +4,15 @@
 // POST /api/driver/disputes   — submit a dispute
 
 const express  = require('express');
-const crypto   = require('crypto');
 const router   = express.Router();
 const { getOrderById }                              = require('../db/orders');
-const { getDriverByEmail }                          = require('../db/drivers');
 const { createDispute, getDisputesByDriver, getRatingByOrderId } = require('../db/ratings');
 
-// ── Shared session helpers (same COOKIE_SECRET as driver.js) ──────────────────
-const DRIVER_COOKIE = 'dr_session';
-const COOKIE_SECRET = process.env.COOKIE_SECRET || crypto.randomBytes(32).toString('hex');
-
-function unsignId(cookie) {
-  if (!cookie || typeof cookie !== 'string') return null;
-  const dot = cookie.lastIndexOf('.');
-  if (dot === -1) return null;
-  const id  = cookie.slice(0, dot);
-  const sig = cookie.slice(dot + 1);
-  const hmac = crypto.createHmac('sha256', COOKIE_SECRET);
-  hmac.update(id);
-  const expected = hmac.digest('base64url');
-  if (sig !== expected) return null;
-  return id;
-}
-
-async function requireDriver(req, res, next) {
-  const cookie = req.cookies?.[DRIVER_COOKIE];
-  if (!unsignId(cookie)) return res.redirect('/driver/login');
-  // Decode email from the cookie value via the in-memory session map in driver.js
-  // Since we can't share Maps across modules, we re-validate using a lightweight
-  // approach: trust the signed cookie and look up driver by stored email in session.
-  // The simplest cross-module approach: store email in a separate signed cookie.
-  const emailCookie = req.cookies?.['dr_email'];
-  if (!emailCookie) return res.redirect('/driver/login');
-  const email = Buffer.from(emailCookie, 'base64').toString('utf8');
-  const driver = await getDriverByEmail(email).catch(() => null);
-  if (!driver) return res.redirect('/driver/login');
-  req.driver = driver;
-  next();
-}
+// ── Driver auth — shared server-side session (middleware/driver-session.js).
+// Identity is resolved from the session store, never from client-supplied
+// cookies. (Previously this trusted an unsigned base64 `dr_email` cookie,
+// which let any driver impersonate any other driver.)
+const { requireDriverSession: requireDriver } = require('../middleware/driver-session');
 
 // GET /driver/dispute/new — dispute form
 router.get('/dispute/new', requireDriver, async (req, res) => {
