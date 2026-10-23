@@ -12,7 +12,7 @@ function getStripe() {
   return Stripe(process.env.STRIPE_SECRET_KEY);
 }
 
-const PLATFORM_FEE_RATE = 0.15; // 15% stays with Shurget (matches the advertised 85/15 driver split)
+const PLATFORM_FEE_RATE = 0.20; // 20% stays with Shurget (standard 80/20 split; 85/15 is a planned bonus tier after 100 completed deliveries)
 
 /**
  * Create a Stripe Connect Express account for a driver.
@@ -70,7 +70,7 @@ async function getAccountStatus(stripeAccountId) {
 
 /**
  * Transfer driver payout for a delivered order.
- * payout = price_total * (1 - PLATFORM_FEE_RATE) = 85% of price_total, rounded to cents.
+ * payout = price_total * (1 - PLATFORM_FEE_RATE) = 80% of price_total, rounded to cents.
  * Returns { transfer, amountCents } on success; throws on failure.
  */
 async function payoutDriver(order, stripeAccountId) {
