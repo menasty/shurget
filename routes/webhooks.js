@@ -59,7 +59,7 @@ router.post('/stripe', express.raw({ type: 'application/json' }), async (req, re
         return res.status(400).json({ error: 'Missing orderId in metadata' });
       }
 
-      const order = await markOrderPaidFromWebhook(orderId, new Date(event.created * 1000));
+      const order = await markOrderPaidFromWebhook(orderId, new Date(event.created * 1000), event.id);
       if (!order) {
         console.error('[webhooks] Order not found:', orderId);
         return res.status(404).json({ error: 'Order not found' });
@@ -237,7 +237,7 @@ async function handleReferralOnPayment(order) {
 
   // Step 1: give the customer their own referral code
   const ownCode = await getOrCreateReferralCode(customerEmail);
-  // Send the code email only the first time (uses_count reflects prior redemptions, not whether email was sent;
+  // Send the code email only the first time (use_count reflects prior redemptions, not whether email was sent;
   // we check if this is a fresh code by seeing if created_at is very recent — within 5 seconds)
   const isNewCode = ownCode && (Date.now() - new Date(ownCode.created_at).getTime() < 10000);
   if (isNewCode) {

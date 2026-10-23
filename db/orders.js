@@ -1215,13 +1215,13 @@ async function getReferralFunnel(dateRange = 'all') {
     SELECT
       rc.code,
       rc.owner_email,
-      rc.uses_count AS redemptions,
+      rc.use_count AS redemptions,
       COUNT(DISTINCT o.id) FILTER (WHERE o.status = 'delivered') AS paid_orders,
       SUM(o.referral_discount_cents) FILTER (WHERE o.status = 'delivered') AS discount_paid_cents
     FROM referral_codes rc
     LEFT JOIN referral_redemptions rr ON rr.code_id = rc.id
     LEFT JOIN orders o ON o.id = rr.order_id ${df.replace('AND created_at', 'AND rc.created_at')}
-    GROUP BY rc.code, rc.owner_email, rc.uses_count
+    GROUP BY rc.code, rc.owner_email, rc.use_count
     ORDER BY redemptions DESC NULLS LAST
     LIMIT 100
   `);

@@ -84,8 +84,8 @@ router.post('/:orderId', async (req, res) => {
 
     const intent = await stripe.paymentIntents.create(intentParams);
 
-    // Record the tip in DB
-    await addTipToOrder(orderId, tipCents);
+    // Record the tip in DB (addTipToOrder takes dollars, not cents)
+    await addTipToOrder(orderId, tipCents / 100);
 
     return res.json({
       success: true,
