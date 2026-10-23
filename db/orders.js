@@ -1025,11 +1025,11 @@ async function getDriverEarningsSummary(driverId) {
   const { rows } = await db.query(
     `SELECT
        COUNT(*)                                              AS total_jobs,
-       COALESCE(SUM(price_total * 0.85), 0)                 AS lifetime_earnings,
+       COALESCE(SUM(price_total * 0.80), 0)                 AS lifetime_earnings,
        COALESCE(SUM(CASE WHEN created_at >= NOW() - INTERVAL '7 days'
-                         THEN price_total * 0.85 ELSE 0 END), 0) AS week_earnings,
+                         THEN price_total * 0.80 ELSE 0 END), 0) AS week_earnings,
        COALESCE(SUM(CASE WHEN payout_status = 'pending'
-                         THEN price_total * 0.85 ELSE 0 END), 0) AS pending_earnings
+                         THEN price_total * 0.80 ELSE 0 END), 0) AS pending_earnings
      FROM orders
      WHERE driver_id = $1
        AND status = 'delivered'`,
