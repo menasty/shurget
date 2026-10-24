@@ -6,6 +6,7 @@ const express = require('express');
 const router = express.Router();
 const { createOrder, setStripeSession } = require('../db/orders');
 const { createCheckoutSession } = require('../services/stripe');
+const { calculateDistance } = require('../services/maps');
 
 /** GET /book — render the booking form */
 router.get('/', (_req, res) => {
@@ -37,11 +38,22 @@ router.post('/', async (req, res) => {
       ? 'second_appliance'
       : 'none';
 
+    // Price on the real driving distance instead of the flat 5-mile default.
+    // If the lookup fails, createOrder keeps its 5-mile fallback.
+    let distanceMiles;
+    try {
+      const dist = await calculateDistance(pickupAddress, dropoffAddress);
+      distanceMiles = dist && dist.distanceMiles;
+    } catch (e) {
+      console.error('[booking] distance lookup failed, using default:', e.message);
+    }
+
     // Create the order in pending_payment so the Stripe webhook can flip it to paid.
     const order = await createOrder({
       itemType,
       pickupAddress,
       dropoffAddress,
+      distanceMiles,
       helpers: helperCount,
       applianceAddon: addonValue,
       customerName: customerName || null,

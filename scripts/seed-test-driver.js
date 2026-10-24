@@ -6,7 +6,7 @@
  *   DATABASE_URL=REDACTED
       phone: '+1-555-0142',
       vehicleType: 'pickup_truck',
-      city: 'Austin',
+      city: 'Denver',
       vehicleInsuranceDoc: null,
       driverLicenseDoc: null,
       vehicleRegistrationDoc: null,
