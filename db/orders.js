@@ -1121,7 +1121,7 @@ async function getOrdersByPartner(partnerSlug) {
   const { rows } = await db.query(
     `SELECT o.*,
             p.commission_rate,
-            ROUND(o.price_total_cents * 0.15 * p.commission_rate) AS partner_commission_cents
+            ROUND(o.price_total * 100 * 0.15 * p.commission_rate) AS partner_commission_cents
      FROM orders o
      LEFT JOIN partners p ON p.slug = o.partner_slug
      WHERE o.partner_slug = $1

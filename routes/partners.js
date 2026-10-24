@@ -28,11 +28,13 @@ const {
   sendStripeAccountLinkEmail,
 } = require('../services/stripe-connect');
 const {
-  SESSION_COOKIE,
-  createSession,
-  getSession,
+  createPartnerSession,
+  getPartnerSession,
+  destroyPartnerSession,
   unsign,
   signSession,
+  signValue,
+  unsignValue,
   requireAdmin,
 } = require('../middleware/session');
 
@@ -48,7 +50,9 @@ function loadPartnerSession(req) {
   if (!signed) return null;
   const id = unsign(signed);
   if (!id) return null;
-  const sess = getSession(id);
+  // Partner sessions live in their own store (middleware/session.js) — a
+  // partner session id is meaningless to the admin session store.
+  const sess = getPartnerSession(id);
   if (!sess || !sess.partnerId) return null;
   return sess;
 }
@@ -186,14 +190,19 @@ router.get('/:slug', async (req, res) => {
     return res.render('partner-login', { partner, error: null });
   }
 
-  // Load stats
-  const stats = await getPartnerStats(slug);
+  // Load stats + recent orders. Wrapped so a data error renders an error
+  // page instead of an unhandled rejection that takes the process down.
+  try {
+    const stats = await getPartnerStats(slug);
 
-  // Get recent orders attributed to this partner
-  const { getOrdersByPartner } = require('../db/orders');
-  const orders = await getOrdersByPartner(slug);
+    const { getOrdersByPartner } = require('../db/orders');
+    const orders = await getOrdersByPartner(slug);
 
-  res.render('partner-dashboard', { partner, stats, orders });
+    return res.render('partner-dashboard', { partner, stats, orders });
+  } catch (err) {
+    console.error('[partners] dashboard failed for', slug, err.message);
+    return res.status(500).render('error', { message: 'Could not load your dashboard. Please try again.' });
+  }
 });
 
 /** POST /partners/:slug/login — magic link email login */
@@ -212,8 +221,8 @@ router.post('/:slug/login', async (req, res) => {
     return res.render('partner-login', { partner, error: 'No account found for that email. Contact support@shurget.com.' });
   }
 
-  // Generate magic link: signed token with partnerId + email + expiry (24h)
-  const token = signSession(crypto.randomBytes(16).toString('hex') + ':' + partner.id + ':' + cleanEmail);
+  // Generate magic link: signed token with partnerId + email + issued-at (24h expiry)
+  const token = signValue(crypto.randomBytes(16).toString('hex') + ':' + partner.id + ':' + cleanEmail + ':' + Date.now());
   const magicLink = `${req.protocol}://${req.get('host')}/partners/${slug}/verify?token=${encodeURIComponent(token)}`;
 
   // Send magic link email
@@ -228,15 +237,34 @@ router.post('/:slug/login', async (req, res) => {
 
 /** GET /partners/:slug/verify — magic link handler → set session */
 router.get('/:slug/verify', async (req, res) => {
-  const { slug, token } = req.params;
+  const { slug } = req.params;
   const magicToken = req.query.token;
   const partner = await getPartnerBySlug(slug);
 
-  if (!partner || !magicToken) return res.status(400).render('400');
+  if (!partner || !magicToken) return res.status(400).send('This sign-in link is invalid.');
 
-  // Verify token: unsign gives us back the raw session data
-  // We embed partnerId + email in the session data itself
-  const sessionId = createSession({ partnerId: partner.id, partnerEmail: partner.contact_email, type: 'partner' });
+  // Actually verify the magic token: it must carry a valid HMAC signature
+  // (unsignValue returns the payload only when the signature checks out),
+  // name THIS partner and their contact email, and be under 24h old.
+  // (Previously the token was never checked at all — any non-empty value
+  // minted a session, in the admin session store.)
+  const payload = unsignValue(magicToken);
+  const parts = payload ? payload.split(':') : [];
+  const tokenPartnerId = parts.length === 4 ? parseInt(parts[1], 10) : NaN;
+  const tokenEmail = parts.length === 4 ? parts[2] : null;
+  const issuedAt = parts.length === 4 ? parseInt(parts[3], 10) : NaN;
+  const MAX_TOKEN_AGE_MS = 24 * 60 * 60 * 1000;
+
+  if (
+    tokenPartnerId !== partner.id ||
+    tokenEmail !== partner.contact_email ||
+    !Number.isFinite(issuedAt) ||
+    Date.now() - issuedAt > MAX_TOKEN_AGE_MS
+  ) {
+    return res.status(400).send('This sign-in link is invalid or has expired. Request a new one.');
+  }
+
+  const sessionId = createPartnerSession({ partnerId: partner.id, partnerEmail: partner.contact_email });
   setPartnerSession(res, sessionId);
 
   return res.redirect(`/partners/${slug}`);
@@ -244,6 +272,15 @@ router.get('/:slug/verify', async (req, res) => {
 
 /** POST /partners/:slug/logout — clear partner session */
 router.post('/:slug/logout', (req, res) => {
+  const sess = loadPartnerSession(req);
+  if (sess) {
+    const signed = (req.headers['cookie'] || '').split(';').map(s => s.trim())
+      .find(s => s.startsWith('shurget_partner_session='));
+    if (signed) {
+      const id = unsign(decodeURIComponent(signed.slice('shurget_partner_session='.length)));
+      if (id) destroyPartnerSession(id);
+    }
+  }
   res.setHeader('Set-Cookie',
     'shurget_partner_session=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/');
   return res.redirect(`/signed-out?who=partner&slug=${encodeURIComponent(req.params.slug)}`);

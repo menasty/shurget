@@ -36,9 +36,13 @@ router.post('/stripe', express.raw({ type: 'application/json' }), async (req, re
       const stripe = getStripe();
       event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
     } else {
-      // Dev/staging without webhook secret — parse body directly
-      event = JSON.parse(req.body.toString());
-      console.warn('[webhooks] STRIPE_WEBHOOK_SECRET not set — skipping signature verification');
+      // Fail CLOSED. Without the webhook secret there is no way to tell a
+      // genuine Stripe event from a forged one, and a forged
+      // checkout.session.completed marks orders paid without payment.
+      // Refuse the request — a missing STRIPE_WEBHOOK_SECRET in production
+      // is a configuration emergency, not a dev convenience.
+      console.error('[webhooks] STRIPE_WEBHOOK_SECRET is not set — rejecting unverifiable webhook');
+      return res.status(500).json({ error: 'Webhook endpoint is not configured' });
     }
   } catch (err) {
     console.error('[webhooks] Signature verification failed:', err.message);

@@ -5,9 +5,8 @@
 // GET  /api/driver/payouts/status     — JSON account status
 
 const express  = require('express');
-const crypto   = require('crypto');
 const router   = express.Router();
-const { getDriverByEmail, saveStripeAccountId } = require('../db/drivers');
+const { saveStripeAccountId } = require('../db/drivers');
 const { getPayoutsByDriver, getDriverEarningsSummary } = require('../db/orders');
 const {
   createConnectAccount,
@@ -15,33 +14,11 @@ const {
   getAccountStatus,
 } = require('../services/stripe-connect');
 
-// ── Session cookie helpers (same COOKIE_SECRET as driver.js) ─────────────────
-const DRIVER_COOKIE = 'dr_session';
-const COOKIE_SECRET = process.env.COOKIE_SECRET || crypto.randomBytes(32).toString('hex');
-
-function unsignId(cookie) {
-  if (!cookie || typeof cookie !== 'string') return null;
-  const dot = cookie.lastIndexOf('.');
-  if (dot === -1) return null;
-  const id  = cookie.slice(0, dot);
-  const sig = cookie.slice(dot + 1);
-  const hmac = crypto.createHmac('sha256', COOKIE_SECRET);
-  hmac.update(id);
-  if (hmac.digest('base64url') !== sig) return null;
-  return id;
-}
-
-async function requireDriver(req, res, next) {
-  const cookie = req.cookies?.[DRIVER_COOKIE];
-  if (!unsignId(cookie)) return res.redirect('/driver/login');
-  const emailCookie = req.cookies?.['dr_email'];
-  if (!emailCookie) return res.redirect('/driver/login');
-  const email = Buffer.from(emailCookie, 'base64').toString('utf8');
-  const driver = await getDriverByEmail(email).catch(() => null);
-  if (!driver) return res.redirect('/driver/login');
-  req.driver = driver;
-  next();
-}
+// ── Driver auth — shared server-side session (middleware/driver-session.js).
+// Identity is resolved from the session store, never from client-supplied
+// cookies. (Previously this trusted an unsigned base64 `dr_email` cookie,
+// which let any driver impersonate any other driver.)
+const { requireDriverSession: requireDriver } = require('../middleware/driver-session');
 
 // ── Helper: build absolute base URL ──────────────────────────────────────────
 function baseUrl(req) {

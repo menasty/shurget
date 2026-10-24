@@ -105,8 +105,11 @@ app.use('/api/reviews', reviews);
 // Inbound SMS (Twilio webhook)
 app.use('/api/sms', require('./routes/sms'));
 
-// Test email route — verify Postmark connectivity without a real booking
-app.use('/api/test-email', require('./routes/test-email'));
+// NOTE: /api/test-email is intentionally NOT mounted. routes/test-email.js is
+// a dev/staging diagnostic that sends real email via the production Postmark
+// account to any address in the request body with no auth — mounting it in
+// production turns the server into an open mail relay. Re-mount it locally
+// only, behind admin auth, if ever needed again.
 
 // Stripe Connect V2 integration — onboarding, products, storefront, checkout
 // Webhook endpoint is mounted inside the router at /api/connect/webhook

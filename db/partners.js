@@ -156,8 +156,8 @@ async function getPartnerStats(partnerSlug) {
   const { rows } = await db.query(
     `SELECT
        COUNT(*) FILTER (WHERE status IN ('paid', 'dispatched', 'in_progress', 'delivered')) AS total_bookings,
-       COALESCE(SUM(price_total_cents) FILTER (WHERE status IN ('paid', 'dispatched', 'in_progress', 'delivered')), 0) AS total_revenue_cents,
-       COALESCE(SUM(price_total_cents) FILTER (WHERE status IN ('paid', 'dispatched', 'in_progress', 'delivered')), 0) * 0.15 * p.commission_rate AS commission_earned_cents
+       COALESCE(SUM(price_total * 100) FILTER (WHERE status IN ('paid', 'dispatched', 'in_progress', 'delivered')), 0) AS total_revenue_cents,
+       COALESCE(SUM(price_total * 100) FILTER (WHERE status IN ('paid', 'dispatched', 'in_progress', 'delivered')), 0) * 0.15 * MAX(p.commission_rate) AS commission_earned_cents
      FROM orders o
      JOIN partners p ON p.slug = $1
      WHERE o.partner_slug = $1`,

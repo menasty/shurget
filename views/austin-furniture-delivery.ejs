@@ -42,7 +42,7 @@ const schema = JSON.stringify({
 });
 %>
 <%
-const bodyContent = '<section class="seo-copy">
+const bodyContent = `<section class="seo-copy">
     <div class="seo-copy-inner">
       <div class="seo-copy-main">
         <h2>Austin's on-demand furniture hauling service</h2>
@@ -204,6 +204,6 @@ const bodyContent = '<section class="seo-copy">
         <a href="/partners">Partner with Shurget</a>
       </div>
     </div>
-  </section>';
+  </section>`;
 %>
 <%- include('partials/seo-page-shell', { title, metaDescription, canonicalPath, eyebrow, h1, subhead, pageCampaign, schema, bodyContent }) %>

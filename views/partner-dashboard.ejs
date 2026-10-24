@@ -289,7 +289,7 @@
                 <tr>
                   <td><%= new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %></td>
                   <td style="font-family:'Courier New',monospace;font-size:0.8rem;">#<%= order.id %></td>
-                  <td><%= (order.item_type || '').replace(/-/g, ' ').replace(/\b\/g, function(s){return s.toUpperCase();}) %></td>
+                  <td><%= (order.item_type || '').replace(/-/g, ' ').replace(/\b\w/g, function(s){return s.toUpperCase();}) %></td>
                   <td style="font-size:0.82rem;color:var(--gray-mid);">
                     <%= (order.pickup_address || '').split(',')[0] %> → <%= (order.dropoff_address || '').split(',')[0] %>
                   </td>
