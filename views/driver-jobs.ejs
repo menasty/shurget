@@ -383,7 +383,7 @@ function showTab(tab) {
 function fmtDist(m) { return m ? parseFloat(m).toFixed(1) + ' mi' : '—'; }
 function fmtPayout(total) {
   const d = parseFloat(total || 0);
-  return '$' + (d * 0.85).toFixed(2);
+  return '$' + (d * 0.80).toFixed(2);
 }
 function timeAgo(ds) {
   if (!ds) return '';
@@ -464,7 +464,7 @@ function renderAvailableJobs(jobs) {
 
 
   list.innerHTML = jobs.map(job => {
-    const payout = (parseFloat(job.price_total || 0) * 0.85).toFixed(2);
+    const payout = (parseFloat(job.price_total || 0) * 0.80).toFixed(2);
     const total  = parseFloat(job.price_total || 0).toFixed(2);
     return `
     <div class="job-card" id="job-card-${job.id}">
@@ -476,7 +476,7 @@ function renderAvailableJobs(jobs) {
           </div>
           <div class="job-payout-box">
             <div class="job-payout">$${payout}</div>
-            <div class="job-payout-label">Your payout (85%)</div>
+            <div class="job-payout-label">Your payout (80%)</div>
             <div class="job-total">$${total} total</div>
           </div>
         </div>
@@ -645,7 +645,7 @@ function renderActiveJobs(jobs) {
   }
 
   list.innerHTML = jobs.map(job => {
-    const payout = (parseFloat(job.price_total || 0) * 0.85).toFixed(2);
+    const payout = (parseFloat(job.price_total || 0) * 0.80).toFixed(2);
     const ds = job.driver_status || '';
     const st = job.status || '';
 

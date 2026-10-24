@@ -12,7 +12,7 @@ function getStripe() {
   return Stripe(process.env.STRIPE_SECRET_KEY);
 }
 
-const PLATFORM_FEE_RATE = 0.20; // 20% stays with Shurget
+const PLATFORM_FEE_RATE = 0.20; // 20% stays with Shurget (standard 80/20 split; 85/15 is a planned bonus tier after 100 completed deliveries)
 
 /**
  * Create a Stripe Connect Express account for a driver.

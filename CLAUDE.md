@@ -40,7 +40,7 @@ Express.js + EJS + PostgreSQL (Neon) + Render
 - Postmark (transactional email — POSTMARK_SERVER_TOKEN env var)
 - OpenRouteService (geocoding, via ORS_API_KEY env var; fallback: zip-based estimation)
 - OpenAI (future AI features, via OPENAI_API_KEY)
-- Stripe (Stripe Checkout for customer payments + Connect Express for driver payouts — STRIPE_SECRET_KEY env var; orders go to `pending_payment` → `paid` after checkout; drivers onboard via `/driver/payouts`, transfers fire on delivery at 85% of order total)
+- Stripe (Stripe Checkout for customer payments + Connect Express for driver payouts — STRIPE_SECRET_KEY env var; orders go to `pending_payment` → `paid` after checkout; drivers onboard via `/driver/payouts`, transfers fire on delivery at 80% of order total (85% loyalty tier after 100 completed deliveries))
 - Google Analytics 4 (GA4_MEASUREMENT_ID env var; set to G-XXXXXXXXXX for shurget.com — tracks booking funnel, driver onboarding, /contact, /pricing; no-ops if unset)
 -  R2 (future image uploads)
 
