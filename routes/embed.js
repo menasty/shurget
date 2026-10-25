@@ -50,8 +50,8 @@ router.post('/calculate', async (req, res) => {
     }
 
     const itemType = item || 'other';
-    const pickupAddress  = originZip + ', TX';
-    const dropoffAddress = destZip   + ', TX';
+    const pickupAddress  = originZip + ', CO';
+    const dropoffAddress = destZip   + ', CO';
 
     const distanceResult = await calculateDistance(pickupAddress, dropoffAddress);
     const distanceMiles  = distanceResult?.distanceMiles ?? 5;

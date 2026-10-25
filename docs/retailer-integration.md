@@ -12,7 +12,7 @@ Add one script tag next to your "Add to Cart" button:
 <script
   src="https://shurget.com/widget.js"
   data-item="sofa"
-  data-origin-zip="78704"
+  data-origin-zip="80202"
   data-partner="YOUR-STORE-SLUG"
 ></script>
 ```
@@ -45,7 +45,7 @@ That's it. The widget appears, loads live pricing, and routes bookings to Shurge
   <script
     src="https://shurget.com/widget.js"
     data-item="sofa"
-    data-origin-zip="78704"
+    data-origin-zip="80202"
     data-partner="bentwood-furniture"
     data-label="Haul it home — instant quote"
     data-color="#1a1a1a"
@@ -61,7 +61,7 @@ If your product page has dynamic content, inject the script programmatically:
 const script = document.createElement('script');
 script.src = 'https://shurget.com/widget.js';
 script.setAttribute('data-item', 'sofa');
-script.setAttribute('data-origin-zip', '78704');
+script.setAttribute('data-origin-zip', '80202');
 script.setAttribute('data-partner', 'my-store');
 document.body.appendChild(script);
 ```
@@ -120,9 +120,9 @@ The widget is plain JavaScript — no framework, no build step required.
 
 ### Pricing shows "Something went wrong"
 
-**Cause:** Network issue or the store's ZIP code isn't in Shurget's Austin service area.
+**Cause:** Network issue or the store's ZIP code isn't in Shurget's Denver service area.
 
-**Fix:** Shurget currently serves Austin, TX (ZIPs starting 787xx). Contact [partners@shurget.com](mailto:partners@shurget.com) to discuss coverage expansion.
+**Fix:** Shurget currently serves Denver, CO (ZIPs starting 802xx). Contact [partners@shurget.com](mailto:partners@shurget.com) to discuss coverage expansion.
 
 ### "Book Now" doesn't redirect
 

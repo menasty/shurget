@@ -60,7 +60,7 @@ async function getOrCreateReferralCode(email) {
 }
 
 /**
- * Record a referral code redemption and increment the code's uses_count.
+ * Record a referral code redemption and increment the code's use_count.
  * Returns the redemption row.
  */
 async function recordRedemption(codeId, refereeEmail, orderId, creditAmount = 2000) {
@@ -74,7 +74,7 @@ async function recordRedemption(codeId, refereeEmail, orderId, creditAmount = 20
       [codeId, refereeEmail ? refereeEmail.toLowerCase().trim() : null, orderId, creditAmount]
     );
     await client.query(
-      'UPDATE referral_codes SET uses_count = uses_count + 1 WHERE id = $1',
+      'UPDATE referral_codes SET use_count = use_count + 1 WHERE id = $1',
       [codeId]
     );
     await client.query('COMMIT');

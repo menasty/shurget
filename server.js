@@ -116,9 +116,6 @@ app.use('/api/sms', require('./routes/sms'));
 app.use('/connect', require('./routes/connect'));
 app.use('/api/connect', require('./routes/connect'));
 
-// SEO landing pages (mounted at root)
-app.use('/', require('./routes/seo'));
-
 // Customer order dashboard
 const { getOrdersByEmail } = require('./db/orders');
 app.get('/dashboard', async (req, res) => {

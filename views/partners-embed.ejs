@@ -284,7 +284,7 @@
             <div class="fake-product-name">The Bentwood 3-Seat Sectional Sofa</div>
             <div class="fake-product-price">$1,249</div>
             <p class="fake-product-desc">
-              Premium mid-century frame with high-resilience foam cushions. 112&quot; wide, available in 8 fabric colors. Ships flat from our Austin warehouse.
+              Premium mid-century frame with high-resilience foam cushions. 112&quot; wide, available in 8 fabric colors. Ships flat from our Denver warehouse.
             </p>
             <button class="fake-add-to-cart">Add to Cart</button>
 
@@ -295,7 +295,7 @@
                 src="/widget.js"
                 data-item="sofa"
                 data-weight="standard"
-                data-origin-zip="78704"
+                data-origin-zip="80202"
                 data-partner="couch-potatoes"
                 data-label="Shurget it home — instant quote"
               ></script>
@@ -313,7 +313,7 @@
       <div class="snippet-form">
         <div class="snippet-field">
           <label>Your Store ZIP</label>
-          <input type="text" id="gen-zip" placeholder="78704" maxlength="5" inputmode="numeric" value="78704">
+          <input type="text" id="gen-zip" placeholder="80202" maxlength="5" inputmode="numeric" value="80202">
         </div>
         <div class="snippet-field">
           <label>Item Type</label>
@@ -345,7 +345,7 @@
         <span id="snippet-text">&lt;script
   src="https://shurget.com/widget.js"
   data-item="sofa"
-  data-origin-zip="78704"
+  data-origin-zip="80202"
   data-partner="my-store"
   data-label="Shurget it home — instant quote"
 &gt;&lt;/script&gt;</span>
@@ -369,7 +369,7 @@
     var snippetEl  = document.getElementById('snippet-text');
 
     function updateSnippet() {
-      var zip     = genZip.value.trim() || '78704';
+      var zip     = genZip.value.trim() || '80202';
       var item    = genItem.value || 'sofa';
       var partner = genPartner.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-') || 'my-store';
 
