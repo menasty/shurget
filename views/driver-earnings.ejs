@@ -61,7 +61,7 @@
 
 <div class="page">
   <h1>Earnings</h1>
-  <p class="sub">85% of every delivery goes to you. Stripe sends funds in 1–2 business days.</p>
+  <p class="sub">80% of every delivery goes to you — 85% after 100 completed deliveries. Stripe sends funds in 1–2 business days.</p>
 
   <div class="stats">
     <div class="stat-card">
@@ -103,7 +103,7 @@
         </div>
       </div>
       <div class="transfer-right">
-        <div class="transfer-amount">$<%= (parseFloat(p.price_total || 0) * 0.85).toFixed(2) %></div>
+        <div class="transfer-amount">$<%= (parseFloat(p.price_total || 0) * 0.80).toFixed(2) %></div>
         <span class="transfer-status <%= p.payout_status || 'pending' %>"><%= (p.payout_status || 'pending').toUpperCase() %></span>
       </div>
     </div>

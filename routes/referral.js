@@ -27,7 +27,7 @@ router.post('/validate', async (req, res) => {
     }
 
     // Check max_uses
-    if (row.max_uses !== null && row.uses_count >= row.max_uses) {
+    if (row.max_uses !== null && row.use_count >= row.max_uses) {
       return res.json({ valid: false, message: 'This code has reached its usage limit.' });
     }
 
