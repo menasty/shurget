@@ -4,6 +4,8 @@
 
 const POSTMARK_SERVER_TOKEN = process.env.POSTMARK_SERVER_TOKEN;
 const FROM_EMAIL = process.env.POSTMARK_FROM_EMAIL || 'hello@shurgetapp.com';
+const APP_URL = process.env.APP_URL || 'https://shurgetapp.com';
+const { generateTrackingToken } = require('./tracking-token');
 
 async function sendConfirmationEmail(order) {
   if (!POSTMARK_SERVER_TOKEN) {
@@ -108,8 +110,8 @@ function buildConfirmationHtml(order) {
       <div style="color:#6b7280; font-size:13px;">${order.driverPhone}</div>
     </div>` : ''}
 
-    <p style="color:#6b7280; font-size:13px; margin:0;">Track your order at <a href="https://shurget.com/confirmation/${order.id}">shurget-5..app</a></p>
-    <p style="color:#6b7280; font-size:13px; margin:8px 0 0;">Questions? <a href="https://shurget.com/help" style="color:#ea580c;">Help Center →</a></p>
+    <p style="color:#6b7280; font-size:13px; margin:0;">Track your order at <a href="https://shurgetapp.com/confirmation/${order.id}?token=${generateTrackingToken(order.id)}">shurgetapp.com/confirmation/${order.id}</a></p>
+    <p style="color:#6b7280; font-size:13px; margin:8px 0 0;">Questions? <a href="https://shurgetapp.com/help" style="color:#ea580c;">Help Center →</a></p>
   </div>
 </body>
 </html>`;
@@ -130,7 +132,7 @@ Driver ETA: ~${order.etaMinutes} minutes
 Total: $${Number(order.priceTotal).toFixed(2)}
 ${order.driverName ? `\nDriver: ${order.driverName} (${order.driverPhone})` : ''}
 
-Track your order: https://shurget.com/confirmation/${order.id}
+Track your order: https://shurgetapp.com/confirmation/${order.id}?token=${generateTrackingToken(order.id)}
 `;
 }
 
@@ -337,7 +339,7 @@ function buildDriverAssignedHtml(order) {
   const etaDisplay = order.etaMinutes
     ? `~${order.etaMinutes} minutes`
     : 'Arriving soon';
-  const trackUrl = `https://shurget.com/track/${order.id}`;
+  const trackUrl = `${APP_URL}/track/${order.id}?token=${generateTrackingToken(order.id)}`;
 
   return `<!DOCTYPE html>
 <html>
@@ -387,7 +389,7 @@ function buildDriverAssignedHtml(order) {
 
 function buildDriverAssignedText(order) {
   const etaDisplay = order.etaMinutes ? `~${order.etaMinutes} minutes` : 'Arriving soon';
-  const trackUrl = `https://shurget.com/track/${order.id}`;
+  const trackUrl = `${APP_URL}/track/${order.id}?token=${generateTrackingToken(order.id)}`;
 
   return `Shurget — Your Driver Is On The Way #${order.id}
 
@@ -895,7 +897,7 @@ async function sendInTransitEmail(order) {
 
   if (!normalized.customerEmail) return;
 
-  const trackUrl = `https://shurget.com/track/${normalized.id}`;
+  const trackUrl = `${APP_URL}/track/${normalized.id}?token=${generateTrackingToken(normalized.id)}`;
   const etaDisplay = normalized.etaMinutes ? `~${normalized.etaMinutes} min` : 'Soon';
 
   const html = `<!DOCTYPE html>
@@ -969,7 +971,7 @@ async function sendDeliveredEmail(order, ratingLink) {
 
   if (!normalized.customerEmail) return;
 
-  const ratingUrl = ratingLink || `https://shurget.com/rate/${normalized.id}`;
+  const ratingUrl = ratingLink || `https://shurgetapp.com/rate/${normalized.id}`;
 
   const html = `<!DOCTYPE html>
 <html>
@@ -986,7 +988,7 @@ async function sendDeliveredEmail(order, ratingLink) {
     <div style="text-align:center;margin-bottom:24px;">
       <a href="${ratingUrl}" style="display:inline-block;background:#ea580c;color:#fff;text-decoration:none;padding:14px 28px;border-radius:6px;font-weight:bold;font-size:16px;">⭐ Rate Your Driver</a>
     </div>
-    <p style="color:#6b7280;font-size:13px;margin:0;text-align:center;">Had an issue? <a href="mailto:hello@shurgetapp.com?subject=Order%20%23${normalized.id}" style="color:#ea580c;">Contact support</a> &nbsp;·&nbsp; <a href="https://shurget.com/help" style="color:#ea580c;">Help Center</a></p>
+    <p style="color:#6b7280;font-size:13px;margin:0;text-align:center;">Had an issue? <a href="mailto:hello@shurgetapp.com?subject=Order%20%23${normalized.id}" style="color:#ea580c;">Contact support</a> &nbsp;·&nbsp; <a href="https://shurgetapp.com/help" style="color:#ea580c;">Help Center</a></p>
   </div>
 </body>
 </html>`;
@@ -1247,6 +1249,59 @@ async function sendDriverNewJobAlert({ driverEmail, driverName, orderId, itemTyp
   }
 }
 
+// Send a fresh signed tracking link (used by POST /track/resend-link).
+async function sendTrackingLinkEmail(toEmail, orderId) {
+  if (!POSTMARK_SERVER_TOKEN) {
+    console.warn('[email] POSTMARK_SERVER_TOKEN not set — skipping tracking-link email');
+    return;
+  }
+  const trackUrl = `${APP_URL}/track/${orderId}?token=${generateTrackingToken(orderId)}`;
+  const res = await fetch('https://api.postmarkapp.com/email', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-Postmark-Server-Token': POSTMARK_SERVER_TOKEN,
+    },
+    body: JSON.stringify({
+      From: FROM_EMAIL,
+      To: toEmail,
+      Subject: `Your Shurget tracking link — Order #${orderId}`,
+      HtmlBody: `<p>Here is a fresh tracking link for your Shurget order #${orderId}:</p><p><a href="${trackUrl}">${trackUrl}</a></p><p>This link expires in 30 days.</p>`,
+      TextBody: `Here is a fresh tracking link for your Shurget order #${orderId}:\n${trackUrl}\n\nThis link expires in 30 days.`,
+      MessageStream: 'outbound',
+    }),
+  });
+  if (!res.ok) console.error('[email] Postmark error (tracking link):', res.status, await res.text());
+}
+
+// Send a 6-digit dashboard code (used by POST /dashboard/request-code).
+// 10-minute expiry; the code itself is never stored — verification uses a
+// signed commitment cookie (routes/dashboard-access.js).
+async function sendDashboardCodeEmail(toEmail, code) {
+  if (!POSTMARK_SERVER_TOKEN) {
+    console.warn('[email] POSTMARK_SERVER_TOKEN not set — skipping dashboard-code email');
+    return;
+  }
+  const res = await fetch('https://api.postmarkapp.com/email', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-Postmark-Server-Token': POSTMARK_SERVER_TOKEN,
+    },
+    body: JSON.stringify({
+      From: FROM_EMAIL,
+      To: toEmail,
+      Subject: 'Your Shurget dashboard code',
+      HtmlBody: `<p>Your Shurget dashboard code is:</p><p style="font-size:28px;font-weight:bold;letter-spacing:0.2em;">${code}</p><p>It expires in 10 minutes. If you didn't request it, you can ignore this email.</p>`,
+      TextBody: `Your Shurget dashboard code is: ${code}\n\nIt expires in 10 minutes. If you didn't request it, you can ignore this email.`,
+      MessageStream: 'outbound',
+    }),
+  });
+  if (!res.ok) console.error('[email] Postmark error (dashboard code):', res.status, await res.text());
+}
+
 module.exports = {
   sendConfirmationEmail,
   sendQuoteRequestEmail,
@@ -1264,4 +1319,6 @@ module.exports = {
   sendPartnerApplicationReceived,
   sendPartnerMagicLink,
   sendDriverNewJobAlert,
+  sendTrackingLinkEmail,
+  sendDashboardCodeEmail,
 };
