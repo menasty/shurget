@@ -17,6 +17,19 @@
 const express = require('express');
 const router  = express.Router();
 
+// ─── Sample-integration lockdown ─────────────────────────────────────────────
+// Every route in this router requires an admin session, EXCEPT the Stripe
+// webhook below, which authenticates via Stripe's signature verification.
+// Previously these endpoints created real Stripe objects with no
+// authentication at all. (The router is mounted at both /connect and
+// /api/connect; req.path inside the router is the post-mount remainder, so
+// the webhook exemption matches on both mounts.)
+const { requireAdmin } = require('../middleware/session');
+router.use((req, res, next) => {
+  if (req.path === '/api/connect/webhook') return next();
+  return requireAdmin(req, res, next);
+});
+
 // ─── Stripe Client ───────────────────────────────────────────────────────────
 // PLACEHOLDER: Set STRIPE_SECRET_KEY in your Render environment variables.
 // Get this from: https://dashboard.stripe.com/apikeys
