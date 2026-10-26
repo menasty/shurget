@@ -43,7 +43,40 @@ router.get('/login', (req, res) => {
 });
 
 // POST /driver/login
-router.post('/login', async (req, res) => {
+// ─── Driver login rate limiting ─────────────────────────────────────────────
+// In-memory attempt tracker (resets on deploy; fine for single-instance
+// Render pilot — move to Redis/DB if the app ever scales horizontally).
+// Blocks brute-forcing the 4-digit phone PIN: 5 failed attempts per IP or per
+// email within 15 minutes locks further attempts out for 15 minutes.
+const LOGIN_WINDOW_MS = 15 * 60 * 1000;
+const LOGIN_MAX_FAILS = 5;
+const loginFailures = new Map(); // key -> array of failure timestamps
+function loginRateLimit(req, res, next) {
+  const now = Date.now();
+  const keys = [`ip:${req.ip}`, `email:${(req.body.email || '').trim().toLowerCase()}`];
+  for (const key of keys) {
+    const attempts = (loginFailures.get(key) || []).filter((t) => now - t < LOGIN_WINDOW_MS);
+    loginFailures.set(key, attempts);
+    if (attempts.length >= LOGIN_MAX_FAILS) {
+      return res.status(429).render('driver-login', { error: 'Too many failed login attempts. Please wait 15 minutes and try again.' });
+    }
+  }
+  next();
+}
+function recordLoginFailure(req) {
+  const now = Date.now();
+  for (const key of [`ip:${req.ip}`, `email:${(req.body.email || '').trim().toLowerCase()}`]) {
+    const attempts = (loginFailures.get(key) || []).filter((t) => now - t < LOGIN_WINDOW_MS);
+    attempts.push(now);
+    loginFailures.set(key, attempts);
+  }
+}
+function clearLoginFailures(req) {
+  loginFailures.delete(`ip:${req.ip}`);
+  loginFailures.delete(`email:${(req.body.email || '').trim().toLowerCase()}`);
+}
+
+router.post('/login', loginRateLimit, async (req, res) => {
   const email = (req.body.email || '').trim().toLowerCase();
   const pin   = (req.body.pin   || '').trim();
 
@@ -53,13 +86,17 @@ router.post('/login', async (req, res) => {
 
   const driver = await getDriverByEmail(email).catch(() => null);
 
-  // Validate: driver must exist, be active, and phone must end with the pin
+  // Validate: driver must exist, be ACTIVE, and phone must end with the pin.
+  // (Previously a pending/unactivated driver could log in — the status check
+  // below closes that gap. The error stays generic to avoid user enumeration.)
   const phone      = (driver?.phone || '').replace(/\D/g, ''); // digits only
   const pinMatches = phone.endsWith(pin);
 
-  if (!driver || !pinMatches) {
+  if (!driver || driver.status !== 'active' || !pinMatches) {
+    recordLoginFailure(req);
     return res.render('driver-login', { error: 'Email or PIN incorrect. Use the last 4 digits of your phone number.' });
   }
+  clearLoginFailures(req);
 
   const sessionId = createDriverSession(driver.id, driver.email);
   setDriverCookie(res, sessionId);
