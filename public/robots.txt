@@ -25,4 +25,4 @@ Allow: /
 User-agent: Applebot
 Allow: /
 
-Sitemap: https://shurget.com/sitemap.xml
+Sitemap: https://shurgetapp.com/sitemap.xml

@@ -46,7 +46,7 @@ function notifyCustomer(step, order) {
         .catch(e => console.error('[driver-api] en_route email:', e.message));
     }
     if (step === 'deliver') {
-      const base = process.env.APP_URL || 'https://shurget.com';
+      const base = process.env.APP_URL || 'https://shurgetapp.com';
       markStatusEmailSent(order.id, 'delivered')
         .then(first => { if (first) return email.sendDeliveredEmail(order, `${base}/rate/${order.id}`); })
         .catch(e => console.error('[driver-api] delivered email:', e.message));

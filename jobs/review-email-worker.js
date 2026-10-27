@@ -15,7 +15,7 @@ const { sendPostDeliveryReviewEmail }                  = require('../services/em
 const { getReferralCodeByEmail, getOrCreateReferralCode } = require('../db/referrals');
 const { generateRatingToken }                          = require('../services/rating-token');
 
-const APP_URL = process.env.APP_URL || 'https://shurget.com';
+const APP_URL = process.env.APP_URL || 'https://shurgetapp.com';
 
 async function run() {
   const pending = await getPendingReviewEmails(50);

@@ -202,7 +202,7 @@ router.post('/jobs/:id/complete', requireDriver, async (req, res) => {
     try {
       const { sendDeliveredEmail } = require('../services/email');
       const { markStatusEmailSent } = require('../db/orders');
-      const ratingLink = `${process.env.APP_URL || 'https://shurget.com'}/rate/${order.id}`;
+      const ratingLink = `${process.env.APP_URL || 'https://shurgetapp.com'}/rate/${order.id}`;
       markStatusEmailSent(order.id, 'delivered').then(first => {
         if (first) sendDeliveredEmail(order, ratingLink).catch(() => {});
       }).catch(() => {});

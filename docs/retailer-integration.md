@@ -10,7 +10,7 @@ Add one script tag next to your "Add to Cart" button:
 
 ```html
 <script
-  src="https://shurget.com/widget.js"
+  src="https://shurgetapp.com/widget.js"
   data-item="sofa"
   data-origin-zip="80202"
   data-partner="YOUR-STORE-SLUG"
@@ -43,7 +43,7 @@ That's it. The widget appears, loads live pricing, and routes bookings to Shurge
 
   <!-- Shurget delivery widget -->
   <script
-    src="https://shurget.com/widget.js"
+    src="https://shurgetapp.com/widget.js"
     data-item="sofa"
     data-origin-zip="80202"
     data-partner="bentwood-furniture"
@@ -59,7 +59,7 @@ If your product page has dynamic content, inject the script programmatically:
 
 ```js
 const script = document.createElement('script');
-script.src = 'https://shurget.com/widget.js';
+script.src = 'https://shurgetapp.com/widget.js';
 script.setAttribute('data-item', 'sofa');
 script.setAttribute('data-origin-zip', '80202');
 script.setAttribute('data-partner', 'my-store');
@@ -114,7 +114,7 @@ The widget is plain JavaScript — no framework, no build step required.
 **Fix:** Remove `defer` or `async` from the script tag. Place it at the very end of your `<body>`, or just after the product info block:
 
 ```html
-<script src="https://shurget.com/widget.js" data-item="sofa" data-partner="my-store"></script>
+<script src="https://shurgetapp.com/widget.js" data-item="sofa" data-partner="my-store"></script>
 </body>  <!-- NOT before this -->
 ```
 
@@ -134,7 +134,7 @@ The widget is plain JavaScript — no framework, no build step required.
 
 **Cause:** The `/api/embed/calculate` endpoint is being called from a retailer domain without CORS headers (pre-July 2026 widget versions).
 
-**Fix:** Ensure you are using `https://shurget.com/widget.js` (not a self-hosted copy). The live CDN serves the CORS-enabled version. If you've copied the widget locally, update to the latest version from `https://shurget.com/widget.js`.
+**Fix:** Ensure you are using `https://shurgetapp.com/widget.js` (not a self-hosted copy). The live CDN serves the CORS-enabled version. If you've copied the widget locally, update to the latest version from `https://shurgetapp.com/widget.js`.
 
 ### SSL/HTTPS warnings
 
@@ -160,7 +160,7 @@ Expected capabilities:
 
 ## Contact & Sales
 
-- **Pilot program:** Fill out the form at [shurget.com/partners](#pilot-form) — we respond within 1 business day
+- **Pilot program:** Fill out the form at [shurgetapp.com/partners](#pilot-form) — we respond within 1 business day
 - **Volume pricing:** Partners with 20+ deliveries/month qualify for discounted rates
 - **Custom integration / API:** [partners@shurget.com](mailto:partners@shurget.com)
 - **Support:** [support@shurget.com](mailto:support@shurget.com)

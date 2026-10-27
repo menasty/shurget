@@ -715,7 +715,7 @@ async function updateJobStatus(orderId, action) {
 
 // ── Copy referral link
 function copyReferralLink(code) {
-  const url = 'https://shurget.com/drive/earn?ref=' + code;
+  const url = 'https://shurgetapp.com/drive/earn?ref=' + code;
   navigator.clipboard.writeText(url).then(() => showToast('Referral link copied!')).catch(() => {
     const el = document.createElement('textarea');
     el.value = url; el.style.cssText = 'position:fixed;opacity:0';
