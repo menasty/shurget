@@ -13,7 +13,7 @@ function getStripe() {
   return new Stripe(STRIPE_SECRET_KEY, { apiVersion: '2026-07-29.dahlia' });
 }
 
-const APP_URL = process.env.APP_URL || 'https://shurget.com';
+const APP_URL = process.env.APP_URL || 'https://shurgetapp.com';
 
 /**
  * Create a Stripe Checkout session for an order.

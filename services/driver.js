@@ -59,7 +59,7 @@ async function notifyDriversOfNewJob(order) {
     const { sendDriverNewJobAlert } = require('./email');
 
     const drivers = await getActiveDrivers();
-    const claimBase = 'https://shurget.com/driver/jobs';
+    const claimBase = 'https://shurgetapp.com/driver/jobs';
 
     await Promise.all(drivers.map(driver => {
       const claimUrl = `${claimBase}?email=${encodeURIComponent(driver.email)}`;

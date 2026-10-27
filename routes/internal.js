@@ -201,7 +201,7 @@ router.post('/send-review-requests', async (req, res) => {
 
       const refRow = await getOrCreateReferralCode(order.customer_email);
       const referralCode      = refRow.code;
-      const appUrl             = process.env.APP_URL || 'https://shurget.com';
+      const appUrl             = process.env.APP_URL || 'https://shurgetapp.com';
       const referralShareLink  = `${appUrl}/book?ref=${referralCode}&utm_source=referral&utm_medium=email&utm_campaign=customer_referral`;
 
       const token      = generateRatingToken(order.id);
