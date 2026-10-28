@@ -297,21 +297,45 @@
       <p class="page-sub">Track your orders and view your booking history.</p>
     </div>
 
-    <!-- Email lookup form -->
+    <% if (!authed) { %>
+    <!-- Email-code challenge: the open ?email= lookup is gone. Request a
+         code, then enter it — no account needed. -->
     <div class="lookup-card">
       <label for="email-input">Find your orders</label>
-      <form class="lookup-form" method="get" action="/dashboard">
+      <% if (notice) { %><p style="font-size:0.9rem;color:var(--gray-mid);margin-bottom:1rem;"><%= notice %></p><% } %>
+      <form class="lookup-form" method="post" action="/dashboard/request-code">
         <input
           id="email-input"
           type="email"
           name="email"
           placeholder="Enter your email address"
-          value="<%= email %>"
           required
         >
-        <button type="submit" class="btn-lookup">Look Up</button>
+        <button type="submit" class="btn-lookup">Send me a code</button>
+      </form>
+      <form class="lookup-form" method="post" action="/dashboard/verify-code" style="margin-top:0.75rem;">
+        <input
+          type="email"
+          name="email"
+          placeholder="Enter your email address"
+          required
+        >
+        <input
+          type="text"
+          name="code"
+          placeholder="6-digit code"
+          required
+          inputmode="numeric"
+          style="flex:1;padding:0.75rem 1rem;border:1.5px solid var(--gray-light);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:0.95rem;color:var(--charcoal);outline:none;"
+        >
+        <button type="submit" class="btn-lookup">Verify code</button>
       </form>
     </div>
+    <% } else { %>
+    <div class="lookup-card">
+      <p style="font-size:0.95rem;color:var(--charcoal);">Showing orders for <strong><%= email %></strong></p>
+    </div>
+    <% } %>
 
     <% if (email) { %>
 

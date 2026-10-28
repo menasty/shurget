@@ -8,6 +8,13 @@ const TWILIO_AUTH_TOKEN  = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_PHONE_FROM  = process.env.TWILIO_PHONE_FROM;
 const ADMIN_PHONE        = process.env.ADMIN_PHONE;
 const APP_URL = process.env.APP_URL || 'https://shurgetapp.com';
+const { generateTrackingToken } = require('./tracking-token');
+
+// Signed tracking links (H3 hardening): bare /track/:id URLs are rejected,
+// so every SMS tracking link carries a 30-day token.
+function trackLink(orderId) {
+  return `${APP_URL}/track/${orderId}?token=${generateTrackingToken(orderId)}`;
+}
 
 // ─── Low-level send ──────────────────────────────────────────────────────────
 
@@ -77,7 +84,7 @@ async function sendCustomerSms(order, body) {
 /** Order confirmed / payment successful */
 async function sendOrderConfirmedSms(order) {
   await sendCustomerSms(order,
-    `Your haul is booked! Order #${order.id}. Track: ${APP_URL}/track/${order.id}`
+    `Your haul is booked! Order #${order.id}. Track: ${trackLink(order.id)}`
   );
 }
 
@@ -90,7 +97,7 @@ async function sendDriverAssignedSms(order) {
   const eta = order.eta_minutes || order.etaMinutes;
   const etaText = eta ? ` ETA: ~${eta} min.` : '';
   await sendCustomerSms(order,
-    `${greeting} — ${driverName} has been assigned to your Shurget delivery.${etaText} Track: ${APP_URL}/track/${order.id}`
+    `${greeting} — ${driverName} has been assigned to your Shurget delivery.${etaText} Track: ${trackLink(order.id)}`
   );
 }
 
@@ -100,7 +107,7 @@ async function sendInTransitSms(order) {
   const firstName = name ? name.split(' ')[0] : '';
   const greeting = firstName ? `Hi ${firstName}` : 'Hi there';
   await sendCustomerSms(order,
-    `${greeting} — your haul is on the way! Track live: ${APP_URL}/track/${order.id}`
+    `${greeting} — your haul is on the way! Track live: ${trackLink(order.id)}`
   );
 }
 
@@ -140,7 +147,7 @@ async function sendDriverDispatchedSms(order) {
   const etaText = eta ? `ETA: ~${eta} min. ` : '';
 
   await sendSms(phone,
-    `${greeting} — ${driverName} has been assigned to your Shurget delivery. ${etaText}Track: ${APP_URL}/track/${order.id}`
+    `${greeting} — ${driverName} has been assigned to your Shurget delivery. ${etaText}Track: ${trackLink(order.id)}`
   );
 }
 
@@ -158,7 +165,7 @@ async function sendDriverEnRouteSms(order) {
   const etaText = eta ? ` ETA: ~${eta} min.` : '';
 
   await sendSms(phone,
-    `${greeting} — ${driverName} is heading to pick you up now.${etaText} Track live: ${APP_URL}/track/${order.id}`
+    `${greeting} — ${driverName} is heading to pick you up now.${etaText} Track live: ${trackLink(order.id)}`
   );
 }
 

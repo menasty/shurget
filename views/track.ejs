@@ -486,7 +486,7 @@
     <div class="action-btns">
       <a href="/book" class="btn-home">Book Another Haul</a>
       <% if (order.customer_email) { %>
-      <a href="/dashboard?email=<%= encodeURIComponent(order.customer_email) %>" class="btn-book-again">View All My Orders</a>
+      <a href="/dashboard" class="btn-book-again">View All My Orders</a>
       <% } %>
     </div>
 
@@ -517,6 +517,9 @@
     <% } %>
 
     <script>
+    // Signed tracking token for this order (rendered by routes/track.js).
+    // Cancel calls carry it in the body; polling carries it in the query.
+    var trackToken = '<%= trackToken %>';
     async function cancelOrder(orderId) {
       if (!confirm('Are you sure you want to cancel this order?')) return;
       const btn = document.getElementById('cancelOrderBtn');
@@ -524,7 +527,7 @@
       btn.disabled = true;
       btn.textContent = 'Cancelling...';
       try {
-        const res = await fetch(`/api/orders/${orderId}/cancel`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({}) });
+        const res = await fetch(`/api/orders/${orderId}/cancel`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token: trackToken }) });
         const data = await res.json();
         if (data.success) {
           btn.style.display = 'none';
@@ -552,7 +555,7 @@
       btn.disabled = true;
       btn.textContent = 'Cancelling...';
       try {
-        const res = await fetch(`/api/orders/${orderId}/cancel-unprepared`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({}) });
+        const res = await fetch(`/api/orders/${orderId}/cancel-unprepared`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ token: trackToken }) });
         const data = await res.json();
         msg.style.display = 'block';
         if (data.success) {
@@ -659,7 +662,7 @@
     }
 
     function check() {
-      fetch('/track/api/' + orderId)
+      fetch('/track/api/' + orderId + '?token=' + encodeURIComponent(trackToken))
         .then(function(r) { return r.json(); })
         .then(function(data) {
           if (data.driver_location && data.driver_location.lat) {

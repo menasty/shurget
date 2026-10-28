@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracking Link Expired — Shurget</title>
+  <link rel="stylesheet" href="/css/theme.css">
+  <style>
+    body { background: var(--bg); }
+    .expired-page {
+      max-width: 540px;
+      margin: 0 auto;
+      padding: 120px 1.5rem 4rem;
+      text-align: center;
+    }
+    .expired-page h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 0.05em;
+      color: var(--charcoal);
+      margin-bottom: 0.5rem;
+    }
+    .expired-page .subtitle { color: var(--gray-mid); font-size: 1rem; margin-bottom: 2rem; line-height: 1.65; }
+    .resend-card {
+      background: var(--white);
+      border: 1.5px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: left;
+    }
+    .resend-card label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--orange);
+      margin-bottom: 0.5rem;
+    }
+    .resend-card input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--gray-light);
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--charcoal);
+      outline: none;
+      margin-bottom: 0.75rem;
+      box-sizing: border-box;
+    }
+    .resend-card button {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .resend-note { color: var(--gray-mid); font-size: 0.85rem; margin-top: 1rem; text-align: center; }
+    a.btn {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      background: var(--orange);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="/images/shurget-logo.png" alt="Shurget" height="48" style="vertical-align: middle;">
+      </a>
+      <div class="nav-right">
+        <a href="/book" class="nav-badge">Book Now</a>
+      </div>
+    </div>
+  </nav>
+  <div class="expired-page">
+    <h1>Link Expired or Invalid</h1>
+    <p class="subtitle"><%= message %></p>
+    <div class="resend-card">
+      <form method="post" action="/track/resend-link">
+        <label for="resend-order">Order number</label>
+        <input id="resend-order" type="text" name="orderId" value="<%= orderId %>" placeholder="e.g. 1234" required>
+        <label for="resend-email">Email you booked with</label>
+        <input id="resend-email" type="email" name="email" placeholder="you@example.com" required>
+        <button type="submit">Send me a new link</button>
+      </form>
+      <p class="resend-note">If that order and email match, a new tracking link is on its way to your inbox.</p>
+    </div>
+    <a class="btn" href="/dashboard">View All My Orders</a>
+  </div>
+</body>
+</html>

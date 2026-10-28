@@ -7,13 +7,30 @@ const router = express.Router();
 const { getOrderById, updateDriverLocation, dispatchOrder, completeOrder, cancelOrderByCustomer, cancelOrderUnprepared } = require('../db/orders');
 const { sendConfirmationEmail } = require('../services/email');
 const { requireAdminApi } = require('../middleware/session');
+const { requireTrackToken } = require('../middleware/track-token');
+const { DRIVER_COOKIE, getDriverSession } = require('../middleware/driver-session');
+const { getDriverByEmail } = require('../db/drivers');
+
+// Driver-session gate for JSON APIs. Unlike the page-style driver middleware
+// (which redirects to /driver/login), this returns 403 JSON so API clients
+// get a machine-readable denial. The live driver-location path is
+// POST /api/driver/jobs/:id/location (routes/driver-api.js); this endpoint
+// has no in-repo caller, so gating it breaks nothing in-repo.
+async function requireDriverApi(req, res, next) {
+  const sess = getDriverSession(req.cookies?.[DRIVER_COOKIE]);
+  const driver = sess ? await getDriverByEmail(sess.email).catch(() => null) : null;
+  if (!driver) return res.status(403).json({ error: 'Driver login required' });
+  req.driver = driver;
+  next();
+}
 
 /**
  * GET /api/orders/:id
  * Returns order status, addresses, fare breakdown, and timestamps.
- * Returns 404 if order not found.
+ * Gated by requireTrackToken: a valid token for this order or an admin
+ * session. Returns 404 if order not found (after the gate passes).
  */
-router.get('/:id', async (req, res) => {
+router.get('/:id', requireTrackToken, async (req, res) => {
   try {
     const order = await getOrderById(req.params.id);
     if (!order) {
@@ -46,7 +63,9 @@ router.get('/:id', async (req, res) => {
             name: order.driver_name,
             phone: order.driver_phone,
             etaMinutes: order.eta_minutes,
-            location: (order.driver_lat && order.driver_lng)
+            // GPS is shown ONLY while a driver is actively on the job.
+            location: (order.driver_lat && order.driver_lng &&
+              (order.status === 'assigned' || order.status === 'in_progress'))
               ? { lat: order.driver_lat, lng: order.driver_lng, updatedAt: order.driver_location_updated_at }
               : null,
           }
@@ -66,19 +85,25 @@ router.get('/:id', async (req, res) => {
 /**
  * POST /api/orders/:id/location
  * Driver updates their current location (lat/lng).
- * Lightweight — no auth in MVP (driver app would add auth in production).
+ * Gated: the caller must hold a driver session AND be the driver assigned
+ * to this order. Previously unauthenticated ("no auth in MVP"), so anyone
+ * could spoof the GPS the tracking page displays.
  */
-router.post('/:id/location', async (req, res) => {
+router.post('/:id/location', requireDriverApi, async (req, res) => {
   try {
     const { lat, lng } = req.body;
     if (typeof lat !== 'number' || typeof lng !== 'number') {
       return res.status(400).json({ error: 'lat and lng must be numbers' });
     }
-    const order = await updateDriverLocation(req.params.id, lat, lng);
-    if (!order) {
+    const order = await getOrderById(req.params.id);
+    if (!order || order.driver_id !== req.driver.id) {
+      return res.status(403).json({ error: 'Not your order' });
+    }
+    const updated = await updateDriverLocation(req.params.id, lat, lng);
+    if (!updated) {
       return res.status(404).json({ error: 'Order not found' });
     }
-    res.json({ ok: true, updatedAt: order.driver_location_updated_at });
+    res.json({ ok: true, updatedAt: updated.driver_location_updated_at });
   } catch (err) {
     console.error('[/api/orders/:id/location]', err);
     res.status(500).json({ error: 'Failed to update location' });
@@ -268,9 +293,10 @@ router.post('/payment-failure', requireAdminApi, async (req, res) => {
  *   - status 'paid' (no driver yet)  → 100% refund
  *   - status 'assigned' (driver assigned, not en-route) → 50% refund + driver lost-time compensation
  *   - any other status → 400, direct customer to support
- * Public endpoint — access is gated by knowledge of the order id (same trust model as /track/:id).
+ * Gated by requireTrackToken: only the customer holding this order's signed
+ * link (or an admin session) can cancel it. Previously public by order id.
  */
-router.post('/:id/cancel', async (req, res) => {
+router.post('/:id/cancel', requireTrackToken, async (req, res) => {
   try {
     const orderId = parseInt(req.params.id, 10);
     if (!orderId) return res.status(400).json({ error: 'Invalid order id' });
@@ -298,9 +324,10 @@ router.post('/:id/cancel', async (req, res) => {
  *   - Applies a $15 penalty against the driver (driver_adjustments) and
  *     increments their unprepared-cancellation strike counter; auto-flags
  *     the driver for equipment review at 3+ incidents.
- * Public endpoint — same trust model as /:id/cancel and /track/:id.
+ * Gated by requireTrackToken, like /:id/cancel. Previously public by order
+ * id, so a stranger could refund an order AND penalize/flag its driver.
  */
-router.post('/:id/cancel-unprepared', async (req, res) => {
+router.post('/:id/cancel-unprepared', requireTrackToken, async (req, res) => {
   try {
     const orderId = parseInt(req.params.id, 10);
     if (!orderId) return res.status(400).json({ error: 'Invalid order id' });

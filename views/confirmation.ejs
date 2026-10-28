@@ -340,7 +340,7 @@
 
     <!-- CTA buttons -->
     <div class="cta-row">
-      <% if (order) { %><a href="/track/<%= order.id %>" class="cta-primary">Track Your Delivery →</a><% } %>
+      <% if (order) { %><a href="/track/<%= order.id %><% if (typeof trackToken !== 'undefined' && trackToken) { %>?token=<%= trackToken %><% } %>" class="cta-primary">Track Your Delivery →</a><% } %>
       <a href="/book" class="<%= order ? 'cta-ghost' : 'cta-primary' %>">Book Another Haul</a>
       <a href="/" class="cta-ghost">Back to Home</a>
     </div>
