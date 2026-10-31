@@ -116,20 +116,10 @@ app.use('/api/sms', require('./routes/sms'));
 app.use('/connect', require('./routes/connect'));
 app.use('/api/connect', require('./routes/connect'));
 
-// Customer order dashboard
-const { getOrdersByEmail } = require('./db/orders');
-app.get('/dashboard', async (req, res) => {
-  const email = (req.query.email || '').trim().toLowerCase();
-  let orders = [];
-  if (email) {
-    try {
-      orders = await getOrdersByEmail(email);
-    } catch (err) {
-      console.error('[dashboard] failed to load orders:', err.message);
-    }
-  }
-  res.render('dashboard', { email, orders });
-});
+// Customer order dashboard behind an email-code challenge
+// (routes/dashboard-access.js). The old open GET /dashboard?email= lookup
+// is gone: an email address alone no longer opens anyone's order history.
+app.use('/dashboard', require('./routes/dashboard-access'));
 
 // Static informational pages
 app.get('/signed-out', (req, res) => {

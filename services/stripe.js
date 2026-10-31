@@ -3,6 +3,7 @@
 // Does NOT own: webhook handling (future), payment processing logic
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+const { generateTrackingToken } = require('./tracking-token');
 
 // Lazily init — avoids crash when key is absent in dev
 function getStripe() {
@@ -61,8 +62,8 @@ async function createCheckoutSession({ orderId, amount, itemType, customerEmail,
     metadata: {
       orderId: String(orderId),
     },
-    success_url: `${baseUrl || APP_URL}/confirmation/${orderId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${baseUrl || APP_URL}/confirmation/${orderId}?payment=cancelled`,
+    success_url: `${baseUrl || APP_URL}/confirmation/${orderId}?payment=success&session_id={CHECKOUT_SESSION_ID}&token=${generateTrackingToken(orderId)}`,
+    cancel_url: `${baseUrl || APP_URL}/confirmation/${orderId}?payment=cancelled&token=${generateTrackingToken(orderId)}`,
   });
 
   return session;
